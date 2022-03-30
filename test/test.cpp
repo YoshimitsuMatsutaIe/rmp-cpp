@@ -4,6 +4,6 @@
 
 int main()
 {
-    rmp_test::Node node;
-    node.do_any();
+    rmp::Node node(3);
+    node.print_state();
 }
