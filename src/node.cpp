@@ -3,32 +3,26 @@
 #include "/usr/include/eigen3/Eigen/QR"
 #include <iostream>
 
-//using namespace rmp;
 
-rmp::Node::Node(int dim)
+rmp_node::Node::Node(int dim)
 {
     this->dim = dim;
-    rmp::Node::set_dim(dim);
+    rmp_node::Node::set_dim(dim);
 }
 
-void rmp::Node::set_dim(int dim)
+void rmp_node::Node::set_dim(int dim)
 {
     Eigen::VectorXd _vec(dim);
     Eigen::MatrixXd _mat(dim, dim);
 
     x = _vec;
-    x << 1, 2, 3;
     x_dot = _vec;
-    x_dot << 4, 5, 6;
     f = _vec;
-    f << 7, 8, 9;
     M = _mat;
-    M << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-    //M = _M;
 }
 
 
-void rmp::Node::print_state()
+void rmp_node::Node::print_state()
 {
     std::cout << "dimention = " << dim << std::endl;
     std::cout << "x = " << x << std::endl;
@@ -37,14 +31,19 @@ void rmp::Node::print_state()
     std::cout << "M = " << M << std::endl;
 }
 
+void rmp_node::Node::pushforward()
+{
+    
+}
 
-void rmp::Node::pullback()
+void rmp_node::Node::pullback()
 {
     
 }
 
 
-void rmp::Root::resolve()
+void rmp_node::Root::resolve()
 {
     q_ddot = M.completeOrthogonalDecomposition().pseudoInverse() * f;
 }
+

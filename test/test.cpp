@@ -4,6 +4,6 @@
 
 int main()
 {
-    rmp::Node node(3);
+    rmp_node::Node node(3);
     node.print_state();
 }
