@@ -87,8 +87,9 @@ void Node::pullback_value2()
         for (Node* child : children)
         {
             child->pullback_value2();
-            this->parent->value2 += this->value2;
+
         }
+        this->parent->value2 += this->value2;
     }
 
 }
