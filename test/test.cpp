@@ -36,17 +36,17 @@ int main()
 {
     std::cout << "running..." << std::endl;
 
-
-    rmp_node::Node root(2, "root");
+    double dt = 0.01;
+    rmp_node::Node root(2, "root", dt);
     Eigen::VectorXd q0(2), q0_dot(2);
     q0 << 0.0, 0.0;
     q0_dot << 0.0, 0.0;
     root.set_initial_state(q0, q0_dot);
 
-    rmp_node::Node node1(2, "node1");
+    rmp_node::Node node1(2, "node1", dt);
     root.add_child(&node1);
 
-    rmp_node::Node leaf1(2, "leaf");
+    rmp_node::Node leaf1(2, "leaf", dt);
     node1.add_child(&leaf1);
 
     //root.print_state();

@@ -4,10 +4,11 @@
 #include <iostream>
 
 
-rmp_node::Node::Node(int dim, std::string name)
+rmp_node::Node::Node(int dim, std::string name, double dt)
 {
     this->dim = dim;
     rmp_node::Node::set_dim(dim);
+    this->dt = dt;
 
     this->name = name;
     if (name == "root")
@@ -41,6 +42,7 @@ void rmp_node::Node::set_dim(int dim)
     M = _mat;
     if (name == "root")
     {
+        std::cout << "root dayo!" << std::endl;
         q_ddot = _vec;
     }
 }
@@ -85,11 +87,13 @@ void rmp_node::Node::add_child(rmp_node::Node* child)
 void rmp_node::Node::pushforward()
 {
     std::cout << "pushforward!" << std::endl;
-    std::cout << "\tnow name = " << name << std::endl;
+    std::cout << "now name = " << name << std::endl;
 
     if (parent == nullptr)
     {
+        std::cout << "q_ddot = " << q_ddot << std::endl;
         x_dot += q_ddot * dt;
+        std::cout << "ok!" << std::endl;
         x += x_dot * dt;
         for (rmp_node::Node* child : children)
         {

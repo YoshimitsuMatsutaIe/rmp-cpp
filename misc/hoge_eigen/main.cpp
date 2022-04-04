@@ -10,5 +10,8 @@ int main()
     m(0, 1) = 3;
     m(1, 1) = 4;
 
-    std::cout << m << std::endl;
+    Eigen::VectorXd f(2);
+    f << 1, 2;
+
+    std::cout << f + m * f << std::endl;
 }

@@ -33,7 +33,7 @@ namespace rmp_node{
             Eigen::VectorXd *f, Eigen::MatrixXd *M
         );
 
-        Node(int dim, std::string name);
+        Node(int dim, std::string name, double dt);
 
         void set_dim(int dim);
         void set_mappings(
