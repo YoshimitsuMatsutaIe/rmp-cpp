@@ -3,12 +3,32 @@
 #include <iostream>
 
 
-void calc_x_(Eigen::VectorXd x, Eigen::VectorXd &y)
+// 恒等写像
+void calc_x_(const Eigen::VectorXd& y, Eigen::VectorXd* x)
 {
-    x[0] = y[0];
-    x[1] = y[1];
+    *x = y;
 }
 
+void calc_J_(const Eigen::VectorXd &y, Eigen::MatrixXd *J)
+{
+    *J = Eigen::MatrixXd::Zero(2, 2);
+}
+
+
+void calc_J_dot_(const Eigen::VectorXd &y, Eigen::MatrixXd *J_dot)
+{
+    *J_dot = Eigen::MatrixXd::Zero(2, 2);
+}
+
+void calc_rmp_func(
+    const Eigen::VectorXd &x,
+    const Eigen::VectorXd &x_dot,
+    Eigen::VectorXd *f, Eigen::MatrixXd *M
+)
+{
+    *f = x;
+    *M = Eigen::MatrixXd::Zero(2, 2);
+}
 
 
 
@@ -31,8 +51,15 @@ int main()
 
     //root.print_state();
 
+    root.set_mappings(&calc_x_, &calc_J_, &calc_J_dot_, &calc_rmp_func);
+    node1.set_mappings(&calc_x_, &calc_J_, &calc_J_dot_, &calc_rmp_func);
+    leaf1.set_mappings(&calc_x_, &calc_J_, &calc_J_dot_, &calc_rmp_func);
 
     root.pushforward();
+
+
+
+
 
     std::cout << "done!" << std::endl;
 }
