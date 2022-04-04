@@ -3,7 +3,7 @@
 #include <vector>
 
 namespace rmp_node{
-
+    
     class Node
     {
     public:
@@ -23,17 +23,27 @@ namespace rmp_node{
 
         Eigen::VectorXd q_ddot;  //指令値
 
+        // 写像
+        //void* calc_z;
         void(*calc_x)(const Eigen::VectorXd& y, Eigen::VectorXd* x);
-        void(*calc_J)(const Eigen::VectorXd& y);
-        void(*calc_J_dot)(const Eigen::VectorXd& y);
+        void(*calc_J)(const Eigen::VectorXd& y, Eigen::MatrixXd* J);
+        void(*calc_J_dot)(const Eigen::VectorXd& y,  Eigen::MatrixXd* J_dot);
         void(*calc_rmp_func)(
-            const Eigen::VectorXd& y, const Eigen::VectorXd& y_dot
+            const Eigen::VectorXd& y,
+            const Eigen::VectorXd& y_dot,
+            Eigen::VectorXd* f,
+            Eigen::MatrixXd* M
         );
 
         Node(int dim, std::string name);
 
         void set_dim(int dim);
-
+        void set_mappings(
+            void(*calc_x)(const Eigen::VectorXd& y, Eigen::VectorXd* x),
+            void* calc_J,
+            void* calc_J_dot,
+            void* calc_rmp_func
+        );
         void set_initial_state(
             const Eigen::VectorXd& q, const Eigen::VectorXd& q_dot
         );

@@ -40,6 +40,14 @@ void rmp_node::Node::set_dim(int dim)
 }
 
 
+void rmp_node::Node::set_mappings(
+    void(*calc_x)(const Eigen::VectorXd& y, Eigen::VectorXd* x),void* calc_J, void* calc_J_dot, void* calc_rmp_func
+)
+{
+    this->calc_x = calc_x;
+    //this->calc_z();
+}
+
 void rmp_node::Node::print_state()
 {
     std::cout << "name = " << name << std::endl;
