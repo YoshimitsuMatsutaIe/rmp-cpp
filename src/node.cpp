@@ -7,8 +7,10 @@
 rmp_node::Node::Node(int dim, std::string name, double dt)
 {
     this->dim = dim;
-    rmp_node::Node::set_dim(dim);
     this->dt = dt;
+    this->name = name;
+    rmp_node::Node::set_dim(dim);
+    
 
     this->name = name;
     if (name == "root")
@@ -42,9 +44,10 @@ void rmp_node::Node::set_dim(int dim)
     M = _mat;
     if (name == "root")
     {
-        std::cout << "root dayo!" << std::endl;
+        //std::cout << "root dayo!" << std::endl;
         q_ddot = _vec;
     }
+    
 }
 
 

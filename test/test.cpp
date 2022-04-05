@@ -34,7 +34,7 @@ void calc_rmp_func(
 
 int main()
 {
-    std::cout << "running..." << std::endl;
+    std::cout << "running...\n" << std::endl;
 
     double dt = 0.01;
     rmp_node::Node root(2, "root", dt);
@@ -49,7 +49,9 @@ int main()
     rmp_node::Node leaf1(2, "leaf", dt);
     node1.add_child(&leaf1);
 
-    //root.print_state();
+    root.print_state();
+    node1.print_state();
+    leaf1.print_state();
 
     root.set_mappings(&calc_x_, &calc_J_, &calc_J_dot_, &calc_rmp_func);
     node1.set_mappings(&calc_x_, &calc_J_, &calc_J_dot_, &calc_rmp_func);
@@ -61,5 +63,5 @@ int main()
 
 
 
-    std::cout << "done!" << std::endl;
+    std::cout << "\ndone!" << std::endl;
 }
