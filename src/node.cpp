@@ -52,13 +52,13 @@ void rmp_node::Node::set_dim(int dim)
 
 
 void rmp_node::Node::set_mappings(
-    void(*calc_x)(const Eigen::VectorXd& y, Eigen::VectorXd* x),
-    void(*calc_J)(const Eigen::VectorXd& y, Eigen::MatrixXd* J),
-    void(*calc_J_dot)(const Eigen::VectorXd& y,  Eigen::MatrixXd* J_dot),
+    void(*calc_x)(const Eigen::VectorXd& y, Eigen::VectorXd& x),
+    void(*calc_J)(const Eigen::VectorXd& y, Eigen::MatrixXd& J),
+    void(*calc_J_dot)(const Eigen::VectorXd& y,  Eigen::MatrixXd& J_dot),
     void(*calc_rmp_func)(
         const Eigen::VectorXd &x,
         const Eigen::VectorXd &x_dot,
-        Eigen::VectorXd *f, Eigen::MatrixXd *M
+        Eigen::VectorXd &f, Eigen::MatrixXd &M
     )
 )
 {
@@ -100,13 +100,13 @@ void rmp_node::Node::pushforward()
         x += x_dot * dt;
         for (rmp_node::Node* child : children)
         {
-            this->calc_rmp_func(this->x, this->x_dot, &this->f, &this->M);  // 自分のRMPを計算
+            this->calc_rmp_func(this->x, this->x_dot, this->f, this->M);  // 自分のRMPを計算
 
             // 子供のやつ
-            child->calc_x(x, &child->x);
-            child->calc_J(x, &child->J);
+            child->calc_x(x, child->x);
+            child->calc_J(x, child->J);
             child->x_dot = child->J * x_dot;
-            child->calc_J_dot(x, &child->J_dot);
+            child->calc_J_dot(x, child->J_dot);
             child->pushforward();
         }
     }
@@ -118,13 +118,13 @@ void rmp_node::Node::pushforward()
     {
         for (rmp_node::Node* child : children)
         {
-            this->calc_rmp_func(this->x, this->x_dot, &this->f, &this->M);  // 自分のRMPを計算
+            this->calc_rmp_func(this->x, this->x_dot, this->f, this->M);  // 自分のRMPを計算
 
             // 子供のやつ
-            child->calc_x(x, &child->x);
-            child->calc_J(x, &child->J);
+            child->calc_x(x, child->x);
+            child->calc_J(x, child->J);
             child->x_dot = child->J * x_dot;
-            child->calc_J_dot(x, &child->J_dot);
+            child->calc_J_dot(x, child->J_dot);
             child->pushforward();
         }
     }
