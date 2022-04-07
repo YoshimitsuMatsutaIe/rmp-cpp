@@ -7,15 +7,25 @@
 
 #include "./node.hpp"
 
+namespace rmp_base
+{
+    class Is_Not_Leaf : public rmp_node::Node
+    {
+    public:
+        using rmp_node::Node::Node;
+        void calc_natural_form();
+    };
+}
 
 
 namespace rmp2
 {
-    class goal_attractor : public rmp_node::Node
+    class Goal_Attractor : public rmp_node::Node
     {
     private:
-        double max_speed;
+        //double max_speed;
         double gain;
+        double damp;
         double f_alpha;
         double sigma_alpha;
         double sigma_gamma;
@@ -25,40 +35,60 @@ namespace rmp2
         double epsilon;
 
         double soft_max(const double alpha, const double s);
-        // void soft_normal(const double aloha, Eigen::VectorXd& v);
-        // void metric_stretches_space(
-        //     const double alpha, const Eigen::VectorXd& v,
-        //     Eigen::MatrixXd& M
-        // );
-        // void basiec_metric(
-        //     const double alpha, const double beta, const Eigen::VectorXd& f,
-        //     Eigen::MatrixXd& M
-        // );
 
-        void grad_potential2(
+
+        void calc_grad_potential2(
             const Eigen::VectorXd &x, Eigen::VectorXd& out
         );
 
-        void inertia_matrix();
-        void force();
+        void calc_curvature(Eigen::VectorXd& out);
+
+        void calc_inertia_matrix();
+        void calc_force();
 
 
     public:
         using rmp_node::Node::Node;
-        // goal_attractor(
-        //     double max_speed,
-        //     double gain,
-        //     double f_alpha,
-        //     double sigma_alpha,
-        //     double sigma_gamma,
-        //     double wu,
-        //     double wl,
-        //     double alpha,
-        //     double epsilon
-        // );
+        Goal_Attractor(
+            double max_speed,
+            double gain,
+            double f_alpha,
+            double sigma_alpha,
+            double sigma_gamma,
+            double wu,
+            double wl,
+            double alpha,
+            double epsilon
+        );
 
         void calc_natural_form();
 
+    };
+
+
+    class Obstacle_Avoidance : public rmp_node::Node
+    {
+    private:
+        double gain;
+    
+
+
+    public:
+        using rmp_node::Node::Node;
+        Obstacle_Avoidance(double gain);
+    };
+
+
+
+    class Joint_Limit_Avoidance : public rmp_node::Node
+    {
+    private:
+        double jl_upper;
+    
+
+    public:
+        using rmp_node::Node::Node;
+        Joint_Limit_Avoidance();
     };
 };
 

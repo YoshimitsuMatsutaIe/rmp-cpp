@@ -13,7 +13,7 @@ namespace rmp_node{
         double dt;  //刻み時間
         int self_dim;
         int parent_dim;
-        int node_type;
+        int node_type;  //0:root, 1::leaf
         std::string name;
 
         class Node* parent;
@@ -34,14 +34,10 @@ namespace rmp_node{
         void(*calc_J_dot)(const Eigen::VectorXd &y, const Eigen::VectorXd &y_dot, Eigen::MatrixXd &J_dot);
         
 
+        Node();
         Node(int self_dim, int parent_dim, int node_type, std::string name, double dt);
 
-        virtual void calc_rmp_func(
-            const Eigen::VectorXd &x,
-            const Eigen::VectorXd &x_dot,
-            Eigen::VectorXd &f,
-            Eigen::MatrixXd &M
-        );
+        virtual void calc_natural_form() = 0;
 
         
 

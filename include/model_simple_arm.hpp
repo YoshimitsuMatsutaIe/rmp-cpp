@@ -6,13 +6,10 @@
 
 namespace model_simple_arm
 {
-
-    const double l1=1.0;
-    const double l2=1.0;
-    const double l3=1.0;
-    const double l4=1.0;
-    
-
+    const double l1 = 1.0;
+    const double l2 = 1.0;
+    const double l3 = 1.0;
+    const double l4 = 1.0;
 
     void x0(const Eigen::VectorXd &q, Eigen::VectorXd &x);
     void x1(const Eigen::VectorXd &q, Eigen::VectorXd &x);
@@ -31,7 +28,6 @@ namespace model_simple_arm
 
 
 };
-
 
 
 #endif

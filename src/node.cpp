@@ -3,6 +3,7 @@
 #include "/usr/include/eigen3/Eigen/QR"
 #include <iostream>
 
+rmp_node::Node::Node(){};
 
 rmp_node::Node::Node(
     int self_dim, int parent_dim, int node_type, std::string name, double dt
@@ -50,15 +51,10 @@ rmp_node::Node::Node(
 }
 
 
-void rmp_node::Node::calc_rmp_func(
-    const Eigen::VectorXd &x,
-    const Eigen::VectorXd &x_dot,
-    Eigen::VectorXd &f,
-    Eigen::MatrixXd &M
-)
-{
-    //何もしない
-}
+// void rmp_node::Node::calc_natural_form()
+// {
+//     //何もしない
+// }
 
 
 
@@ -165,7 +161,7 @@ void rmp_node::Node::pushforward()
         std::cout << "OK!" << std::endl;
         for (rmp_node::Node* child : children)
         {
-            this->calc_rmp_func(this->x, this->x_dot, this->f, this->M);  // 自分のRMPを計算
+            this->calc_natural_form();  // 自分のRMPを計算
 
             // 子供のやつ
             child->calc_x(x, child->x);
@@ -184,7 +180,7 @@ void rmp_node::Node::pushforward()
     {
         for (rmp_node::Node* child : children)
         {
-            this->calc_rmp_func(this->x, this->x_dot, this->f, this->M);  // 自分のRMPを計算
+            this->calc_natural_form();  // 自分のRMPを計算
 
             // 子供のやつ
             child->calc_x(x, child->x);
