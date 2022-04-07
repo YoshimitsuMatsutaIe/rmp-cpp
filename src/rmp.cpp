@@ -4,6 +4,7 @@
 #include "/usr/include/eigen3/Eigen/Core"
 
 #include "../include/rmp.hpp"
+#include "../include/xi.hpp"
 
 void rmp_base::Is_Not_Leaf::calc_natural_form(){};
 
@@ -51,7 +52,8 @@ void rmp2::Goal_Attractor::calc_inertia_matrix()
 
 void rmp2::Goal_Attractor::calc_curvature(Eigen::VectorXd& out)
 {
-
+    double hoge(3);
+    xi(alpha, x_dot(0), x_dot(1), x_dot(2), epsilon, sigma_alpha, sigma_gamma, wl, wu, 0.0, 0.0, 0.0, &hoge);
 }
 
 
