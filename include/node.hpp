@@ -7,47 +7,10 @@
 
 namespace rmp_node{
 
-    class Root
+
+    class Node
     {
     public:
-        double dt;  //刻み時間
-        int self_dim;
-        int node_type;  //0:root, 1::leaf
-        std::string name;
-
-        std::vector<class Node*> children;
-
-        Eigen::VectorXd x;
-        Eigen::VectorXd x_dot;
-        Eigen::VectorXd f;  //所望の力
-        Eigen::MatrixXd M;  //慣性行列
-
-        Eigen::VectorXd x_ddot;  //指令値
-
-
-        Root();
-        Root(int self_dim, int node_type, std::string name, double dt);
-
-        virtual void calc_natural_form();
-
-        void set_initial_state(
-            const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot
-        );
-
-        const void print_state();
-        const void print_state_all_node();
-
-        void add_child(Node *child);
-        void pushforward();
-        void pullback();
-        void resolve();
-    };
-
-
-    class Node : public Root
-    {
-    public:
-        double dt;  //刻み時間
         int self_dim;
         int parent_dim;
         int node_type;  //0:root, 1::leaf
@@ -63,8 +26,6 @@ namespace rmp_node{
         Eigen::VectorXd f;  //所望の力
         Eigen::MatrixXd M;  //慣性行列
 
-        Eigen::VectorXd q_ddot;  //指令値
-
         // 写像
         void(*calc_x)(const Eigen::VectorXd &y, Eigen::VectorXd &x);  //phi
         void(*calc_J)(const Eigen::VectorXd &y, Eigen::MatrixXd &J);  //phiのヤコビ行列
@@ -72,30 +33,43 @@ namespace rmp_node{
         
 
         Node();
-        Node(int self_dim, int parent_dim, int node_type, std::string name, double dt);
+        Node(int self_dim, int parent_dim, int node_type, std::string name);
 
-        virtual void calc_natural_form() = 0;
-
-        
+        virtual void calc_natural_form();
 
         void set_mappings(
             void(*calc_x)(const Eigen::VectorXd &y, Eigen::VectorXd &x),
             void(*calc_J)(const Eigen::VectorXd &y, Eigen::MatrixXd &J),
             void(*calc_J_dot)(const Eigen::VectorXd &y, const Eigen::VectorXd &y_dot, Eigen::MatrixXd &J_dot)
         );
-        void set_mappings();
-        void set_initial_state(
-            const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot
-        );
+        
 
         const void print_state();
         const void print_state_all_node();
 
         void add_child(Node *child);
-        void pushforward();
-        void pullback();
+        virtual void pushforward();
+        //virtual void pullback();
+    };
+
+
+    class Root : public Node
+    {
+    public:
+        double dt;  //刻み時間
+        Eigen::VectorXd q_ddot;  //指令値
+        Root(int self_dim, int parent_dim, int node_type, std::string name, double dt);
+        void set_initial_state(
+            const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot
+        );
+        void pushforward() override;
+        //void pullback() override;
         void resolve();
     };
+
+
+
+
 }
 
 

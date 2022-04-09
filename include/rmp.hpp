@@ -7,23 +7,14 @@
 
 #include "./node.hpp"
 
-namespace rmp_base
-{
-    class Is_Not_Leaf : public rmp_node::Node
-    {
-    public:
-        using rmp_node::Node::Node;
-        void calc_natural_form() override;
-    };
-}
+/*rmp-flow
 
-
+*/
 namespace rmp2
 {
     class Goal_Attractor : public rmp_node::Node
     {
     private:
-        //double max_speed;
         double gain;
         double damp;
         double f_alpha;
@@ -34,7 +25,8 @@ namespace rmp2
         double alpha;
         double epsilon;
 
-        double soft_max(const double alpha, const double s);
+        Eigen::VectorXd& x0;  //goal point's position
+        Eigen::VectorXd& x0_dot;  //goal point's velo
 
         void calc_grad_potential2(const Eigen::VectorXd& z, Eigen::VectorXd& out);
         void calc_inertia_matrix(const Eigen::VectorXd& z, const Eigen::VectorXd& z_dot, Eigen::MatrixXd& out);
@@ -42,8 +34,8 @@ namespace rmp2
 
 
     public:
-        using rmp_node::Node::Node;
         Goal_Attractor(
+            int self_dim, int parent_dim, int node_type, std::string name,
             double max_speed,
             double gain,
             double f_alpha,
@@ -52,26 +44,41 @@ namespace rmp2
             double wu,
             double wl,
             double alpha,
-            double epsilon
+            double epsilon,
+            Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot
         );
 
-        void calc_natural_form(
-            const Eigen::VectorXd& x0, const Eigen::VectorXd& x0_dot
-        ) override;
+        void pushforward() override;
 
+        //void set_goal_point_ref(Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot);
+        void calc_natural_form() override;
     };
 
 
     class Obstacle_Avoidance : public rmp_node::Node
     {
     private:
-        double gain;
+        double scale_rep;
+        double scale_damp;
+        double ratio;
+        double rep_gain;
+        double r;
     
-
+        Eigen::VectorXd& x0;  //obstacle point's position
+        Eigen::VectorXd& x0_dot;  //obstacle point's velo
 
     public:
-        using rmp_node::Node::Node;
-        Obstacle_Avoidance(double gain);
+        Obstacle_Avoidance(
+            int self_dim, int parent_dim, int node_type, std::string name,
+            double scale_rep,
+            double scale_damp,
+            double ratio,
+            double rep_gain,
+            double r,
+            Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot
+        );
+
+        void calc_natural_form() override;
     };
 
 

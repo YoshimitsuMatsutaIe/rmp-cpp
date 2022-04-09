@@ -4,14 +4,12 @@
 #include "/usr/include/eigen3/Eigen/Core"
 
 #include "../include/rmp.hpp"
-//#include "../include/xi.hpp"
 #include "../include/rmp2_attractor_xi.hpp"
 
-// 何もしない
-void rmp_base::Is_Not_Leaf::calc_natural_form(){};
 
 
 rmp2::Goal_Attractor::Goal_Attractor(
+    int self_dim, int parent_dim, int node_type, std::string name,
     double max_speed,
     double gain,
     double f_alpha,
@@ -20,8 +18,10 @@ rmp2::Goal_Attractor::Goal_Attractor(
     double wu,
     double wl,
     double alpha,
-    double epsilon
-)
+    double epsilon,
+    Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot
+) : Node(self_dim, parent_dim, node_type, name), x0(z0), x0_dot(z0_dot)
+
 {
     this->damp = gain / max_speed;
     this->gain = gain;
@@ -32,14 +32,14 @@ rmp2::Goal_Attractor::Goal_Attractor(
     this->wl =wl;
     this->alpha =alpha;
     this->epsilon = epsilon;
+
+
+
+    this->children.push_back(nullptr);
 }
 
 
-double rmp2::Goal_Attractor::soft_max(
-    const double alpha, const double s)
-{
-    return s + 1/alpha * std::log(1 + std::exp(-2 * alpha * s));
-}
+void rmp2::Goal_Attractor::pushforward(){}
 
 
 void rmp2::Goal_Attractor::calc_grad_potential2(const Eigen::VectorXd& z, Eigen::VectorXd& out)
@@ -77,10 +77,36 @@ void rmp2::Goal_Attractor::calc_force(const Eigen::VectorXd& z, const Eigen::Vec
 }
 
 
-void rmp2::Goal_Attractor::calc_natural_form(
-    const Eigen::VectorXd& x0, const Eigen::VectorXd& x0_dot
-)
+void rmp2::Goal_Attractor::calc_natural_form()
 {
     calc_inertia_matrix(x-x0, x_dot-x0_dot, this->M);
     calc_force(x-x0, x_dot-x0_dot, this->f);
+}
+
+
+// void rmp2::Goal_Attractor::set_goal_point_ref(Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot)
+// {
+//     x0 = z0;
+//     x0_dot = z0_dot;
+// }
+
+
+
+
+rmp2::Obstacle_Avoidance::Obstacle_Avoidance(
+    int self_dim, int parent_dim, int node_type, std::string name,
+    double scale_rep,
+    double scale_damp,
+    double ratio,
+    double rep_gain,
+    double r,
+    Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot
+): Node(self_dim, parent_dim, node_type, name), x0(z0), x0_dot(z0_dot)
+{
+    this->scale_rep = scale_rep;
+    this->scale_damp = scale_damp;
+    this->ratio = ratio;
+    this->rep_gain = rep_gain;
+    this->r = r;
+    this->children.push_back(nullptr);
 }
