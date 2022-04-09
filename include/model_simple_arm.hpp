@@ -1,5 +1,5 @@
-#ifndef MODEL_SIMPLE_ARM
-#define MODEL_SIMPLE_ARM
+#ifndef MODEL_SIMPLE_ARM__H
+#define MODEL_SIMPLE_ARM__H
 
 #include "/usr/include/eigen3/Eigen/Core"
 

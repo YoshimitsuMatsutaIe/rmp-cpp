@@ -5,6 +5,7 @@
 
 rmp_node::Node::Node(){};
 
+
 rmp_node::Node::Node(
     int self_dim, int parent_dim, int node_type, std::string name, double dt
 )

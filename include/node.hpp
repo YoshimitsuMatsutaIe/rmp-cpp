@@ -1,5 +1,5 @@
-#ifndef NODE
-#define NODE
+#ifndef NODE__H
+#define NODE__H
 
 #include "/usr/include/eigen3/Eigen/Core"
 #include <string>
@@ -7,7 +7,44 @@
 
 namespace rmp_node{
 
-    class Node
+    class Root
+    {
+    public:
+        double dt;  //刻み時間
+        int self_dim;
+        int node_type;  //0:root, 1::leaf
+        std::string name;
+
+        std::vector<class Node*> children;
+
+        Eigen::VectorXd x;
+        Eigen::VectorXd x_dot;
+        Eigen::VectorXd f;  //所望の力
+        Eigen::MatrixXd M;  //慣性行列
+
+        Eigen::VectorXd x_ddot;  //指令値
+
+
+        Root();
+        Root(int self_dim, int node_type, std::string name, double dt);
+
+        virtual void calc_natural_form();
+
+        void set_initial_state(
+            const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot
+        );
+
+        const void print_state();
+        const void print_state_all_node();
+
+        void add_child(Node *child);
+        void pushforward();
+        void pullback();
+        void resolve();
+    };
+
+
+    class Node : public Root
     {
     public:
         double dt;  //刻み時間

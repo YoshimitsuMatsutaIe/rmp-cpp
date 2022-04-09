@@ -1,5 +1,5 @@
-#ifndef RMP
-#define RMP
+#ifndef RMP__H
+#define RMP__H
 
 #include <iostream>
 
@@ -13,7 +13,7 @@ namespace rmp_base
     {
     public:
         using rmp_node::Node::Node;
-        void calc_natural_form();
+        void calc_natural_form() override;
     };
 }
 
@@ -36,15 +36,9 @@ namespace rmp2
 
         double soft_max(const double alpha, const double s);
 
-
-        void calc_grad_potential2(
-            const Eigen::VectorXd &x, Eigen::VectorXd& out
-        );
-
-        void calc_curvature(Eigen::VectorXd& out);
-
-        void calc_inertia_matrix();
-        void calc_force();
+        void calc_grad_potential2(const Eigen::VectorXd& z, Eigen::VectorXd& out);
+        void calc_inertia_matrix(const Eigen::VectorXd& z, const Eigen::VectorXd& z_dot, Eigen::MatrixXd& out);
+        void calc_force(const Eigen::VectorXd& z, const Eigen::VectorXd& z_dot, Eigen::VectorXd& out);
 
 
     public:
@@ -61,7 +55,9 @@ namespace rmp2
             double epsilon
         );
 
-        void calc_natural_form();
+        void calc_natural_form(
+            const Eigen::VectorXd& x0, const Eigen::VectorXd& x0_dot
+        ) override;
 
     };
 
