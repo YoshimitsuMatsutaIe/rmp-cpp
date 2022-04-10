@@ -12,7 +12,7 @@
 */
 namespace rmp2
 {
-    class Goal_Attractor : public rmp_node::Node
+    class Goal_Attractor : public rmp_node::Leaf_Base
     {
     private:
         double gain;
@@ -35,7 +35,7 @@ namespace rmp2
 
     public:
         Goal_Attractor(
-            int self_dim, int parent_dim, int node_type, std::string name,
+            int self_dim, int parent_dim, std::string name,
             double max_speed,
             double gain,
             double f_alpha,
@@ -48,50 +48,93 @@ namespace rmp2
             Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot
         );
 
-        void pushforward() override;
-
-        //void set_goal_point_ref(Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot);
-        void calc_natural_form() override;
+        void calc_natural_form(void) override;
     };
 
 
-    class Obstacle_Avoidance : public rmp_node::Node
+
+    class Obstacle_Avoidance : public rmp_node::Leaf_Base
     {
     private:
         double scale_rep;
         double scale_damp;
-        double ratio;
-        double rep_gain;
-        double r;
+        double gain;
+        double sigma;
+        double rw;
     
         Eigen::VectorXd& x0;  //obstacle point's position
         Eigen::VectorXd& x0_dot;  //obstacle point's velo
 
+        Eigen::MatrixXd J_;  //書き出しのため
+        Eigen::MatrixXd J_dot_;  //書き出しのため
+
+
+        double calc_inertia_matrix(double s, double s_dot);
+        double calc_force(double s, double s_dot);
+
+        double w2(double s);
+        double w2_dot(double s);
+        double u2(double s_dot);
+        double u2_dot(double s_dot);
+        double delta(double s, double s_dot);
+        double xi(double s, double s_dot);
+        double grad_phi1(double s);
+
     public:
         Obstacle_Avoidance(
-            int self_dim, int parent_dim, int node_type, std::string name,
+            int self_dim, int parent_dim, std::string name,
             double scale_rep,
             double scale_damp,
-            double ratio,
-            double rep_gain,
-            double r,
+            double gain,
+            double sigma,
+            double rw,
             Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot
         );
 
-        void calc_natural_form() override;
+        void calc_natural_form(void) override;
     };
 
 
 
-    class Joint_Limit_Avoidance : public rmp_node::Node
+    class Joint_Limit_Avoidance : public rmp_node::Leaf_Base
     {
     private:
-        double jl_upper;
+        double gamma_p;
+        double gamma_d;
+        double lambda;
+        double sigma;
+        Eigen::VectorXd q_max;
+        Eigen::VectorXd q_min;
+        Eigen::VectorXd q_neutral;
+
+        double alpha_upper(double q_dot);
+        double alpha_lower(double q_dot);
+        double s(double q, double qu, double ql);
+        double s_dot(double q, double qu, double ql);
+        double d(double s);
+        double d_dot(double s, double s_dot);
+        double b(double q, double q_dot, double qu, double ql);
+        double b_dot(double q, double q_dot, double qu, double ql);
+        double a(double q, double q_dot, double qu, double ql);
+        double a_dot(double q, double q_dot, double qu, double ql);
+
+        void calc_inertia_matrix(void);
+        void xi(Eigen::VectorXd& out);
+        void calc_force(void);
     
 
     public:
-        using rmp_node::Node::Node;
-        Joint_Limit_Avoidance();
+        Joint_Limit_Avoidance(int self_dim, int parent_dim, std::string name,
+        double gamma_p,
+        double gamma_d,
+        double lambda,
+        double sigma,
+        Eigen::VectorXd q_max,
+        Eigen::VectorXd q_min,
+        Eigen::VectorXd q_neutral
+        );
+
+        void calc_natural_form(void) override;
     };
 };
 

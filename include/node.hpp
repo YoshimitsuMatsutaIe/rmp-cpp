@@ -13,7 +13,7 @@ namespace rmp_node{
     public:
         int self_dim;
         int parent_dim;
-        int node_type;  //0:root, 1::leaf
+        int node_type = 2;  //0:root, 1::leaf
         std::string name;
 
         class Node* parent;
@@ -32,8 +32,8 @@ namespace rmp_node{
         void(*calc_J_dot)(const Eigen::VectorXd &y, const Eigen::VectorXd &y_dot, Eigen::MatrixXd &J_dot);
         
 
-        Node();
-        Node(int self_dim, int parent_dim, int node_type, std::string name);
+        Node(void);
+        Node(int self_dim, int parent_dim, std::string name);
 
         virtual void calc_natural_form();
 
@@ -44,12 +44,12 @@ namespace rmp_node{
         );
         
 
-        const void print_state();
-        const void print_state_all_node();
+        const void print_state(void);
+        const void print_state_all_node(void);
 
         void add_child(Node *child);
-        virtual void pushforward();
-        //virtual void pullback();
+        virtual void pushforward(void);
+        virtual void pullback(void);
     };
 
 
@@ -58,17 +58,23 @@ namespace rmp_node{
     public:
         double dt;  //刻み時間
         Eigen::VectorXd q_ddot;  //指令値
-        Root(int self_dim, int parent_dim, int node_type, std::string name, double dt);
+        Root(int self_dim, int parent_dim, std::string name, double dt);
         void set_initial_state(
             const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot
         );
-        void pushforward() override;
-        //void pullback() override;
-        void resolve();
+        void pushforward(void) override;
+        void pullback(void) override;
+        void resolve(void);
     };
 
 
-
+    class Leaf_Base : public Node
+    {
+    public:
+        Leaf_Base(int self_dim, int parent_dim, std::string name);
+        void pushforward(void) override;
+        void pullback(void) override;
+    };
 
 }
 

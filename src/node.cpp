@@ -3,7 +3,7 @@
 #include "/usr/include/eigen3/Eigen/QR"
 #include <iostream>
 
-rmp_node::Node::Node(){};
+rmp_node::Node::Node(void){};
 // rmp_node::Node::Node(
 //     int self_dim, int parent_dim, int node_type, std::string name, double dt
 // )
@@ -50,7 +50,7 @@ rmp_node::Node::Node(){};
 // }
 
 rmp_node::Node::Node(
-    int self_dim, int parent_dim, int node_type, std::string name
+    int self_dim, int parent_dim, std::string name
 )
 {
     this->name = name;
@@ -63,17 +63,7 @@ rmp_node::Node::Node(
     M = Eigen::MatrixXd::Zero(self_dim, self_dim);
     J = Eigen::MatrixXd::Zero(self_dim, parent_dim);
     J_dot = Eigen::MatrixXd::Zero(self_dim, parent_dim);
-
-    this->node_type = node_type;
-
 }
-
-
-
-
-
-
-
 
 void rmp_node::Node::set_mappings(
     void(*calc_x)(const Eigen::VectorXd& y, Eigen::VectorXd& x),
@@ -91,16 +81,13 @@ void rmp_node::Node::set_mappings(
 
 
 
-
-
-
-void rmp_node::Node::calc_natural_form()
+void rmp_node::Node::calc_natural_form(void)
 {
-    // 
+    std::cout << "root hasn't rmp func." << std::endl;
 }
 
 
-const void rmp_node::Node::print_state()
+const void rmp_node::Node::print_state(void)
 {
     std::cout << "name = " << name << std::endl;
     std::cout << "node_type = " << node_type << std::endl;
@@ -129,7 +116,7 @@ const void rmp_node::Node::print_state()
 }
 
 
-const void rmp_node::Node::print_state_all_node()
+const void rmp_node::Node::print_state_all_node(void)
 {
     std::cout << "\n" << std::endl;
 
@@ -200,7 +187,7 @@ void rmp_node::Node::add_child(rmp_node::Node* child)
 // }
 
 
-void rmp_node::Node::pushforward()
+void rmp_node::Node::pushforward(void)
 {
     for (rmp_node::Node* child : children)
     {
@@ -214,30 +201,30 @@ void rmp_node::Node::pushforward()
 }
 
 
-// void rmp_node::Node::pullback()
-// {
-//     std::cout << "pullback!" << std::endl;
-
-//     if (parent == nullptr)
-//     {
-
-//     }
-// }
-
-
-
-
-rmp_node::Root::Root(int self_dim, int parent_dim, int node_type, std::string name, double dt)
-    : Node(self_dim, parent_dim, node_type, name)
+void rmp_node::Node::pullback(void)
 {
+    std::cout << "pullback doing at " << name << std::endl;
+    for (rmp_node::Node* child : children)
+    {
+        child->pullback();
+        this->parent->f += J.transpose() * (f - (M * J_dot * x_dot));
+        this->parent->M += J.transpose() * M * J;
+    }
+}
 
+
+
+
+rmp_node::Root::Root(int self_dim, int parent_dim, std::string name, double dt)
+    : Node(self_dim, parent_dim, name)
+{
+    this-> node_type = 0;
     this->dt = dt;
     this->parent = nullptr;
     this->q_ddot = Eigen::VectorXd::Zero(self_dim);
     this->calc_x = [](const Eigen::VectorXd &y, Eigen::VectorXd &x)->void {};
     this->calc_J = [](const Eigen::VectorXd &y, Eigen::MatrixXd &J)->void {};
     this->calc_J_dot = [](const Eigen::VectorXd &y, const Eigen::VectorXd &y_dot, Eigen::MatrixXd &J_dot)->void {};
-
 }
 
 void rmp_node::Root::set_initial_state(
@@ -249,7 +236,7 @@ void rmp_node::Root::set_initial_state(
 }
 
 
-void rmp_node::Root::pushforward()
+void rmp_node::Root::pushforward(void)
 {
     x_dot += q_ddot * dt;
     x += x_dot * dt;
@@ -265,9 +252,39 @@ void rmp_node::Root::pushforward()
     }
 }
 
-void rmp_node::Root::resolve()
+
+void rmp_node::Root::pullback(void)
+{
+    std::cout << "pullback running..." << std::endl;
+    for (rmp_node::Node* child : children)
+    {
+        child->pullback();
+    }
+    std::cout << "pullback done!" << std::endl;
+}
+
+
+void rmp_node::Root::resolve(void)
 {
     q_ddot = M.completeOrthogonalDecomposition().pseudoInverse() * f;
 }
 
 
+
+rmp_node::Leaf_Base::Leaf_Base(int self_dim, int parent_dim, std::string name) : Node(self_dim, parent_dim, name)
+{
+    this->node_type = 1;
+    this->children.push_back(nullptr);
+}
+
+void rmp_node::Leaf_Base::pushforward(void)
+{
+    // 何もしないです
+}
+
+void rmp_node::Leaf_Base::pullback(void)
+{
+    std::cout << "pullback doing at " << name << ", and hear is leaf!" << std::endl;
+    this->parent->f += J.transpose() * (f - (M * J_dot * x_dot));
+    this->parent->M += J.transpose() * M * J;
+}
