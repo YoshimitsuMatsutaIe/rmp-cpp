@@ -7,6 +7,5 @@ add_executable(
     ../src/robot_model_sice.cpp
     ../src/rmp.cpp
     ../src/rmp2_attractor_xi.cpp
-    ../src/mapping_of_distance.cpp
     ../src/mappings.cpp
 )

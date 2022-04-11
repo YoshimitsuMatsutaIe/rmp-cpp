@@ -1,8 +1,10 @@
 """曲率式を計算"""
 
+import typing as tp
 import sympy as sy
 from sympy.printing import cxxcode
 import time
+
 
 def calc_rmp_func(
     x, dx, phi=None, grad_phi=None, M=None, G=None, B=None, toSimplify=False
@@ -61,10 +63,10 @@ def calc_rmp_func(
     return xi, f, M
 
 
+@property
 def gen_cpp_code(
-    expr,
-    src_name, include_txt, func_header,
-):
+    expr, src_name, include_txt, func_header,
+) -> tp.NoReturn:
     """
     """
     namespace_name = src_name
@@ -120,6 +122,7 @@ if __name__ == "__main__":
     x = sy.Matrix(sy.MatrixSymbol('x', N, 1))
     x_dot = sy.Matrix(sy.MatrixSymbol('x_dot', N, 1))
 
+    print(type(x))
 
 
     x_norm = 0

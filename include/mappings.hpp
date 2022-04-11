@@ -7,15 +7,20 @@
 
 namespace mapping_base
 {
+    /**
+     * @brief 恒等写像
+     * 
+     */
     class Base
     {
     public:
         std::string name;
         Base(void);
-        virtual void phi(const Eigen::VectorXd &x, Eigen::VectorXd &out) = 0;
-        virtual void jacobian(const Eigen::VectorXd &x, Eigen::MatrixXd &out) = 0;
-        virtual void jacobian_dot(const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::MatrixXd &out) = 0;
+        virtual void phi(const Eigen::VectorXd &x, Eigen::VectorXd &out);
+        virtual void jacobian(const Eigen::VectorXd &x, Eigen::MatrixXd &out);
+        virtual void jacobian_dot(const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::MatrixXd &out);
     };
+
 
 
 

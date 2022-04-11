@@ -6,6 +6,7 @@
 #include "/usr/include/eigen3/Eigen/Core"
 
 #include "./node.hpp"
+#include "./mappings.hpp"
 
 /*rmp-flow
 
@@ -35,7 +36,7 @@ namespace rmp2
 
     public:
         Goal_Attractor(
-            int self_dim, int parent_dim, std::string name,
+            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
             double max_speed,
             double gain,
             double f_alpha,
@@ -61,13 +62,6 @@ namespace rmp2
         double gain;
         double sigma;
         double rw;
-    
-        Eigen::VectorXd& x0;  //obstacle point's position
-        Eigen::VectorXd& x0_dot;  //obstacle point's velo
-
-        Eigen::MatrixXd J_;  //書き出しのため
-        Eigen::MatrixXd J_dot_;  //書き出しのため
-
 
         double calc_inertia_matrix(double s, double s_dot);
         double calc_force(double s, double s_dot);
@@ -82,13 +76,12 @@ namespace rmp2
 
     public:
         Obstacle_Avoidance(
-            int self_dim, int parent_dim, std::string name,
+            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
             double scale_rep,
             double scale_damp,
             double gain,
             double sigma,
-            double rw,
-            Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot
+            double rw
         );
 
         void calc_natural_form(void) override;
@@ -124,7 +117,7 @@ namespace rmp2
     
 
     public:
-        Joint_Limit_Avoidance(int self_dim, int parent_dim, std::string name,
+        Joint_Limit_Avoidance(int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
         double gamma_p,
         double gamma_d,
         double lambda,
@@ -135,6 +128,7 @@ namespace rmp2
         );
 
         void calc_natural_form(void) override;
+        void pullback(void) override;
     };
 };
 

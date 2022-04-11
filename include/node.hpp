@@ -30,24 +30,15 @@ namespace rmp_node{
         Eigen::VectorXd f;  //所望の力
         Eigen::MatrixXd M;  //慣性行列
 
-        // 写像
-        void(*calc_x)(const Eigen::VectorXd &y, Eigen::VectorXd &x);  //phi
-        void(*calc_J)(const Eigen::VectorXd &y, Eigen::MatrixXd &J);  //phiのヤコビ行列
-        void(*calc_J_dot)(const Eigen::VectorXd &y, const Eigen::VectorXd &y_dot, Eigen::MatrixXd &J_dot);
-        
+        class mapping_base::Base* mappings;
+        bool have_rmp_func=false;
 
         Node(void);
-        Node(int self_dim, int parent_dim, std::string name);
+        Node(int self_dim, int parent_dim, std::string name, mapping_base::Base* mapping);
 
-        virtual void calc_natural_form();
-
-        void set_mappings(
-            void(*calc_x)(const Eigen::VectorXd &y, Eigen::VectorXd &x),
-            void(*calc_J)(const Eigen::VectorXd &y, Eigen::MatrixXd &J),
-            void(*calc_J_dot)(const Eigen::VectorXd &y, const Eigen::VectorXd &y_dot, Eigen::MatrixXd &J_dot)
-        );
+        virtual void calc_natural_form(void);
         
-
+        void initialize_rmp_natural_form(void);
         const void print_state(void);
         const void print_state_all_node(void);
 
@@ -62,7 +53,10 @@ namespace rmp_node{
     public:
         double dt;  //刻み時間
         Eigen::VectorXd q_ddot;  //指令値
-        Root(int self_dim, int parent_dim, std::string name, double dt);
+        Root(
+            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
+            double dt
+        );
         void set_initial_state(
             const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot
         );
@@ -75,8 +69,9 @@ namespace rmp_node{
     class Leaf_Base : public Node
     {
     public:
-        Leaf_Base(int self_dim, int parent_dim, std::string name);
-        void pushforward(void) override;
+        Leaf_Base(
+            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings
+        );
         void pullback(void) override;
     };
 

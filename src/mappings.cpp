@@ -11,6 +11,15 @@
 mapping_base::Base::Base(void){}
 
 
+void mapping_base::Base::phi(const Eigen::VectorXd &x, Eigen::VectorXd &out)
+{
+    out = x;
+}
+
+void mapping_base::Base::jacobian(const Eigen::VectorXd &x, Eigen::MatrixXd &out){}
+void mapping_base::Base::jacobian_dot(const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::MatrixXd &out){}
+
+
 mapping_base::Distance::Distance(
     Eigen::VectorXd& o, Eigen::VectorXd& o_dot
 ): o(o), o_dot(o_dot)
