@@ -118,8 +118,6 @@ const void rmp_node::Node::print_state(void)
 
 const void rmp_node::Node::print_state_all_node(void)
 {
-    std::cout << "\n" << std::endl;
-
     print_state();
     
     if (node_type == 1)
@@ -133,6 +131,7 @@ const void rmp_node::Node::print_state_all_node(void)
             child->print_state_all_node();
         }
     }
+    std::cout << "\n" << std::endl;
 }
 
 

@@ -5,6 +5,10 @@
 #include <string>
 #include <vector>
 
+#include "./mappings.hpp"
+
+
+
 namespace rmp_node{
 
 

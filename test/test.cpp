@@ -1,5 +1,5 @@
 #include "../include/node.hpp"
-#include "../include/model_simple_arm.hpp"
+#include "../include/robot_model_sice.hpp"
 #include "../include/rmp.hpp"
 
 #include "/usr/include/eigen3/Eigen/Core"
