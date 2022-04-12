@@ -1,9 +1,11 @@
-#include "../include/node.hpp"
+#include "../include/rmp_node.hpp"
 #include "../include/robot_model_sice.hpp"
-#include "../include/rmp.hpp"
+#include "../include/rmp_leaf.hpp"
 #include "../include/mappings.hpp"
+#include "../include/rmp_tree.hpp"
 
-#include "/usr/include/eigen3/Eigen/Core"
+//#include "/usr/include/eigen3/Eigen/Core"
+#include <eigen3/Eigen/Core>
 #include <iostream>
 
 
@@ -20,7 +22,7 @@ int main()
     og_dot = Eigen::VectorXd::Zero(2);
 
 
-    double dt = 0.01;
+    double dt = 0.001;
 
 
     /* root */
@@ -56,19 +58,24 @@ int main()
     mapping_base::Base id_mappings;
     rmp2::Goal_Attractor ee_node(
         2, 2, "ee-attractor", &id_mappings,
-        2.0, 10.0, 0.15, 1.0, 1.0, 0.9, 0.1, 1.0, 1e-5,
+        2.0, 5.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 1e-5,
         og, og_dot
     );
+
+
     node3.add_child(&ee_node);
 
 
-    root.print_state_all_node();
-    root.pushforward();
-    root.print_state_all_node();
+    // root.print_state_all_node();
+    // root.pushforward();
+    // root.print_state_all_node();
 
-    root.pullback();
-    root.print_state_all_node();
+    // root.pullback();
+    // root.print_state_all_node();
 
+
+    rmp_tree::RMP_Tree tree(&root, "test_tree");
+    tree.run(299.4, root.dt);
 
     std::cout << "done all!" << std::endl;
 }
