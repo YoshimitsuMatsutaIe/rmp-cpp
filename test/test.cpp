@@ -22,7 +22,7 @@ int main()
     og_dot = Eigen::VectorXd::Zero(2);
 
 
-    double dt = 0.001;
+    double dt = 0.01;
 
 
     /* root */
@@ -58,7 +58,7 @@ int main()
     mapping_base::Base id_mappings;
     rmp2::Goal_Attractor ee_node(
         2, 2, "ee-attractor", &id_mappings,
-        2.0, 5.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 1e-5,
+        0.2, 1.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 1e-5,
         og, og_dot
     );
 
@@ -75,7 +75,7 @@ int main()
 
 
     rmp_tree::RMP_Tree tree(&root, "test_tree");
-    tree.run(299.4, root.dt);
+    tree.run(360.*8, root.dt);
 
     std::cout << "done all!" << std::endl;
 }

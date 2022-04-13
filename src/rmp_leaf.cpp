@@ -42,7 +42,7 @@ rmp2::Goal_Attractor::Goal_Attractor(
 
 void rmp2::Goal_Attractor::calc_grad_potential2(const Eigen::VectorXd& z, Eigen::VectorXd& out)
 {
-    out = (1.0 - std::exp(-2.0 * alpha * z.norm())) / (1. + std::exp(-2.0 * alpha * z.norm())) * z / z.norm();
+    out = (1.0 - std::exp(-2.0 * alpha * z.norm())) / (1.0 + std::exp(-2.0 * alpha * z.norm())) * z / z.norm();
     std::cout << "calc_grad = \n" << out << std::endl;
 }
 
@@ -82,7 +82,7 @@ void rmp2::Goal_Attractor::calc_force(const Eigen::VectorXd& z, const Eigen::Vec
     //std::cout << "xi = \n" << xi << std::endl;
     //std::cout << "grad = \n" << grad << std::endl;
 
-    out = this->M * (-gain * grad - damp * z_dot) - xi;
+    out = this->M * (-gain * grad - damp * z_dot);// - xi;
 }
 
 
@@ -229,12 +229,12 @@ rmp2::Joint_Limit_Avoidance::Joint_Limit_Avoidance(
 
 double rmp2::Joint_Limit_Avoidance::alpha_upper(double q_dot)
 {
-    return 1.0 - std::exp(-std::pow(std::max(q_dot, 0.0), 2) / (2.0*std::pow(sigma,2)));
+    return 1.0 - std::exp(-std::pow(std::max(q_dot, 0.0), 2.0) / (2.0*std::pow(sigma,2.0)));
 }
 
 double rmp2::Joint_Limit_Avoidance::alpha_lower(double q_dot)
 {
-    return 1.0 - std::exp(-std::pow(std::min(q_dot, 0.0), 2) / (2*std::pow(sigma,2)));
+    return 1.0 - std::exp(-std::pow(std::min(q_dot, 0.0), 2.0) / (2.0*std::pow(sigma,2.0)));
 }
 
 double rmp2::Joint_Limit_Avoidance::s(double q, double qu, double ql)
@@ -254,7 +254,7 @@ double rmp2::Joint_Limit_Avoidance::d(double s)
 
 double rmp2::Joint_Limit_Avoidance::d_dot(double s, double s_dot)
 {
-    return (4.0 - 8*s) * s_dot;
+    return (4.0 - 8.0*s) * s_dot;
 }
 
 double rmp2::Joint_Limit_Avoidance::b(double q, double q_dot, double qu, double ql)
@@ -282,12 +282,12 @@ double rmp2::Joint_Limit_Avoidance::b_dot(double q, double q_dot, double qu, dou
 
 double rmp2::Joint_Limit_Avoidance::a(double q, double q_dot, double qu, double ql)
 {
-    return std::pow(b(q, q_dot, qu, ql), 2);
+    return std::pow(b(q, q_dot, qu, ql), 2.0);
 }
 
 double rmp2::Joint_Limit_Avoidance::a_dot(double q, double q_dot, double qu, double ql)
 {
-    return -2*std::pow(b(q, q_dot, qu, ql), -3) * b_dot(q, q_dot, qu, ql);
+    return -2*std::pow(b(q, q_dot, qu, ql), -3.0) * b_dot(q, q_dot, qu, ql);
 }
 
 

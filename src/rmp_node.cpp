@@ -199,20 +199,28 @@ void rmp_node::Root::pullback(void)
 void rmp_node::Root::resolve(void)
 {
     //q_ddot = M.completeOrthogonalDecomposition().pseudoInverse() * f;
-
+    //q_ddot = (M.transpose() * M).inverse() * M.transpose() * f;
     //q_ddot = M.inverse() * f;
-
     //q_ddot = M.colPivHouseholderQr().solve(f);
-
     //q_ddot = M.ldlt().solve(f);
-
     //q_ddot = M.template bdcSvd<Eigen::ComputeThinU | Eigen::ComputeThinV>().solve(f);
+    //q_ddot = (M.transpose() * M).ldlt().solve(M.transpose() * f);
 
-    q_ddot = (M.transpose() * M).ldlt().solve(M.transpose() * f);
+    //SVD使って実装
+    Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeFullU | Eigen::ComputeFullV);
+    Eigen::VectorXd s = svd.singularValues();
+    Eigen::MatrixXd pinv_M = svd.matrixV() * s.asDiagonal() * svd.matrixU().transpose();
+    q_ddot = pinv_M * f;
+
+
+    std::cout << "U: \n" << svd.matrixU() << std::endl;
+    std::cout << "S: \n" << svd.singularValues()  << std::endl;
+    std::cout << "V: \n" << svd.matrixV() << std::endl;
+
 
     std::cout << "f = \n" << f << std::endl;
     std::cout << "M = \n" << M << std::endl;
-    std::cout << "pinv_M = \n" << M.completeOrthogonalDecomposition().pseudoInverse() << std::endl;
+    std::cout << "pinv_M = \n" << pinv_M << std::endl;
     std::cout << "q_ddot = \n" << q_ddot << std::endl;
 }
 
