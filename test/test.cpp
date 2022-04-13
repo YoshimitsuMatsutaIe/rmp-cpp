@@ -75,7 +75,7 @@ int main()
 
 
     rmp_tree::RMP_Tree tree(&root, "test_tree");
-    tree.run(360.*8, root.dt);
+    tree.run(3., root.dt);
 
     std::cout << "done all!" << std::endl;
 }
