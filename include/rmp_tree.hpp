@@ -21,6 +21,7 @@ namespace rmp_tree
     class RMP_Tree
     {
     private:
+        bool is_debug=true;
         void update_environment();
 
     public:
@@ -32,7 +33,8 @@ namespace rmp_tree
         double time_interval;
 
         void one_step(void);
-        void run(double time_span, double time_interval);
+        void run(double time_span, double time_interval, std::string save_path="test.csv");
+        void set_debug(bool is_debug);
 
     };
 }

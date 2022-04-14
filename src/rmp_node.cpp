@@ -40,12 +40,16 @@ void rmp_node::Node::initialize_rmp_natural_form(void)
 
 void rmp_node::Node::calc_natural_form(void)
 {
+    if (this->is_debug)
+    {
     std::cout << "root hasn't rmp func." << std::endl;
+    }
 }
 
 
 const void rmp_node::Node::print_state(void)
 {
+    if (this->is_debug==false){return;}
     std::cout << "name = " << name << std::endl;
     std::cout << "node_type = " << node_type << std::endl;
     std::cout << "dimention = " << self_dim << std::endl;
@@ -76,6 +80,7 @@ const void rmp_node::Node::print_state(void)
 
 const void rmp_node::Node::print_state_all_node(void)
 {
+    if (this->is_debug==false){return;}
     if (node_type==0)
     {
         std::cout << "print all state" << std::endl;
@@ -129,6 +134,17 @@ void rmp_node::Node::pullback(void)
         child->pullback();
         this->parent->f += J.transpose() * (f - (M * J_dot * this->parent->x_dot));
         this->parent->M += J.transpose() * M * J;
+    }
+}
+
+
+void rmp_node::Node::set_debug(bool is_debug)
+{
+    this->is_debug = is_debug;
+    for (rmp_node::Node* child : children)
+    {
+        child->is_debug = is_debug;
+        child->set_debug(is_debug);
     }
 }
 
@@ -212,16 +228,18 @@ void rmp_node::Root::resolve(void)
     Eigen::MatrixXd pinv_M = svd.matrixV() * s.asDiagonal() * svd.matrixU().transpose();
     q_ddot = pinv_M * f;
 
+    if (is_debug)
+    {
+        std::cout << "U: \n" << svd.matrixU() << std::endl;
+        std::cout << "S: \n" << svd.singularValues()  << std::endl;
+        std::cout << "V: \n" << svd.matrixV() << std::endl;
 
-    std::cout << "U: \n" << svd.matrixU() << std::endl;
-    std::cout << "S: \n" << svd.singularValues()  << std::endl;
-    std::cout << "V: \n" << svd.matrixV() << std::endl;
 
-
-    std::cout << "f = \n" << f << std::endl;
-    std::cout << "M = \n" << M << std::endl;
-    std::cout << "pinv_M = \n" << pinv_M << std::endl;
-    std::cout << "q_ddot = \n" << q_ddot << std::endl;
+        std::cout << "f = \n" << f << std::endl;
+        std::cout << "M = \n" << M << std::endl;
+        std::cout << "pinv_M = \n" << pinv_M << std::endl;
+        std::cout << "q_ddot = \n" << q_ddot << std::endl;
+    }
 }
 
 
@@ -244,4 +262,10 @@ void rmp_node::Leaf_Base::pullback(void)
 
     this->parent->f += J.transpose() * (f - (M * J_dot * this->parent->x_dot));
     this->parent->M += J.transpose() * M * J;
+}
+
+
+void rmp_node::Leaf_Base::set_debug(bool is_debug)
+{
+    this->is_debug = is_debug;
 }

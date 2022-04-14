@@ -22,15 +22,21 @@ int main()
     og_dot = Eigen::VectorXd::Zero(2);
 
 
-    double dt = 0.01;
+    double dt = 9.05e-5;
 
+    double PI = 3.14159;
 
     /* root */
     mapping_base::Base root_mappings;
     rmp_node::Root root(4, 0, "root", &root_mappings, dt);
     Eigen::VectorXd q0(4), q0_dot(4);
-    q0 = Eigen::VectorXd::Zero(4);
-    q0_dot = Eigen::VectorXd::Zero(4);
+    
+    // q0 = Eigen::VectorXd::Zero(4);
+    // q0_dot = Eigen::VectorXd::Zero(4);
+
+    q0 << PI/6, PI/6, PI/6, PI/6;
+    q0_dot << 0., 0., 0., 0.;
+
     root.set_initial_state(q0, q0_dot);
 
     /* node */
@@ -39,30 +45,33 @@ int main()
     double l3 = 1.0;
     double l4 = 1.0;
 
-    // robot_model_sice::X0 x0(l1, l2, l3, l4);
-    // rmp_node::Leaf_Base node0(2, 4, "x0", &x0);
-    // root.add_child(&node0);
+    robot_model_sice::X0 x0(l1, l2, l3, l4);
+    rmp_node::Leaf_Base node0(2, 4, "x0", &x0);
+    root.add_child(&node0);
 
-    // robot_model_sice::X1 x1(l1, l2, l3, l4);
-    // rmp_node::Leaf_Base node1(2, 4, "x1", &x1);
-    // root.add_child(&node1);
+    robot_model_sice::X1 x1(l1, l2, l3, l4);
+    rmp_node::Leaf_Base node1(2, 4, "x1", &x1);
+    root.add_child(&node1);
 
-    // robot_model_sice::X2 x2(l1, l2, l3, l4);
-    // rmp_node::Leaf_Base node2(2, 4, "x2", &x2);
-    // root.add_child(&node2);
+    robot_model_sice::X2 x2(l1, l2, l3, l4);
+    rmp_node::Leaf_Base node2(2, 4, "x2", &x2);
+    root.add_child(&node2);
+
+    // robot_model_sice::X3 x3(l1, l2, l3, l4);
+    // rmp_node::Leaf_Base node3(2, 4, "x3", &x3);
+    // root.add_child(&node3);
+
 
     robot_model_sice::X3 x3(l1, l2, l3, l4);
     rmp_node::Node node3(2, 4, "x3", &x3);
     root.add_child(&node3);
 
-    mapping_base::Base id_mappings;
+    mapping_base::Base id_mappings;  //恒等写像
     rmp2::Goal_Attractor ee_node(
         2, 2, "ee-attractor", &id_mappings,
-        0.2, 1.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 1e-5,
+        6., 10.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 1e-5,
         og, og_dot
     );
-
-
     node3.add_child(&ee_node);
 
 
@@ -75,7 +84,8 @@ int main()
 
 
     rmp_tree::RMP_Tree tree(&root, "test_tree");
-    tree.run(3., root.dt);
+    tree.set_debug(false);
+    tree.run(15.1, root.dt, "test3.csv");
 
     std::cout << "done all!" << std::endl;
 }

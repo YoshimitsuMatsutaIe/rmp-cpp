@@ -43,7 +43,7 @@ rmp2::Goal_Attractor::Goal_Attractor(
 void rmp2::Goal_Attractor::calc_grad_potential2(const Eigen::VectorXd& z, Eigen::VectorXd& out)
 {
     out = (1.0 - std::exp(-2.0 * alpha * z.norm())) / (1.0 + std::exp(-2.0 * alpha * z.norm())) * z / z.norm();
-    std::cout << "calc_grad = \n" << out << std::endl;
+    if (is_debug){std::cout << "calc_grad = \n" << out << std::endl;}
 }
 
 
@@ -62,12 +62,16 @@ void rmp2::Goal_Attractor::calc_inertia_matrix(
     calc_grad_potential2(z, grad);
 
     out = wx * ((1.0 - alpha_x) * grad * grad.transpose() + (alpha_x + epsilon) * Eigen::MatrixXd::Identity(self_dim, self_dim));
-    std::cout << "attract M = \n" << out << std::endl;
-    // std::cout << "alpha_x = " << alpha_x << std::endl;
-    // std::cout << "gamma_x = " << gamma_x << std::endl;
-    // std::cout << "wx = " << wx << std::endl;
-    // std::cout << "z = \n" << z << std::endl;
-    // std::cout << "z_norm = " << z.norm() << std::endl;
+    
+    if (is_debug)
+    {
+        std::cout << "attract M = \n" << out << std::endl;
+        // std::cout << "alpha_x = " << alpha_x << std::endl;
+        // std::cout << "gamma_x = " << gamma_x << std::endl;
+        // std::cout << "wx = " << wx << std::endl;
+        // std::cout << "z = \n" << z << std::endl;
+        // std::cout << "z_norm = " << z.norm() << std::endl;
+    }
 }
 
 
@@ -82,7 +86,7 @@ void rmp2::Goal_Attractor::calc_force(const Eigen::VectorXd& z, const Eigen::Vec
     //std::cout << "xi = \n" << xi << std::endl;
     //std::cout << "grad = \n" << grad << std::endl;
 
-    out = this->M * (-gain * grad - damp * z_dot);// - xi;
+    out = this->M * (-gain * grad - damp * z_dot) - xi;
 }
 
 

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <cmath>
 
 #include "../include/rmp_leaf.hpp"
 #include "../include/rmp_tree.hpp"
@@ -26,7 +27,9 @@ void rmp_tree::RMP_Tree::one_step(void)
 }
 
 
-void rmp_tree::RMP_Tree::run(double time_span, double time_interval)
+void rmp_tree::RMP_Tree::run(
+    double time_span, double time_interval, std::string save_path
+)
 {
     std::chrono::system_clock::time_point  start_time, end_time; // 型は auto で可
     start_time = std::chrono::system_clock::now();
@@ -38,7 +41,7 @@ void rmp_tree::RMP_Tree::run(double time_span, double time_interval)
     int total_step = time_span / time_interval;
     double t=0;  //時刻
 
-    std::ofstream file("test2.csv");  //ここに書き出す
+    std::ofstream file(save_path);  //ここに書き出す
 
     //csvのヘッダー作成
     std::string csv_header="t";
@@ -70,9 +73,14 @@ void rmp_tree::RMP_Tree::run(double time_span, double time_interval)
     for (int i=0; i<total_step; ++i)
     {
         t += time_interval;
-        std::cout << "\ni = " << i << std::endl;
+        if (is_debug){std::cout << "\ni = " << i << std::endl;}
 
         one_step();
+        if (std::isnan(root->x[0]))
+        {
+            break;
+        }
+        
         root->print_state_all_node();
 
         file << t;
@@ -95,3 +103,9 @@ void rmp_tree::RMP_Tree::run(double time_span, double time_interval)
 
 
 
+
+void rmp_tree::RMP_Tree::set_debug(bool is_debug)
+{
+    this->is_debug = is_debug;
+    this->root->set_debug(is_debug);
+}

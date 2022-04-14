@@ -15,6 +15,8 @@ namespace rmp_node{
     class Node
     {
     public:
+        bool is_debug = true;  //falseのときコメント切る
+
         int self_dim;
         int parent_dim;
         int node_type = 2;  //0:root, 1::leaf
@@ -34,7 +36,12 @@ namespace rmp_node{
         bool have_rmp_func=false;
 
         Node(void);
-        Node(int self_dim, int parent_dim, std::string name, mapping_base::Base* mapping);
+        Node(
+            int self_dim,
+            int parent_dim,
+            std::string name,
+            mapping_base::Base* mapping
+        );
 
         virtual void calc_natural_form(void);
         
@@ -45,6 +52,8 @@ namespace rmp_node{
         void add_child(Node *child);
         virtual void pushforward(void);
         virtual void pullback(void);
+        
+        virtual void set_debug(bool is_debug);
     };
 
 
@@ -73,6 +82,7 @@ namespace rmp_node{
             int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings
         );
         void pullback(void) override;
+        void set_debug(bool is_debug) override;
     };
 
 }

@@ -23,7 +23,10 @@ namespace mapping_base
 
 
 
-
+    /**
+     * @brief 障害物用
+     * 
+     */
     class Distance : public Base
     {
     private:
