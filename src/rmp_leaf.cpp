@@ -319,7 +319,7 @@ void rmp2::Joint_Limit_Avoidance::calc_force(void)
     Eigen::VectorXd xi_(self_dim);
     xi(xi_);
 
-    f = M * (gamma_p*(q_neutral - x) - gamma_p*(x_dot)) - xi_;
+    f = M * (gamma_p*(q_neutral - x) - gamma_d*x_dot) - xi_;
 }
 
 
