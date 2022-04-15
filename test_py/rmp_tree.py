@@ -9,11 +9,11 @@ class Node:
         self.dim = dim
         self.parent = parent
         self.mappings = calc_mappings
-        self.children = []
         
         self.x = np.zeros((self.dim, 1))
         self.x_dot = np.zeros((self.dim, 1))
         if parent is not None:
+            self.children = []
             self.J = np.zeros((self.dim, self.parent.dim))
             self.J_dot = np.zeros((self.dim, self.parent.dim))
     
