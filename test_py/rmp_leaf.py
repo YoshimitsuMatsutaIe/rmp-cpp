@@ -1,9 +1,9 @@
 from turtle import dot
 import numpy as np
+from numpy import linalg as LA
 from math import gamma, sqrt, sin, cos, exp
 
 import rmp_tree
-
 
 
 class GoalAttractor(rmp_tree.LeafBase):
@@ -21,7 +21,7 @@ class GoalAttractor(rmp_tree.LeafBase):
         self.alpha = alpha
         self.epsilon = epsilon
         
-        super().__init__(name, parent, dim, calc_mappings)
+        super().__init__(name, dim, parent, calc_mappings)
     
     
     def calc_rmp_func(self,):
@@ -30,13 +30,14 @@ class GoalAttractor(rmp_tree.LeafBase):
     
     
     def __grad_phi(self,):
-        return (1-exp(-2*self.alpha*self.x.norm())) / (1+exp(-2*self.alpha*self.x.norm()))\
-            * self.x / self.x.norm()
+        x_norm = LA.norm(self.x)
+        return (1-exp(-2*self.alpha*x_norm)) / (1+exp(-2*self.alpha*x_norm)) * self.x / x_norm
     
     
     def __inertia_matrix(self,):
-        alpha_x = exp(-self.x.norm()**2 / (2 * self.sigma_alpha**2))
-        gamma_x = exp(-self.x.norm()**2 / (2 * self.sigma_gamma**2))
+        x_norm = LA.norm(self.x)
+        alpha_x = exp(-x_norm**2 / (2 * self.sigma_alpha**2))
+        gamma_x = exp(-x_norm**2 / (2 * self.sigma_gamma**2))
         wx = gamma_x*self.wu + (1 - gamma_x)*self.wl
         
         grad = self.__grad_phi()
@@ -63,7 +64,7 @@ class ObstacleAvoidance(rmp_tree.LeafBase):
         self.sigma = sigma
         self.rw = rw
     
-        super().__init__(name, parent, 1, calc_mappings)
+        super().__init__(name, 1, parent, calc_mappings)
     
     
     def calc_rmp_func(self,):
@@ -131,7 +132,7 @@ class JointLimitAvoidance(rmp_tree.LeafBase):
         self.q_min = q_min
         self.q_neutral = q_neutral
         
-        super().__init__(name, parent, parent.dim, calc_mappings)
+        super().__init__(name, parent.dim, parent, calc_mappings)
     
     
     def calc_rmp_func(self,):
