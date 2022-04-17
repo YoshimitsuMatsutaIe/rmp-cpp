@@ -28,13 +28,16 @@ M = w_x  * ((1 - alpha_x) * nabla_x_phi * nabla_x_phi.T + (alpha_x + epsilon) * 
 xi, f, M = calc_rmp_func(x, x_dot, grad_phi=nabla_x_phi, M=M)
 
 
-file_name = "xi"
-include_txt = \
-    "#include <cmath>\n" +\
-    "#include \"/usr/include/eigen3/Eigen/Core\""
-func_header = "func(double alpha, double epsilon, double sigma_alpha, double sigma_gamma, double w_l, double w_u, const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::VectorXd &out)"
-gen_cpp_code(xi, file_name, include_txt, func_header)
+# file_name = "xi"
+# include_txt = \
+#     "#include <cmath>\n" +\
+#     "#include \"/usr/include/eigen3/Eigen/Core\""
+# func_header = "func(double alpha, double epsilon, double sigma_alpha, double sigma_gamma, double w_l, double w_u, const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::VectorXd &out)"
+# gen_cpp_code(xi, file_name, include_txt, func_header)
 
-#gen_cpp_code(f, "f", include_txt, func_header)
+# #gen_cpp_code(f, "f", include_txt, func_header)
 
-gen_cpp_code(M, "M", include_txt, func_header)
+# gen_cpp_code(M, "M", include_txt, func_header)
+
+
+gen_numpy_code(xi, "attractor_xi")

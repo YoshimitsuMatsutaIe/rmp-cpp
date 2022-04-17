@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sympy import Id
 
 
 import rmp_tree
@@ -7,9 +8,9 @@ import rmp_leaf
 import mappings
 import robot_model_sice
 
-TIME_SPAN = 0.1
-TIME_INTERVAL = 0.00005
-q0 = np.zeros((4, 1))
+TIME_SPAN = 0.05
+TIME_INTERVAL = 0.01
+q0 = np.array([[np.pi/2, 0, 0, 0]]).T
 q0_dot = np.zeros_like(q0)
 
 r = rmp_tree.Root(
@@ -42,7 +43,7 @@ g_dot = np.zeros_like(g)
 
 attracter = rmp_leaf.GoalAttractor(
     name="ee-attractor", parent=n4, dim=2, calc_mappings=mappings.Translation(g, g_dot),
-    max_speed = 6.,
+    max_speed = 3.3,
     gain = 10.0,
     f_alpha = 0.15,
     sigma_alpha = 1.0,
@@ -50,12 +51,24 @@ attracter = rmp_leaf.GoalAttractor(
     wu = 10.0,
     wl = 0.1,
     alpha =0.15,
-    epsilon = 1e-5,
+    epsilon = 0.5,
 )
 n4.add_child(attracter)
 
 
+jl = rmp_leaf.JointLimitAvoidance(
+    name="jl", parent=r, calc_mappings=mappings.Id(),
+    gamma_p = 0.01,
+    gamma_d = 0.05,
+    lam = 1,
+    sigma = 0.1,
+    q_max = robot_model_sice.q_max,
+    q_min = robot_model_sice.q_min,
+    q_neutral = robot_model_sice.q_neutral
+)
 
+
+### 実行 ###
 T = np.arange(0, TIME_SPAN, TIME_INTERVAL)
 for i, t in enumerate(T):
     print("i = ", i)
@@ -70,7 +83,7 @@ for i, t in enumerate(T):
         q_list.append(r.x.copy())
         q_dot_list.append(r.x_dot.copy())
         #r.print_all_state()
-        r.print_state()
+        #r.print_state()
 
     #print(q_list)
 

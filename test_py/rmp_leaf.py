@@ -4,7 +4,7 @@ from numpy import linalg as LA
 from math import gamma, sqrt, sin, cos, exp
 
 import rmp_tree
-
+import attractor_xi
 
 class GoalAttractor(rmp_tree.LeafBase):
     def __init__(
@@ -45,7 +45,8 @@ class GoalAttractor(rmp_tree.LeafBase):
     
     
     def __force(self,):
-        return self.M @ (-self.gain + self.__grad_phi() - self.damp * self.x_dot)
+        xi = attractor_xi.f(self.x, self.x_dot, self.sigma_alpha, self.sigma_gamma, self.wu, self.wl, self.alpha, self.epsilon)
+        return self.M @ (-self.gain + self.__grad_phi() - self.damp * self.x_dot) - xi
 
 
 

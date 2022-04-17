@@ -3,7 +3,6 @@ from numpy import linalg as LA
 
 
 class Node:
-    
     def __init__(self, name, dim, parent, mappings,):
         self.name = name
         self.dim = dim
@@ -96,6 +95,9 @@ class Root(Node):
     
     def resolve(self,):
         self.x_ddot = LA.pinv(self.M) @ self.f
+        print("M = \n", self.M)
+        print("pinvM = \n", LA.pinv(self.M))
+        print("f = \n", self.f)
         print("q_ddot = \n", self.x_ddot)
 
 

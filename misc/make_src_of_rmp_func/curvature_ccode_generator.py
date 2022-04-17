@@ -1,8 +1,8 @@
 """曲率式を計算"""
 
-import typing as tp
 import sympy as sy
 from sympy.printing import cxxcode
+from sympy.printing.numpy import NumPyPrinter
 import time
 
 
@@ -63,10 +63,10 @@ def calc_rmp_func(
     return xi, f, M
 
 
-@property
+
 def gen_cpp_code(
     expr, src_name, include_txt, func_header,
-) -> tp.NoReturn:
+):
     """
     """
     namespace_name = src_name
@@ -99,6 +99,18 @@ def gen_cpp_code(
         f.write("#endif")
 
 
+
+def gen_numpy_code(expr, name):
+    """numpy関数を作成"""
+    symbols = sy.sympify(expr).atoms(sy.Symbol)
+    s_str = ""
+    for s in symbols:
+        s_str += str(s) + ", "
+    numpy_word = "import numpy\ndef f("+ s_str +"):\n    return "
+    name = name + ".py"
+    with open(name, 'w') as f:
+        f.write(numpy_word)
+        f.write(NumPyPrinter().doprint(expr))
 
 
 
