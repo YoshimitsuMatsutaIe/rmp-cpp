@@ -52,6 +52,7 @@ class Node:
     
     
     def pushforward(self):
+        """push ノード"""
         for child in self.children:
             child.x = child.mappings.phi(self.x)
             child.J = child.mappings.J(self.x)
@@ -61,6 +62,9 @@ class Node:
     
     
     def pullback(self):
+        self.f = np.zeros_like(self.f)
+        self.M = np.zeros_like(self.M)
+        
         for child in self.children:
             child.pullback()
         self.parent.f += self.J.T @ (self.f - self.M @ self.J_dot @ self.parent.x_dot)
@@ -83,12 +87,19 @@ class Root(Node):
     
     
     def pushforward(self):
-        self.x_dot += self.x_ddot * self.dt
+        """push ルート"""
         self.x += self.x_dot * self.dt
+        self.x_dot += self.x_ddot * self.dt
+        
         super().pushforward()
     
     
     def pullback(self):
+        # 初期化
+        self.f = np.zeros_like(self.f)
+        self.M = np.zeros_like(self.M)
+        
+        # pullback開始
         for child in self.children:
             child.pullback()
     

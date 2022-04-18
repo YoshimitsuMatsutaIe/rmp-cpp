@@ -90,7 +90,7 @@ void rmp2::Goal_Attractor::calc_force(const Eigen::VectorXd& z, const Eigen::Vec
 }
 
 
-void rmp2::Goal_Attractor::calc_natural_form()
+void rmp2::Goal_Attractor::calc_natural_form(void)
 {
     calc_inertia_matrix(x-x0, x_dot-x0_dot, this->M);
     calc_force(x-x0, x_dot-x0_dot, this->f);
@@ -295,12 +295,12 @@ double rmp2::Joint_Limit_Avoidance::a_dot(double q, double q_dot, double qu, dou
 }
 
 
-void rmp2::Joint_Limit_Avoidance::calc_inertia_matrix(void)
+void rmp2::Joint_Limit_Avoidance::calc_inertia_matrix(Eigen::MatrixXd& out)
 {
-    M = Eigen::MatrixXd::Identity(self_dim, self_dim);
+    out = Eigen::MatrixXd::Identity(self_dim, self_dim);
     for (int i=0; i<self_dim; ++i)
     {
-        M(i, i) = lambda * a(x(i), x_dot(i), q_max(i), q_min(i));
+        out(i, i) = lambda * a(x(i), x_dot(i), q_max(i), q_min(i));
     }
 }
 
@@ -314,19 +314,19 @@ void rmp2::Joint_Limit_Avoidance::xi(Eigen::VectorXd& out)
 }
 
 
-void rmp2::Joint_Limit_Avoidance::calc_force(void)
+void rmp2::Joint_Limit_Avoidance::calc_force(Eigen::VectorXd& out)
 {
     Eigen::VectorXd xi_(self_dim);
     xi(xi_);
 
-    f = M * (gamma_p*(q_neutral - x) - gamma_d*x_dot) - xi_;
+    out = M * (gamma_p*(q_neutral - x) - gamma_d*x_dot) - xi_;
 }
 
 
 void rmp2::Joint_Limit_Avoidance::calc_natural_form(void)
 {
-    calc_inertia_matrix();
-    calc_force();
+    calc_inertia_matrix(this->M);
+    calc_force(this->f);
 }
 
 

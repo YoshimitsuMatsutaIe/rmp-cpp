@@ -111,9 +111,9 @@ namespace rmp2
         double a(double q, double q_dot, double qu, double ql);
         double a_dot(double q, double q_dot, double qu, double ql);
 
-        void calc_inertia_matrix(void);
+        void calc_inertia_matrix(Eigen::MatrixXd& out);
         void xi(Eigen::VectorXd& out);
-        void calc_force(void);
+        void calc_force(Eigen::VectorXd& out);
     
 
     public:

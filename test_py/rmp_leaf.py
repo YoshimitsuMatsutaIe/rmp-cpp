@@ -1,7 +1,6 @@
-from turtle import dot
 import numpy as np
 from numpy import linalg as LA
-from math import gamma, sqrt, sin, cos, exp
+from math import exp
 
 import rmp_tree
 import attractor_xi
