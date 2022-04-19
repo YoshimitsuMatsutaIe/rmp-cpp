@@ -33,7 +33,8 @@ rmp2::Goal_Attractor::Goal_Attractor(
     this->alpha =alpha;
     this->epsilon = epsilon;
     this->have_rmp_func = true;
-    this->J = Eigen::MatrixXd::Identity(self_dim, self_dim);
+    this->J = Eigen::MatrixXd::Identity(self_dim, parent_dim);
+    this->J_dot = Eigen::MatrixXd::Zero(self_dim, parent_dim);
 }
 
 
@@ -213,9 +214,9 @@ rmp2::Joint_Limit_Avoidance::Joint_Limit_Avoidance(
     double gamma_d,
     double lambda,
     double sigma,
-    Eigen::VectorXd q_max,
-    Eigen::VectorXd q_min,
-    Eigen::VectorXd q_neutral
+    Eigen::VectorXd& q_max,
+    Eigen::VectorXd& q_min,
+    Eigen::VectorXd& q_neutral
 ) : Leaf_Base(self_dim, parent_dim, name, mappings)
 {
     this->gamma_p = gamma_p;
@@ -225,8 +226,8 @@ rmp2::Joint_Limit_Avoidance::Joint_Limit_Avoidance(
     this->q_max = q_max;
     this->q_min = q_min;
     this->q_neutral = q_neutral;
-    this->J = Eigen::MatrixXd::Identity(self_dim, self_dim);
-    this->J_dot = Eigen::MatrixXd::Identity(self_dim, self_dim);
+    this->J = Eigen::MatrixXd::Identity(self_dim, parent_dim);
+    this->J_dot = Eigen::MatrixXd::Zero(self_dim, parent_dim);
     this->have_rmp_func = true;
 }
 
@@ -280,13 +281,13 @@ double rmp2::Joint_Limit_Avoidance::b_dot(double q, double q_dot, double qu, dou
     al_ = alpha_lower(q_dot);
     s_dot_ = s_dot(q, qu, ql);
     d_dot_ = d_dot(s_, s_dot_);
-    return (s_dot_*(au_ * d_ + (1-au_)) + s_ * d_dot_)
+    return (s_dot_*(au_*d_ + (1-au_)) + s_*d_dot_)
         + -s_dot_*(al_ * d_ + (1-al_)) + (1-s_) * d_dot_;
 }
 
 double rmp2::Joint_Limit_Avoidance::a(double q, double q_dot, double qu, double ql)
 {
-    return std::pow(b(q, q_dot, qu, ql), 2.0);
+    return std::pow(b(q, q_dot, qu, ql), -2.0);
 }
 
 double rmp2::Joint_Limit_Avoidance::a_dot(double q, double q_dot, double qu, double ql)

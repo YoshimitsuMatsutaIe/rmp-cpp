@@ -9,13 +9,14 @@ import rmp_leaf
 import mappings
 import robot_model_sice
 
-TIME_SPAN = 5.5
+TIME_SPAN = 60
 TIME_INTERVAL = 1e-2
 q0 = np.array([[np.pi/2, 0, 0, 0]]).T
+#q0 = np.array([[-np.pi*2/4, np.pi*2.8/4, 0, 0]]).T
+#q0_dot = np.array([[0.1, 0, 0, 0]]).T
 q0_dot = np.zeros_like(q0)
 
 r = rmp_tree.Root(
-    dt = TIME_INTERVAL,
     x0 = q0,
     x0_dot = q0_dot
 )
@@ -40,22 +41,25 @@ n3 = rmp_tree.LeafBase(
 )
 r.add_child(n3)
 
+x4 = robot_model_sice.X4()
 n4 = rmp_tree.Node(
     name="x4", parent=r, dim=2,
-    mappings=robot_model_sice.X4()
+    mappings=x4
 )
 r.add_child(n4)
 
 
 
 g = np.array([[2, 1]]).T
+#g = np.array([[0.1, 0]]).T
 g_dot = np.zeros_like(g)
+
 
 attracter = rmp_leaf.GoalAttractor(
     name="ee-attractor", parent=n4, dim=2,
     calc_mappings=mappings.Translation(g, g_dot),
     max_speed = 3.3,
-    gain = 10.0,
+    gain = 8.0,
     f_alpha = 0.15,
     sigma_alpha = 1.0,
     sigma_gamma = 1.0,
@@ -81,57 +85,116 @@ jl = rmp_leaf.JointLimitAvoidance(
 r.add_child(jl)
 
 
+# ### 木構造について確認 ###
 
-### 実行 ###
-times = np.arange(0, TIME_SPAN, TIME_INTERVAL)
-for i, t in enumerate(times):
-    print("\ni = ", i)
-    if i == 0:
-        print("t = ", t)
-        q_list = [q0]
-        q_dot_list = [q0_dot]
-        r.pushforward()
-        error = [n4.x]
-    else:
-        print("t = ", t)
-        r.pushforward()
-        r.pullback()
-        r.resolve()
+# r.print_all_state()
+# print("-"*100)
+# print("pushforward!")
+# r.pushforward()
+# r.print_all_state()
+# print("-"*100)
+# print("pullback!")
+# r.pullback()
+# r.print_all_state()
+# print("-"*100)
+# print("resolve!")
+# r.resolve()
+# print("-"*100)
+
+
+
+# ### 実行 ###
+# times = np.arange(0, TIME_SPAN, TIME_INTERVAL)
+# for i, t in enumerate(times):
+#     print("\ni = ", i)
+#     if i == 0:
+#         print("t = ", t)
+#         q_list = [q0]
+#         q_dot_list = [q0_dot]
+#         r.pushforward()
+#         error = [n4.x]
+#     else:
+#         print("t = ", t)
+#         r.pushforward()
+#         r.pullback()
+#         r.resolve()
         
         
-        q_list.append(r.x.copy())
-        q_dot_list.append(r.x_dot.copy())
-        error.append(n4.x.copy())
-        #r.print_all_state()
-        #r.print_state()
+#         q_list.append(r.x.copy())
+#         q_dot_list.append(r.x_dot.copy())
+#         error.append(n4.x.copy())
+#         #r.print_all_state()
+#         #r.print_state()
 
-    #print(q_list)
-
-
-q_list = np.concatenate(q_list, axis=1)
-q_dot_list = np.concatenate(q_dot_list, axis=1)
-error= np.concatenate(error, axis=1)
+#     #print(q_list)
 
 
-#print(q_list)
-
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.plot(times, q_list[0, :], label="q1", marker="")
-ax.plot(times, q_list[1, :], label="q2", marker="")
-ax.plot(times, q_list[2, :], label="q3", marker="")
-ax.plot(times, q_list[3, :], label="q4", marker="")
-ax.legend()
-ax.grid()
-fig.savefig("test.png")
+# q_list = np.concatenate(q_list, axis=1)
+# q_dot_list = np.concatenate(q_dot_list, axis=1)
+# error= np.concatenate(error, axis=1)
 
 
+# #print(q_list)
 
-fig2 = plt.figure()
-ax2 = fig2.add_subplot()
-ax2.plot(error[0, :], error[1, :], label="ee")
-ax2.scatter(g[0,0], g[1,0], label="goal", marker="*", color="red")
-ax2.legend()
-ax2.grid()
-ax2.set_aspect('equal')
-fig2.savefig("ee.png")
+# fig = plt.figure()
+# ax = fig.add_subplot(111)
+# ax.plot(times, q_list[0, :], label="q1", marker="")
+# ax.plot(times, q_list[1, :], label="q2", marker="")
+# ax.plot(times, q_list[2, :], label="q3", marker="")
+# ax.plot(times, q_list[3, :], label="q4", marker="")
+# ax.legend()
+# ax.grid()
+# fig.savefig("test.png")
+
+
+
+# fig2 = plt.figure()
+# ax2 = fig2.add_subplot()
+# ax2.plot(error[0, :], error[1, :], label="ee")
+# ax2.scatter(g[0,0], g[1,0], label="goal", marker="*", color="red")
+# ax2.legend()
+# ax2.grid()
+# ax2.set_aspect('equal')
+# fig2.savefig("ee.png")
+
+
+
+
+### scipy使用 ###
+
+def dX(t, X):
+    print("\nt = ", t)
+    X = X.reshape(-1, 1)
+    q_ddot = r.solve(q=X[:4, :], q_dot=X[4:, :])
+    X_dot = np.concatenate([X[4:, :], q_ddot])
+    return np.ravel(X_dot)
+
+sol = integrate.solve_ivp(
+    fun = dX,
+    t_span = (0, TIME_SPAN),
+    y0 = np.ravel(np.concatenate([q0, q0_dot])),
+    atol=1e-6
+)
+
+print(sol.message)
+
+fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(8, 13))
+axes[0].plot(sol.t, sol.y[0], label="q1")
+axes[0].plot(sol.t, sol.y[1], label="q2")
+axes[0].plot(sol.t, sol.y[2], label="q3")
+axes[0].plot(sol.t, sol.y[3], label="q4")
+
+_x = []
+_y = []
+for i in range(len(sol.t)):
+    _X = x4.phi(np.array([[sol.y[0][i],sol.y[1][i],sol.y[2][i],sol.y[3][i]]]).T)
+    _x.append(_X[0,0])
+    _y.append(_X[1,0])
+axes[1].plot(_x, _y, label="ee")
+axes[1].scatter(g[0,0], g[1,0], marker="*", color="red")
+axes[1].set_aspect('equal')
+
+for ax in axes.ravel():
+    ax.legend()
+    ax.grid()
+fig.savefig("solver.png")

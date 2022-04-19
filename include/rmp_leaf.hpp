@@ -122,9 +122,9 @@ namespace rmp2
         double gamma_d,
         double lambda,
         double sigma,
-        Eigen::VectorXd q_max,
-        Eigen::VectorXd q_min,
-        Eigen::VectorXd q_neutral
+        Eigen::VectorXd& q_max,
+        Eigen::VectorXd& q_min,
+        Eigen::VectorXd& q_neutral
         );
 
         void calc_natural_form(void) override;

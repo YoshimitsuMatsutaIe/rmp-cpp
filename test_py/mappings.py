@@ -26,7 +26,7 @@ class Translation(Id):
         return x - self.g
     
     def velocity(self, J, x_dot):
-        return J @ (x_dot - self.g_dot)
+        return x_dot - self.g_dot
 
 
 class Distance(Id):

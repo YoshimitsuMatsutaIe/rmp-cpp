@@ -45,7 +45,7 @@ class GoalAttractor(rmp_tree.LeafBase):
     
     def __force(self,):
         xi = attractor_xi.f(self.x, self.x_dot, self.sigma_alpha, self.sigma_gamma, self.wu, self.wl, self.alpha, self.epsilon)
-        return self.M @ (-self.gain + self.__grad_phi() - self.damp * self.x_dot) - xi
+        return self.M @ (-self.gain*self.__grad_phi() - self.damp*self.x_dot) - xi
 
 
 
@@ -162,6 +162,7 @@ class JointLimitAvoidance(rmp_tree.LeafBase):
         d = self.__d(s)
         au = self.__alpha_upper(q_dot)
         al = self.__alpha_lower(q_dot)
+        #print(s, d, au, al)
         return s*(au*d + (1-au)) + (1-s)*(al*d + (1-al))
     
     def __b_dot(self, q, q_dot, qu, ql):
@@ -171,35 +172,36 @@ class JointLimitAvoidance(rmp_tree.LeafBase):
         al = self.__alpha_lower(q_dot)
         s_dot = self.__s_dot(qu, ql)
         d_dot = self.__d_dot(s, s_dot)
-        return (s_dot*(au * d + (1-au)) + s * d_dot) + -s_dot*(al * d + (1-al)) + (1-s) * d_dot
+        return (s_dot*(au*d + (1-au)) + s*d_dot) + -s_dot*(al * d + (1-al)) + (1-s) * d_dot
     
     def __a(self, q, q_dot, qu, ql):
-        return self.__b(q, q_dot, qu, ql)**2
+        return self.__b(q, q_dot, qu, ql)**(-2)
     
     def __a_dot(self, q, q_dot, qu, ql):
         return -2*self.__b(q, q_dot, qu, ql)**(-3) * self.__b_dot(q, q_dot, qu ,ql)
     
     def __xi(self,):
-        xi = [
-            (1/2 * self.__a_dot(
-                self.x[i,0],
-                self.x_dot[i,0],
-                self.q_max[i,0],
-                self.q_min[i,0]
+        xi = []
+        for i in range(self.dim):
+            _xi =  1/2 * self.__a_dot(
+                q=self.x[i,0],
+                q_dot=self.x_dot[i,0],
+                qu=self.q_max[i,0],
+                ql=self.q_min[i,0]
             ) * self.x_dot[i,0]**2
-            ) for i in range(self.dim)
-        ]
+            xi.append(_xi)
         return np.array([xi]).T
     
     def __inertia_matrix(self,):
-        diags = [
-            (self.lam * self.__a(
+        diags = []
+        for i in range(self.dim):
+            _s = self.lam * self.__a(
                 self.x[i,0],
                 self.x_dot[i,0],
                 self.q_max[i,0],
                 self.q_min[i,0])
-            ) for i in range(self.dim)
-        ]
+            diags.append(_s)
+        #print(diags)
         return np.diag(diags)
     
     def __force(self,):

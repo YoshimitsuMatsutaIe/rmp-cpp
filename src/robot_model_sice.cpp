@@ -4,7 +4,14 @@
 
 #include "../include/robot_model_sice.hpp"
 
-
+robot_model_sice::Joint_limitation::Joint_limitation(void)
+{
+    const double PI = 3.141592653589793;
+    q_max << -3/4*PI+PI/2, -3/4*PI, -3/4*PI, -3/4*PI;
+    q_min << 3/4*PI+PI/2, 3/4*PI, 3/4*PI, 3/4*PI;
+    q_neutral << PI/2, 0.0, 0.0, 0.0;
+    std::cout << "hogehoge" << std::endl;
+}
 
 robot_model_sice::X0::X0(double l1, double l2, double l3, double l4)
 {

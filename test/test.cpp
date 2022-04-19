@@ -22,7 +22,7 @@ int main()
     og_dot = Eigen::VectorXd::Zero(2);
 
 
-    double dt = 9.05e-5;
+    double dt = 1e-5;
 
     double PI = 3.14159;
 
@@ -34,7 +34,7 @@ int main()
     // q0 = Eigen::VectorXd::Zero(4);
     // q0_dot = Eigen::VectorXd::Zero(4);
 
-    q0 << PI/6, PI/6, PI/6, PI/6;
+    q0 << PI/2, 0, 0, 0;
     q0_dot << 0., 0., 0., 0.;
 
     root.set_initial_state(q0, q0_dot);
@@ -75,6 +75,18 @@ int main()
     node3.add_child(&ee_node);
 
 
+    std::cout << "hoge0" << std::endl;
+    robot_model_sice::Joint_limitation jlqs{};
+    std::cout << "hoge1" << std::endl;
+    mapping_base::Base id_mappings2;  //恒等写像
+    std::cout << "hoge2" << std::endl;
+    rmp2::Joint_Limit_Avoidance jl(
+        4, 4, "jl-avoidance", &id_mappings2,
+        0.01, 0.05, 1.0, 0.1, jlqs.q_max, jlqs.q_min, jlqs.q_neutral
+    );
+    root.add_child(&jl);
+    std::cout << "hoge!!!" << std::endl;
+
     // root.print_state_all_node();
     // root.pushforward();
     // root.print_state_all_node();
@@ -85,7 +97,7 @@ int main()
 
     rmp_tree::RMP_Tree tree(&root, "test_tree");
     tree.set_debug(false);
-    tree.run(15.1, root.dt, "test3.csv");
+    tree.run(30.0, root.dt, "test3.csv");
 
     std::cout << "done all!" << std::endl;
 }

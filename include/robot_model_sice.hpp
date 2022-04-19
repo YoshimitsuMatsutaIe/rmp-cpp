@@ -8,6 +8,13 @@
 
 namespace robot_model_sice
 {
+    struct Joint_limitation
+    {
+        Eigen::VectorXd q_max;
+        Eigen::VectorXd q_min;
+        Eigen::VectorXd q_neutral;
+        Joint_limitation(void);
+    };
 
     class X0 : public mapping_base::Base
     {

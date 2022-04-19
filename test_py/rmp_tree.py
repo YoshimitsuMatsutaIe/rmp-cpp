@@ -67,31 +67,33 @@ class Node:
         
         for child in self.children:
             child.pullback()
-        self.parent.f += self.J.T @ (self.f - self.M @ self.J_dot @ self.parent.x_dot)
-        self.parent.M += self.J.T @ self.M @ self.J
+        self.parent.f = self.parent.f + self.J.T @ (self.f - self.M @ self.J_dot @ self.parent.x_dot)
+        self.parent.M = self.parent.M + self.J.T @ self.M @ self.J
+        
+        #print(self.name, "done")
 
 
 
 class Root(Node):
-    def __init__(self, dt, x0, x0_dot):
+    def __init__(self, x0, x0_dot):
         super().__init__(
             name = "root",
             parent = None,
             dim = x0.shape[0],
             mappings = None,
         )
-        self.dt = dt
         self.x = x0
         self.x_dot = x0_dot
         self.x_ddot = np.zeros_like(x0)
     
     
-    def pushforward(self):
-        """push ルート"""
-        self.x += self.x_dot * self.dt
-        self.x_dot += self.x_ddot * self.dt
-        
-        super().pushforward()
+    def update_state(self, q=None, q_dot=None, dt=None):
+        if q is None and q_dot is None and dt is not None:
+            self.x = self.x + self.x_dot * self.dt
+            self.x_dot = self.x_dot + self.x_ddot * self.dt
+        else:
+            self.x = q
+            self.x_dot = q_dot
     
     
     def pullback(self):
@@ -103,13 +105,23 @@ class Root(Node):
         for child in self.children:
             child.pullback()
     
+        #print(self.name, "done")
+    
     
     def resolve(self,):
         self.x_ddot = LA.pinv(self.M) @ self.f
-        print("M = \n", self.M)
-        print("pinvM = \n", LA.pinv(self.M))
-        print("f = \n", self.f)
-        print("q_ddot = \n", self.x_ddot)
+        # print("M = \n", self.M)
+        # print("pinvM = \n", LA.pinv(self.M))
+        # print("f = \n", self.f)
+        # print("q_ddot = \n", self.x_ddot)
+    
+    
+    def solve(self, q=None, q_dot=None, dt=None):
+        self.update_state(q, q_dot, dt)
+        self.pushforward()
+        self.pullback()
+        self.resolve()
+        return self.x_ddot
 
 
 
@@ -132,8 +144,9 @@ class LeafBase(Node):
     
     def pullback(self):
         self.calc_rmp_func()
-        self.parent.f += self.J.T @ (self.f - self.M @ self.J_dot @ self.parent.x_dot)
-        self.parent.M += self.J.T @ self.M @ self.J
+        self.parent.f = self.parent.f + self.J.T @ (self.f - self.M @ self.J_dot @ self.parent.x_dot)
+        self.parent.M = self.parent.M + self.J.T @ self.M @ self.J
+        #print(self.name, "done")
     
     def calc_rmp_func(self,):
         pass
