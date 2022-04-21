@@ -128,7 +128,6 @@ namespace rmp2
         );
 
         void calc_natural_form(void) override;
-        void pullback(void) override;
     };
 };
 

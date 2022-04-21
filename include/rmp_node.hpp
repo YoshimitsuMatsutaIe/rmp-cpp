@@ -43,7 +43,7 @@ namespace rmp_node{
             mapping_base::Base* mapping
         );
 
-        virtual void calc_natural_form(void);
+        
         
         void initialize_rmp_natural_form(void);
         const void print_state(void);
@@ -60,18 +60,17 @@ namespace rmp_node{
     class Root : public Node
     {
     public:
-        double dt;  //刻み時間
         Eigen::VectorXd q_ddot;  //指令値
         Root(
-            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
-            double dt
+            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings
         );
-        void set_initial_state(
+        void set_state(
             const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot
         );
         void pushforward(void) override;
         void pullback(void) override;
         void resolve(void);
+        void solve(const Eigen::VectorXd& q, const Eigen::VectorXd& q_dot, Eigen::VectorXd& out_q_ddot);
     };
 
 
@@ -81,11 +80,39 @@ namespace rmp_node{
         Leaf_Base(
             int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings
         );
+        virtual void calc_natural_form(void);
         void pullback(void) override;
         void set_debug(bool is_debug) override;
     };
 
-}
+};
+
+
+
+
+namespace rmp_tree
+{
+    class RMP_Tree
+    {
+    private:
+        bool is_debug=true;
+        void update_environment();
+
+    public:
+        RMP_Tree(rmp_node::Root* root, std::string tree_name);
+        //RMP_Tree(std::map<> tree_param);
+        rmp_node::Root* root;
+        std::string tree_name = "nameless";
+        double time_span;
+        double time_interval;
+
+        void one_step(void);
+        void run(double time_span, double time_interval, std::string save_path="test.csv");
+        void set_debug(bool is_debug);
+
+    };
+};
+
 
 
 #endif

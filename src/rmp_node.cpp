@@ -1,13 +1,13 @@
 #include "../include/rmp_node.hpp"
 #include "../include/mappings.hpp"
 
-#include "/usr/include/eigen3/Eigen/Core"
-#include "/usr/include/eigen3/Eigen/QR"
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/QR>
 #include <eigen3/Eigen/LU>
 #include <eigen3/Eigen/Dense>
 #include <iostream>
-
-
+#include <chrono>
+#include <fstream>
 
 rmp_node::Node::Node(void){};
 rmp_node::Node::Node(
@@ -38,13 +38,6 @@ void rmp_node::Node::initialize_rmp_natural_form(void)
 }
 
 
-void rmp_node::Node::calc_natural_form(void)
-{
-    if (this->is_debug)
-    {
-    std::cout << "root hasn't rmp func." << std::endl;
-    }
-}
 
 
 const void rmp_node::Node::print_state(void)
@@ -114,10 +107,6 @@ void rmp_node::Node::pushforward(void)
         child->mappings->jacobian(x, child->J);
         child->x_dot = child->J * x_dot;
         child->mappings->jacobian_dot(x, x_dot, child->J_dot);
-        if (child->have_rmp_func)
-        {
-            child->calc_natural_form();
-        }
         if (child->node_type != 1)
         {
             child->pushforward();
@@ -152,23 +141,21 @@ void rmp_node::Node::set_debug(bool is_debug)
 
 
 rmp_node::Root::Root(
-    int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
-    double dt
+    int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings
 ) : Node(self_dim, parent_dim, name, mappings)
 {
     this->node_type = 0;
-    this->dt = dt;
     this->parent = nullptr;
     this->q_ddot = Eigen::VectorXd::Zero(self_dim);
 }
 
 
-void rmp_node::Root::set_initial_state(
+void rmp_node::Root::set_state(
     const Eigen::VectorXd& q, const Eigen::VectorXd& q_dot
 )
 {
-    x = q;
-    x_dot = q_dot;
+    this->x = q;
+    this->x_dot = q_dot;
 }
 
 
@@ -177,21 +164,17 @@ void rmp_node::Root::pushforward(void)
     //std::cout << "pushforward running..." << std::endl;
     //std::cout << "pushing at " << name << std::endl;
 
-    x_dot += q_ddot * dt;
-    x += x_dot * dt;
+    // this->x_dot += this->q_ddot * dt;
+    // this->x += this->x_dot * dt;
     initialize_rmp_natural_form();
 
-    for (rmp_node::Node* child : children)
+    for (rmp_node::Node* child : this->children)
     {
         // 子供のやつ
         child->mappings->phi(x, child->x);
         child->mappings->jacobian(x, child->J);
         child->x_dot = child->J * x_dot;
         child->mappings->jacobian_dot(x, x_dot, child->J_dot);
-        if (child->have_rmp_func)
-        {
-            child->calc_natural_form();
-        }
         if (child->node_type != 1)
         {
             child->pushforward();
@@ -204,12 +187,13 @@ void rmp_node::Root::pushforward(void)
 void rmp_node::Root::pullback(void)
 {
     //std::cout << "pullback running..." << std::endl;
-    for (rmp_node::Node* child : children)
+    for (rmp_node::Node* child : this->children)
     {
         child->pullback();
     }
     //std::cout << "pullback done!\n" << std::endl;
 }
+
 
 
 void rmp_node::Root::resolve(void)
@@ -223,10 +207,10 @@ void rmp_node::Root::resolve(void)
     //q_ddot = (M.transpose() * M).ldlt().solve(M.transpose() * f);
 
     //SVD使って実装
-    Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeFullU | Eigen::ComputeFullV);
+    Eigen::JacobiSVD<Eigen::MatrixXd> svd(this->M, Eigen::ComputeFullU | Eigen::ComputeFullV);
     Eigen::VectorXd s = svd.singularValues();
     Eigen::MatrixXd pinv_M = svd.matrixV() * s.asDiagonal() * svd.matrixU().transpose();
-    q_ddot = pinv_M * f;
+    this->q_ddot = pinv_M * this->f;
 
     if (is_debug)
     {
@@ -235,11 +219,23 @@ void rmp_node::Root::resolve(void)
         std::cout << "V: \n" << svd.matrixV() << std::endl;
 
 
-        std::cout << "f = \n" << f << std::endl;
-        std::cout << "M = \n" << M << std::endl;
+        std::cout << "f = \n" << this->f << std::endl;
+        std::cout << "M = \n" << this->M << std::endl;
         std::cout << "pinv_M = \n" << pinv_M << std::endl;
-        std::cout << "q_ddot = \n" << q_ddot << std::endl;
+        std::cout << "q_ddot = \n" << this->q_ddot << std::endl;
     }
+}
+
+
+void rmp_node::Root::solve(
+    const Eigen::VectorXd& q, const Eigen::VectorXd& q_dot, Eigen::VectorXd& out_q_ddot
+)
+{
+    this->set_state(q, q_dot);
+    this->pushforward();
+    this->pullback();
+    this->resolve();
+    out_q_ddot = this->q_ddot;
 }
 
 
@@ -253,6 +249,12 @@ rmp_node::Leaf_Base::Leaf_Base(
 }
 
 
+void rmp_node::Leaf_Base::calc_natural_form(void)
+{
+    // pass
+}
+
+
 void rmp_node::Leaf_Base::pullback(void)
 {
     //std::cout << "pullback doing at " << name << ", and hear is leaf!" << std::endl;
@@ -260,7 +262,8 @@ void rmp_node::Leaf_Base::pullback(void)
     // std::cout << "J.transpose() * (f - (M * J_dot * this->parent->x_dot)) = \n" << J.transpose() * (f - (M * J_dot * this->parent->x_dot)) << std::endl;
     // std::cout << "J.transpose() * M * J = \n" << J.transpose() * M * J << std::endl;
 
-    this->parent->f += J.transpose() * (f - (M * J_dot * this->parent->x_dot));
+    this->calc_natural_form();
+    this->parent->f += J.transpose() * (f - (M * J_dot * parent->x_dot));
     this->parent->M += J.transpose() * M * J;
 }
 
@@ -268,4 +271,111 @@ void rmp_node::Leaf_Base::pullback(void)
 void rmp_node::Leaf_Base::set_debug(bool is_debug)
 {
     this->is_debug = is_debug;
+}
+
+
+
+rmp_tree::RMP_Tree::RMP_Tree(rmp_node::Root* root, std::string tree_name)
+{
+    this->root = root;
+    this->tree_name = tree_name;
+}
+
+void rmp_tree::RMP_Tree::update_environment()
+{
+    // 後から実装．センサー値から障害物位置などを変更
+}
+
+void rmp_tree::RMP_Tree::one_step(void)
+{
+    this->root->pushforward();
+    this->root->pullback();
+    this->root->resolve();
+}
+
+
+void rmp_tree::RMP_Tree::run(
+    double time_span, double time_interval, std::string save_path
+)
+{
+    std::chrono::system_clock::time_point  start_time, end_time; // 型は auto で可
+    start_time = std::chrono::system_clock::now();
+
+
+    this->time_span = time_span;
+    this->time_interval = time_interval;
+
+    int total_step = time_span / time_interval;
+    double t = 0.0;  //時刻
+
+    std::ofstream file(save_path);  //ここに書き出す
+
+    //csvのヘッダー作成
+    std::string csv_header="t";
+    for (int i=0; i<root->self_dim; ++i)
+    {
+        csv_header += ",x" + std::to_string(i);
+    }
+    for (int i=0; i<root->self_dim; ++i)
+    {
+        csv_header += ",dx" + std::to_string(i);
+    }
+    file << csv_header << std::endl;
+
+    //初期値書き込み
+    file << t;
+    for (int i=0; i<root->self_dim; ++i)
+    {
+        file << "," << root->x[i];
+    }
+    for (int i=0; i<root->self_dim; ++i)
+    {
+        file << "," << root->x_dot[i];
+    }
+    file << std::endl;
+
+    root->print_state_all_node();
+
+
+
+    // メインループ
+    for (int i=0; i<total_step; ++i)
+    {
+        t += time_interval;
+        if (is_debug){std::cout << "\ni = " << i << std::endl;}
+
+        one_step();
+        if (std::isnan(root->x[0]))
+        {
+            std::cout << "\n発散．終了．" << std::endl;
+            break;
+        }
+        
+        root->print_state_all_node();
+
+        file << t;
+        for (int i=0; i<root->self_dim; ++i)
+        {
+            file << "," << root->x[i];
+        }
+        for (int i=0; i<root->self_dim; ++i)
+        {
+            file << "," << root->x_dot[i];
+        }
+        file << std::endl;
+    }
+
+
+    end_time = std::chrono::system_clock::now();
+    double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time-start_time).count(); //処理に要した時間をミリ秒に変換
+    std::cout << "time = " << elapsed/1000 << "[sec]" << std::endl;
+}
+
+
+
+
+void rmp_tree::RMP_Tree::set_debug(bool is_debug)
+{
+    this->is_debug = is_debug;
+    this->root->set_debug(is_debug);
 }
