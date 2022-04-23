@@ -20,6 +20,7 @@ namespace rmp_node{
         int self_dim;
         int parent_dim;
         int node_type = 2;  //0:root, 1::leaf
+        bool is_cpoint;
         std::string name;
 
         class Node* parent;
@@ -32,7 +33,7 @@ namespace rmp_node{
         Eigen::VectorXd f;  //所望の力
         Eigen::MatrixXd M;  //慣性行列
 
-        class mapping_base::Base* mappings;
+        class mapping_base::Identity* mappings;
         bool have_rmp_func=false;
 
         Node(void);
@@ -40,7 +41,7 @@ namespace rmp_node{
             int self_dim,
             int parent_dim,
             std::string name,
-            mapping_base::Base* mapping
+            mapping_base::Identity* mapping
         );
 
         
@@ -62,7 +63,7 @@ namespace rmp_node{
     public:
         Eigen::VectorXd q_ddot;  //指令値
         Root(
-            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings
+            int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings
         );
         void set_state(
             const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot
@@ -78,7 +79,7 @@ namespace rmp_node{
     {
     public:
         Leaf_Base(
-            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings
+            int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings
         );
         virtual void calc_natural_form(void);
         void pullback(void) override;
@@ -103,11 +104,13 @@ namespace rmp_tree
         //RMP_Tree(std::map<> tree_param);
         rmp_node::Root* root;
         std::string tree_name = "nameless";
-        double time_span;
-        double time_interval;
 
-        void one_step(void);
-        void run(double time_span, double time_interval, std::string save_path="test.csv");
+        //void one_step(void);
+        void run(
+            double time_span, double time_interval,
+            std::string method="euler",
+            std::string save_dir_path="result"
+        );
         void set_debug(bool is_debug);
 
     };

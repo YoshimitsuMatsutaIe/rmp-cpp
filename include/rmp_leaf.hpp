@@ -36,7 +36,7 @@ namespace rmp2
 
     public:
         Goal_Attractor(
-            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
+            int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
             double max_speed,
             double gain,
             double f_alpha,
@@ -76,7 +76,7 @@ namespace rmp2
 
     public:
         Obstacle_Avoidance(
-            int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
+            int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
             double scale_rep,
             double scale_damp,
             double gain,
@@ -117,7 +117,7 @@ namespace rmp2
     
 
     public:
-        Joint_Limit_Avoidance(int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
+        Joint_Limit_Avoidance(int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
         double gamma_p,
         double gamma_d,
         double lambda,

@@ -13,34 +13,13 @@ robot_model_sice::Joint_limitation::Joint_limitation(void)
     q_neutral = Eigen::VectorXd::Zero(4);
 
     q_neutral << PI/2.0, 0.0, 0.0, 0.0;
-    q_max << 3.0/4.0*PI+PI/2.0, 3.0/4.0*PI, 3.0/4.0*PI, 3.0/4.0*PI;
-    q_min << -3.0/4.0*PI+PI/2.0, -3.0/4.0*PI, -3.0/4.0*PI, -3.0/4.0*PI;
+    q_max << (3.0/4.0 + 1.0/2.0)*PI, 3.0/4.0*PI, 3.0/4.0*PI, 3.0/4.0*PI;
+    q_min << (-3.0/4.0 + 1.0/2.0)*PI, -3.0/4.0*PI, -3.0/4.0*PI, -3.0/4.0*PI;
 
 }
 
 
-robot_model_sice::X0::X0(double l1, double l2, double l3, double l4)
-{
-    this->l1 = l1;
-    this->l2 = l2;
-    this->l3 = l3;
-    this->l4 = l4;
-}
-robot_model_sice::X1::X1(double l1, double l2, double l3, double l4)
-{
-    this->l1 = l1;
-    this->l2 = l2;
-    this->l3 = l3;
-    this->l4 = l4;
-}
-robot_model_sice::X2::X2(double l1, double l2, double l3, double l4)
-{
-    this->l1 = l1;
-    this->l2 = l2;
-    this->l3 = l3;
-    this->l4 = l4;
-}
-robot_model_sice::X3::X3(double l1, double l2, double l3, double l4)
+robot_model_sice::Base::Base(double l1, double l2, double l3, double l4)
 {
     this->l1 = l1;
     this->l2 = l2;

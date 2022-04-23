@@ -9,7 +9,7 @@
 
 
 rmp2::Goal_Attractor::Goal_Attractor(
-    int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
+    int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
     double max_speed,
     double gain,
     double f_alpha,
@@ -102,7 +102,7 @@ void rmp2::Goal_Attractor::calc_natural_form(void)
 
 
 rmp2::Obstacle_Avoidance::Obstacle_Avoidance(
-    int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
+    int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
     double scale_rep,
     double scale_damp,
     double gain,
@@ -210,7 +210,7 @@ void rmp2::Obstacle_Avoidance::calc_natural_form(void)
 
 
 rmp2::Joint_Limit_Avoidance::Joint_Limit_Avoidance(
-    int self_dim, int parent_dim, std::string name, mapping_base::Base* mappings,
+    int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
     double gamma_p,
     double gamma_d,
     double lambda,

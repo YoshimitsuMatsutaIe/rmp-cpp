@@ -9,8 +9,6 @@
 #include <iostream>
 
 
-
-
 int main()
 {
     std::cout << "running...\n" << std::endl;
@@ -26,7 +24,7 @@ int main()
     const double PI = 3.141592653589793;
 
     /* root */
-    mapping_base::Base root_mappings;
+    mapping_base::Identity root_mappings;
     rmp_node::Root root(4, 0, "root", &root_mappings);
     Eigen::VectorXd q0(4), q0_dot(4);
     
@@ -65,7 +63,7 @@ int main()
     rmp_node::Node node3(2, 4, "x3", &x3);
     root.add_child(&node3);
 
-    mapping_base::Base id_mappings;  //恒等写像
+    mapping_base::Identity id_mappings;  //恒等写像
     rmp2::Goal_Attractor ee_node(
         2, 2, "ee-attractor", &id_mappings,
         6.0, 10.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 1e-5,
@@ -78,7 +76,7 @@ int main()
     // std::cout << "q_max = \n" << jlqs.q_max << std::endl;
     // std::cout << "q_min = \n" << jlqs.q_min << std::endl;
     // std::cout << "q_neutral = \n" << jlqs.q_neutral << std::endl;
-    mapping_base::Base id_mappings2;  //恒等写像
+    mapping_base::Identity id_mappings2;  //恒等写像
     rmp2::Joint_Limit_Avoidance jl(
         4, 4, "jl-avoidance", &id_mappings2,
         0.01, 0.05, 1.0, 0.1, jlqs.q_max, jlqs.q_min, jlqs.q_neutral
@@ -95,7 +93,7 @@ int main()
 
     rmp_tree::RMP_Tree tree(&root, "test_tree");
     tree.set_debug(false);
-    tree.run(10.0, dt, "test3.csv");
+    tree.run(10.0, dt);
 
     std::cout << "done all!" << std::endl;
 }

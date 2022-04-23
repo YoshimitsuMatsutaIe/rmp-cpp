@@ -8,20 +8,20 @@
 
 
 
-mapping_base::Base::Base(void){}
+mapping_base::Identity::Identity(void){}
 
 
-void mapping_base::Base::phi(const Eigen::VectorXd &x, Eigen::VectorXd &out)
+void mapping_base::Identity::phi(const Eigen::VectorXd &x, Eigen::VectorXd &out)
 {
     out = x;
 }
 
-void mapping_base::Base::jacobian(const Eigen::VectorXd &x, Eigen::MatrixXd &out)
+void mapping_base::Identity::jacobian(const Eigen::VectorXd &x, Eigen::MatrixXd &out)
 {
 
 }
 
-void mapping_base::Base::jacobian_dot(const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::MatrixXd &out)
+void mapping_base::Identity::jacobian_dot(const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::MatrixXd &out)
 {
     
 }

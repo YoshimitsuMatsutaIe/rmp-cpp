@@ -8,5 +8,4 @@ add_executable(
     ../src/rmp_leaf.cpp
     ../src/rmp2_attractor_xi.cpp
     ../src/mappings.cpp
-    ../src/rmp_tree.cpp
 )

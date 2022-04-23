@@ -11,11 +11,11 @@ namespace mapping_base
      * @brief 恒等写像
      * 
      */
-    class Base
+    class Identity
     {
     public:
         std::string name;
-        Base(void);
+        Identity(void);
         virtual void phi(const Eigen::VectorXd &x, Eigen::VectorXd &out);
         virtual void jacobian(const Eigen::VectorXd &x, Eigen::MatrixXd &out);
         virtual void jacobian_dot(const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::MatrixXd &out);
@@ -27,7 +27,7 @@ namespace mapping_base
      * @brief 障害物用
      * 
      */
-    class Distance : public Base
+    class Distance : public Identity
     {
     private:
         Eigen::VectorXd& o;

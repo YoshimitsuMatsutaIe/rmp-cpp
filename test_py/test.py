@@ -1,15 +1,17 @@
-from matplotlib import markers
 import numpy as np
+from numpy import linalg as LA
 import matplotlib.pyplot as plt
-
+import time
 from scipy import integrate
+from functools import lru_cache
 
 import rmp_tree
 import rmp_leaf
 import mappings
 import robot_model_sice
+import visualization
 
-TIME_SPAN = 60
+TIME_SPAN = 10
 TIME_INTERVAL = 1e-2
 q0 = np.array([[np.pi/2, 0, 0, 0]]).T
 #q0 = np.array([[-np.pi*2/4, np.pi*2.8/4, 0, 0]]).T
@@ -50,7 +52,7 @@ r.add_child(n4)
 
 
 
-g = np.array([[2, 1]]).T
+g = np.array([[2.0, 1.0]]).T
 #g = np.array([[0.1, 0]]).T
 g_dot = np.zeros_like(g)
 
@@ -59,7 +61,7 @@ attracter = rmp_leaf.GoalAttractor(
     name="ee-attractor", parent=n4, dim=2,
     calc_mappings=mappings.Translation(g, g_dot),
     max_speed = 3.3,
-    gain = 8.0,
+    gain = 18.0,
     f_alpha = 0.15,
     sigma_alpha = 1.0,
     sigma_gamma = 1.0,
@@ -162,6 +164,7 @@ r.add_child(jl)
 
 ### scipy使用 ###
 
+#@lru_cache()
 def dX(t, X):
     print("\nt = ", t)
     X = X.reshape(-1, 1)
@@ -169,11 +172,49 @@ def dX(t, X):
     X_dot = np.concatenate([X[4:, :], q_ddot])
     return np.ravel(X_dot)
 
+
+
+
+def dX2(t, X):
+    """いつもの"""
+    print("\nt = ", t)
+    X = X.reshape(-1, 1)
+    q = X[:4, :]
+    q_dot = X[4:, :]
+    
+    root_f = np.zeros((4, 1))
+    root_M = np.zeros((4, 4))
+    
+    jl.set_state(q, q_dot)
+    jl.calc_rmp_func()
+    root_f += jl.f
+    root_M += jl.M
+    
+    ee_x = x4.phi(q)
+    ee_J = x4.J(q)
+    ee_x_dot = x4.velocity(ee_J, q_dot)
+    ee_J_dot = x4.J_dot(q, q_dot)
+    attracter.set_state(ee_x-g, ee_x_dot-g_dot)
+    attracter.calc_rmp_func()
+    root_f += ee_J.T @ (attracter.f - attracter.M @ ee_J_dot @ q_dot)
+    root_M += ee_J.T @ attracter.M @ ee_J
+    
+    q_ddot = LA.pinv(root_M) @ root_f
+    
+    X_dot = np.concatenate([q_dot, q_ddot])
+    return np.ravel(X_dot)
+
+
+
+
+
+
 sol = integrate.solve_ivp(
-    fun = dX,
+    #fun = dX,
+    fun = dX2,
     t_span = (0, TIME_SPAN),
     y0 = np.ravel(np.concatenate([q0, q0_dot])),
-    atol=1e-6
+    #atol=1e-6
 )
 
 print(sol.message)
@@ -198,3 +239,29 @@ for ax in axes.ravel():
     ax.legend()
     ax.grid()
 fig.savefig("solver.png")
+
+
+
+def x0(q):
+    return np.zeros((2, 1))
+x1_map = robot_model_sice.X1()
+x2_map = robot_model_sice.X2()
+x3_map = robot_model_sice.X3()
+x4_map = robot_model_sice.X4()
+
+q_data, joint_data, ee_data, cpoint_data = visualization.make_data(
+    q_s = [sol.y[0], sol.y[1], sol.y[2], sol.y[3]],
+    joint_phi_s=[x0, x1_map.phi, x2_map.phi, x3_map.phi, x4_map.phi],
+    is3D=False,
+    ee_phi=x4_map.phi
+)
+
+
+
+
+visualization.make_animation(
+    t_data = sol.t,
+    joint_data=joint_data,
+    is3D=False,
+    goal_data=np.array([[g[0,0], g[1,0]]*len(sol.t)]).reshape(len(sol.t), 2)
+)

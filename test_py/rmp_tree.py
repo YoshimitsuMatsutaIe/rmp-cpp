@@ -150,6 +150,13 @@ class LeafBase(Node):
     
     def calc_rmp_func(self,):
         pass
+    
+    
+    def set_state(self, x, x_dot):
+        self.x = x
+        self.x_dot = x_dot
+
+
 
 if __name__ == "__main__":
     hoge = LeafBase("hoge", None, None, None)
