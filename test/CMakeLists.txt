@@ -10,3 +10,4 @@ add_executable(
     ../src/rmp2_attractor_xi.cpp
     ../src/mappings.cpp
 )
+target_compile_options(test PUBLIC -O2 -Wall)

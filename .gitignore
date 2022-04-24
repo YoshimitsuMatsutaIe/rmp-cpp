@@ -51,3 +51,6 @@ __pycache__/
 *.png
 *.jpg
 *.gif
+
+.vscode
+.vscode/settings.json
