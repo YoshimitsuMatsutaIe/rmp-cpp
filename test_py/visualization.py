@@ -207,7 +207,7 @@ def make_animation(
         frames = range(0, len(t_data), step)
     )
     
-    ani.save(save_dir_path + "animation.gif", fps=30, writer='pillow')
+    ani.save(save_dir_path + "animation0.gif", fps=30, writer='pillow')
     # with open(save_dir_path + 'animation.binaryfile', 'wb') as f:
     #     pickle.dump(ani, f)
     

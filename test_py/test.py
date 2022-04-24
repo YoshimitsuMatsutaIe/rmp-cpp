@@ -11,7 +11,7 @@ import mappings
 import robot_model_sice
 import visualization
 
-TIME_SPAN = 10
+TIME_SPAN = 30
 TIME_INTERVAL = 1e-2
 q0 = np.array([[np.pi/2, 0, 0, 0]]).T
 #q0 = np.array([[-np.pi*2/4, np.pi*2.8/4, 0, 0]]).T
@@ -60,8 +60,8 @@ g_dot = np.zeros_like(g)
 attracter = rmp_leaf.GoalAttractor(
     name="ee-attractor", parent=n4, dim=2,
     calc_mappings=mappings.Translation(g, g_dot),
-    max_speed = 3.3,
-    gain = 18.0,
+    max_speed = 5.0,
+    gain = 5.0,
     f_alpha = 0.15,
     sigma_alpha = 1.0,
     sigma_gamma = 1.0,
@@ -214,6 +214,7 @@ sol = integrate.solve_ivp(
     fun = dX2,
     t_span = (0, TIME_SPAN),
     y0 = np.ravel(np.concatenate([q0, q0_dot])),
+    t_eval=np.arange(0, TIME_SPAN, TIME_INTERVAL),
     #atol=1e-6
 )
 
@@ -238,7 +239,7 @@ axes[1].set_aspect('equal')
 for ax in axes.ravel():
     ax.legend()
     ax.grid()
-fig.savefig("solver.png")
+fig.savefig("solver0.png")
 
 
 

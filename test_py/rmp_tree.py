@@ -25,7 +25,7 @@ class Node:
     
     def print_state(self,):
         print("name = ", self.name)
-        print("parent =", self.parent.name if self.parent is not None else self.parent)
+        print("parent =", self.parent.name if self.parent is not None else 'None')
         print("type = ", self.__class__.__name__)
         
         if self.children is None:

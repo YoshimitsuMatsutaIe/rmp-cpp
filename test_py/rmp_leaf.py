@@ -1,9 +1,11 @@
 import numpy as np
 from numpy import linalg as LA
-from math import exp
+from math import exp, log
 
 import rmp_tree
 import attractor_xi
+
+
 
 class GoalAttractor(rmp_tree.LeafBase):
     def __init__(
@@ -40,7 +42,7 @@ class GoalAttractor(rmp_tree.LeafBase):
         wx = gamma_x*self.wu + (1 - gamma_x)*self.wl
         
         grad = self.__grad_phi()
-        return wx*((1-alpha_x) * grad @ grad.T + (alpha_x+self.epsilon) * np.empty_like(self.M))
+        return wx*((1-alpha_x) * grad @ grad.T + (alpha_x+self.epsilon) * np.eye(self.dim))
     
     
     def __force(self,):
@@ -206,6 +208,67 @@ class JointLimitAvoidance(rmp_tree.LeafBase):
     
     def __force(self,):
         return self.M @ (self.gamma_p*(self.q_neutral - self.x) - self.gamma_d*self.x_dot) - self.__xi()
+
+
+
+
+
+
+class GoalAttractor_1(rmp_tree.LeafBase):
+    """曲率なし"""
+    def __init__(
+        self, name, parent, dim, calc_mappings,
+        max_speed, gain, a_damp_r, sigma_W, sigma_H, A_damp_r
+    ):
+        super().__init__(name, dim, parent, calc_mappings)
+        self.gain = gain
+        self.damp = gain / max_speed
+        self.a_damp_r = a_damp_r
+        self.sigma_W = sigma_W
+        self.sigma_H = sigma_H
+        self.A_damp_r = A_damp_r
+    
+    
+    def calc_rmp_func(self,):
+        a = self.__acceleration()
+        self.M = self.__inertia_matrix(a)
+        self.f = self.M @ a
+    
+    def __soft_normal(self, v, alpha):
+        """ソフト正規化関数"""
+        v_norm = LA.norm(v)
+        softmax = v_norm + 1 / alpha * log(1 + exp(-2 * alpha * v_norm))
+        return v / softmax
+
+    def __metric_stretch(self, v, alpha):
+        """空間を一方向に伸ばす計量"""
+        xi = self.__soft_normal(v, alpha)
+        return xi @ xi.T
+
+    def __basic_metric_H(self, f, alpha, beta):
+        """基本の計量"""
+        f_norm = LA.norm(f)
+        f_softmax = f_norm + 1 / alpha * log(1 + exp(-2 * alpha * f_norm))
+        s = f / f_softmax
+        return beta * s @ s.T + (1 - beta) * np.eye(3)
+    
+    
+    def __acceleration(self,):
+        return -self.gain * self.__soft_normal(self.x, self.a_damp_r) - self.damp * self.x_dot
+
+    def __inertia_matrix(self, acceleration):
+        d = LA.norm(self.x)
+        weight = exp(- d/ self.sigma_W)
+        beta_attract = 1 - exp(-1 / 2 * (d / self.sigma_H) ** 2)
+        
+        return weight * self.__basic_metric_H(acceleration, self.A_damp_r, beta_attract)
+
+
+
+
+
+
+
 
 
 

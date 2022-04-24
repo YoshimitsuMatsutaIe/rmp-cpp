@@ -202,7 +202,7 @@ void rmp_node::Root::pullback(void)
 
 void rmp_node::Root::resolve(void)
 {
-    //q_ddot = M.completeOrthogonalDecomposition().pseudoInverse() * f;
+    q_ddot = M.completeOrthogonalDecomposition().pseudoInverse() * f;
     //q_ddot = (M.transpose() * M).inverse() * M.transpose() * f;
     //q_ddot = M.inverse() * f;
     //q_ddot = M.colPivHouseholderQr().solve(f);
@@ -211,23 +211,23 @@ void rmp_node::Root::resolve(void)
     //q_ddot = (M.transpose() * M).ldlt().solve(M.transpose() * f);
 
     //SVD使って実装
-    Eigen::JacobiSVD<Eigen::MatrixXd> svd(this->M, Eigen::ComputeFullU | Eigen::ComputeFullV);
-    Eigen::VectorXd s = svd.singularValues();
-    Eigen::MatrixXd pinv_M = svd.matrixV() * s.asDiagonal() * svd.matrixU().transpose();
-    this->q_ddot = pinv_M * this->f;
+    // Eigen::JacobiSVD<Eigen::MatrixXd> svd(this->M, Eigen::ComputeFullU | Eigen::ComputeFullV);
+    // Eigen::VectorXd s = svd.singularValues();
+    // Eigen::MatrixXd pinv_M = svd.matrixV() * s.asDiagonal() * svd.matrixU().transpose();
+    // this->q_ddot = pinv_M * this->f;
 
-    if (is_debug)
-    {
-        std::cout << "U: \n" << svd.matrixU() << std::endl;
-        std::cout << "S: \n" << svd.singularValues()  << std::endl;
-        std::cout << "V: \n" << svd.matrixV() << std::endl;
+    // if (is_debug)
+    // {
+    //     std::cout << "U: \n" << svd.matrixU() << std::endl;
+    //     std::cout << "S: \n" << svd.singularValues()  << std::endl;
+    //     std::cout << "V: \n" << svd.matrixV() << std::endl;
 
 
-        std::cout << "f = \n" << this->f << std::endl;
-        std::cout << "M = \n" << this->M << std::endl;
-        std::cout << "pinv_M = \n" << pinv_M << std::endl;
-        std::cout << "q_ddot = \n" << this->q_ddot << std::endl;
-    }
+    //     std::cout << "f = \n" << this->f << std::endl;
+    //     std::cout << "M = \n" << this->M << std::endl;
+    //     std::cout << "pinv_M = \n" << pinv_M << std::endl;
+    //     std::cout << "q_ddot = \n" << this->q_ddot << std::endl;
+    // }
 }
 
 
@@ -305,7 +305,7 @@ void rmp_tree::RMP_Tree::run(
 
 
     //フォルダ作成
-    std::filesystem::create_directory(save_dir_path);
+    bool result = std::filesystem::create_directory(save_dir_path);
 
     const int total_step = time_span / time_interval;
     double t = 0.0;  //時刻
@@ -329,9 +329,9 @@ void rmp_tree::RMP_Tree::run(
         file_X <<  ",x" + std::to_string(i);
     }
     for (int i=0; i<root->self_dim; ++i){
-        file_Q <<  ",dx" + std::to_string(i);
+        file_X <<  ",dx" + std::to_string(i);
     }
-    file_Q << std::endl;
+    file_X << std::endl;
 
 
 
@@ -345,7 +345,15 @@ void rmp_tree::RMP_Tree::run(
     }
     file_Q << std::endl;
 
-    root->print_state_all_node();
+    root->pushforward();  //初期値で全ノードデータを更新
+    // file_X << t;
+    // for (int i=0; i<root->self_dim; ++i){
+    //     file_X << "," << root->x[i];
+    // }
+    // for (int i=0; i<root->self_dim; ++i){
+    //     file_Q << "," << root->x_dot[i];
+    // }
+    // file_Q << std::endl;
 
 
     Eigen::VectorXd q(this->root->self_dim);

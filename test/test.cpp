@@ -19,7 +19,7 @@ int main()
     og << 2.0, 1.0;
     og_dot = Eigen::VectorXd::Zero(2);
 
-
+    const double TiME_INTERVAL = 60.0;
     const double dt = 1e-4;
     const double PI = 3.141592653589793;
 
@@ -66,7 +66,7 @@ int main()
     mapping_base::Identity id_mappings;  //恒等写像
     rmp2::Goal_Attractor ee_node(
         2, 2, "ee-attractor", &id_mappings,
-        6.0, 10.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 1e-5,
+        5.0, 5.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 0.5,
         og, og_dot
     );
     node3.add_child(&ee_node);
@@ -93,7 +93,7 @@ int main()
 
     rmp_tree::RMP_Tree tree(&root, "test_tree");
     tree.set_debug(false);
-    tree.run(10.0, dt);
+    tree.run(TiME_INTERVAL, dt);
 
     std::cout << "done all!" << std::endl;
 }
