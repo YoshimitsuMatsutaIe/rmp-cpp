@@ -1,12 +1,12 @@
-#ifndef ROBOT_MODEL_SICE__H
-#define ROBOT_MODEL_SICE__H
+#ifndef ROBOT_MODEL_BAXTER__H
+#define ROBOT_MODEL_BAXTER__H
 
 #include "/usr/include/eigen3/Eigen/Core"
 
 #include "./mappings.hpp"
 
 
-namespace robot_model_sice
+namespace robot_model_baxter
 {
     struct Joint_limitation
     {
@@ -20,8 +20,8 @@ namespace robot_model_sice
     class Base
     {
     public:
-        double l1, l2, l3, l4;
-        Base(double l1, double l2, double l3, double l4);
+        double L, h, H, L0, L1, L2, L3, L4, L5, L6;
+        Base(void);
     };
 
     class X0 : public Base, public mapping_base::Identity
@@ -59,6 +59,44 @@ namespace robot_model_sice
         void jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &out) override;
         void jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot, Eigen::MatrixXd &out) override;
     };
+
+    class X4 : public Base, public mapping_base::Identity
+    {
+    public:
+        using Base::Base;
+        void phi(const Eigen::VectorXd &q, Eigen::VectorXd &out) override;
+        void jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &out) override;
+        void jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot, Eigen::MatrixXd &out) override;
+    };
+
+    class X5 : public Base, public mapping_base::Identity
+    {
+    public:
+        using Base::Base;
+        void phi(const Eigen::VectorXd &q, Eigen::VectorXd &out) override;
+        void jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &out) override;
+        void jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot, Eigen::MatrixXd &out) override;
+    };
+
+    class X6 : public Base, public mapping_base::Identity
+    {
+    public:
+        using Base::Base;
+        void phi(const Eigen::VectorXd &q, Eigen::VectorXd &out) override;
+        void jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &out) override;
+        void jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot, Eigen::MatrixXd &out) override;
+    };
+
+    class EE : public Base, public mapping_base::Identity
+    {
+    public:
+        using Base::Base;
+        void phi(const Eigen::VectorXd &q, Eigen::VectorXd &out) override;
+        void jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &out) override;
+        void jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot, Eigen::MatrixXd &out) override;
+    };
+
+
 };
 
 

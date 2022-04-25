@@ -62,7 +62,9 @@
         "chrono": "cpp",
         "ratio": "cpp",
         "fstream": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "math.h": "c",
+        "jo_ee.h": "c"
     },
     "cmake.configureOnOpen": true,
     "python.autoComplete.extraPaths": [

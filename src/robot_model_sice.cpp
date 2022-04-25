@@ -28,86 +28,86 @@ robot_model_sice::Base::Base(double l1, double l2, double l3, double l4)
 }
 
 
-void robot_model_sice::X0::phi(const Eigen::VectorXd &q, Eigen::VectorXd &x)
+void robot_model_sice::X0::phi(const Eigen::VectorXd &q, Eigen::VectorXd &out)
 {
-    x(0) = l1*std::cos(q(0));
-    x(1) = l1*std::sin(q(1));
+    out(0) = l1*std::cos(q(0));
+    out(1) = l1*std::sin(q(1));
 }
 
 
-void robot_model_sice::X1::phi(const Eigen::VectorXd &q, Eigen::VectorXd &x)
+void robot_model_sice::X1::phi(const Eigen::VectorXd &q, Eigen::VectorXd &out)
 {
-    x(0) = l1*std::cos(q(0)) + l2*std::cos(q(0) + q(1));
-    x(1) = l1*std::sin(q(0)) + l2*std::sin(q(0) + q(1));
+    out(0) = l1*std::cos(q(0)) + l2*std::cos(q(0) + q(1));
+    out(1) = l1*std::sin(q(0)) + l2*std::sin(q(0) + q(1));
 }
 
 
-void robot_model_sice::X2::phi(const Eigen::VectorXd &q, Eigen::VectorXd &x)
+void robot_model_sice::X2::phi(const Eigen::VectorXd &q, Eigen::VectorXd &out)
 {
-    x(0) = l1*std::cos(q(0)) + l2*std::cos(q(0) + q(1)) + l3*std::cos(q(0) + q(1) + q(2));
-    x(1) = l1*std::sin(q(0)) + l2*std::sin(q(0) + q(1)) + l3*std::sin(q(0) + q(1) + q(2));
+    out(0) = l1*std::cos(q(0)) + l2*std::cos(q(0) + q(1)) + l3*std::cos(q(0) + q(1) + q(2));
+    out(1) = l1*std::sin(q(0)) + l2*std::sin(q(0) + q(1)) + l3*std::sin(q(0) + q(1) + q(2));
 }
 
 
-void robot_model_sice::X3::phi(const Eigen::VectorXd &q, Eigen::VectorXd &x)
+void robot_model_sice::X3::phi(const Eigen::VectorXd &q, Eigen::VectorXd &out)
 {
-    x(0) = l1*std::cos(q(0)) + l2*std::cos(q(0) + q(1)) + l3*std::cos(q(0) + q(1) + q(2)) + l4*std::cos(q(0) + q(1) + q(2) + q(3));
-    x(1) = l1*std::sin(q(0)) + l2*std::sin(q(0) + q(1)) + l3*std::sin(q(0) + q(1) + q(2)) + l4*std::sin(q(0) + q(1) + q(2) + q(3));
+    out(0) = l1*std::cos(q(0)) + l2*std::cos(q(0) + q(1)) + l3*std::cos(q(0) + q(1) + q(2)) + l4*std::cos(q(0) + q(1) + q(2) + q(3));
+    out(1) = l1*std::sin(q(0)) + l2*std::sin(q(0) + q(1)) + l3*std::sin(q(0) + q(1) + q(2)) + l4*std::sin(q(0) + q(1) + q(2) + q(3));
 }
 
 
-void robot_model_sice::X0::jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &J)
+void robot_model_sice::X0::jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &out)
 {
-    J << -l1*std::sin(q(0)), 0, 0, 0,
+    out << -l1*std::sin(q(0)), 0, 0, 0,
         l1*std::cos(q(1)), 0, 0, 0;
 }
 
 
-void robot_model_sice::X1::jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &J)
+void robot_model_sice::X1::jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &out)
 {
-    J << -l1*std::sin(q(0)) - l2*std::sin(q(0) + q(1)), -l2*std::sin(q(0) + q(1)), 0, 0,
+    out << -l1*std::sin(q(0)) - l2*std::sin(q(0) + q(1)), -l2*std::sin(q(0) + q(1)), 0, 0,
         l1*std::cos(q(0)) + l2*std::cos(q(0) + q(1)), l2*std::cos(q(0) + q(1)), 0, 0;
 }
 
 
-void robot_model_sice::X2::jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &J)
+void robot_model_sice::X2::jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &out)
 {
-    J << -l1*std::sin(q(0)) - l2*std::sin(q(0) + q(1)) - l3*std::sin(q(0) + q(1) + q(2)), -l2*std::sin(q(0) + q(1)) - l3*std::sin(q(0) + q(1) + q(2)), -l3*std::sin(q(0) + q(1) + q(2)), 0,
+    out << -l1*std::sin(q(0)) - l2*std::sin(q(0) + q(1)) - l3*std::sin(q(0) + q(1) + q(2)), -l2*std::sin(q(0) + q(1)) - l3*std::sin(q(0) + q(1) + q(2)), -l3*std::sin(q(0) + q(1) + q(2)), 0,
         l1*std::cos(q(0)) + l2*std::cos(q(0) + q(1)) + l3*std::cos(q(0) + q(1) + q(2)), l2*std::cos(q(0) + q(1)) + l3*std::cos(q(0) + q(1) + q(2)), l3*std::cos(q(0) + q(1) + q(2)), 0;
 }
 
-void robot_model_sice::X3::jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &J)
+void robot_model_sice::X3::jacobian(const Eigen::VectorXd &q, Eigen::MatrixXd &out)
 {
-    J << -l1*std::sin(q(0)) - l2*std::sin(q(0) + q(1)) - l3*std::sin(q(0) + q(1) + q(2)) - l4*std::sin(q(0) + q(1) + q(2) + q(3)), -l2*std::sin(q(0) + q(1)) - l3*std::sin(q(0) + q(1) + q(2)) - l4*std::sin(q(0) + q(1) + q(2) + q(3)), -l3*std::sin(q(0) + q(1) + q(2)) - l4*std::sin(q(0) + q(1) + q(2) + q(3)), -l4*std::sin(q(0) + q(1) + q(2) + q(3)),
+    out << -l1*std::sin(q(0)) - l2*std::sin(q(0) + q(1)) - l3*std::sin(q(0) + q(1) + q(2)) - l4*std::sin(q(0) + q(1) + q(2) + q(3)), -l2*std::sin(q(0) + q(1)) - l3*std::sin(q(0) + q(1) + q(2)) - l4*std::sin(q(0) + q(1) + q(2) + q(3)), -l3*std::sin(q(0) + q(1) + q(2)) - l4*std::sin(q(0) + q(1) + q(2) + q(3)), -l4*std::sin(q(0) + q(1) + q(2) + q(3)),
         l1*std::cos(q(0)) + l2*std::cos(q(0) + q(1)) + l3*std::cos(q(0) + q(1) + q(2)) + l4*std::cos(q(0) + q(1) + q(2) + q(3)), l2*std::cos(q(0) + q(1)) + l3*std::cos(q(0) + q(1) + q(2)) + l4*std::cos(q(0) + q(1) + q(2) + q(3)), l3*std::cos(q(0) + q(1) + q(2)) + l4*std::cos(q(0) + q(1) + q(2) + q(3)), l4*std::cos(q(0) + q(1) + q(2) + q(3));
     
 }
 
 
-void robot_model_sice::X0::jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &dq, Eigen::MatrixXd &J_dot)
+void robot_model_sice::X0::jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &dq, Eigen::MatrixXd &out)
 {
-    J_dot << -dq(0)*l1*std::cos(q(0)), 0, 0, 0,
+    out << -dq(0)*l1*std::cos(q(0)), 0, 0, 0,
         -dq(0)*l1*std::sin(q(0)), 0, 0, 0;
 }
 
 
-void robot_model_sice::X1::jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &dq, Eigen::MatrixXd &J_dot)
+void robot_model_sice::X1::jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &dq, Eigen::MatrixXd &out)
 {
-    J_dot << -dq(0)*l1*std::cos(q(0)) - l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)), -l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)), 0, 0,
+    out << -dq(0)*l1*std::cos(q(0)) - l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)), -l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)), 0, 0,
         -dq(0)*l1*std::sin(q(0)) - l2*(dq(0) + dq(1))*std::sin(q(0) + q(1)), -l2*(dq(0) + dq(1))*std::sin(q(0) + q(1)), 0, 0;
 }
 
 
-void robot_model_sice::X2::jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &dq, Eigen::MatrixXd &J_dot)
+void robot_model_sice::X2::jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &dq, Eigen::MatrixXd &out)
 {
-    J_dot << -dq(0)*l1*std::cos(q(0)) - l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)), -l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)), -l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)), 0,
+    out << -dq(0)*l1*std::cos(q(0)) - l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)), -l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)), -l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)), 0,
         -dq(0)*l1*std::sin(q(0)) - l2*(dq(0) + dq(1))*std::sin(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::sin(q(0) + q(1) + q(2)), -l2*(dq(0) + dq(1))*std::sin(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::sin(q(0) + q(1) + q(2)), -l3*(dq(0) + dq(1) + dq(2))*std::sin(q(0) + q(1) + q(2)), 0;
 }
 
 
-void robot_model_sice::X3::jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &dq, Eigen::MatrixXd &J_dot)
+void robot_model_sice::X3::jacobian_dot(const Eigen::VectorXd &q, const Eigen::VectorXd &dq, Eigen::MatrixXd &out)
 {
-    J_dot << -dq(0)*l1*std::cos(q(0)) - l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::cos(q(0) + q(1) + q(2) + q(3)), -l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::cos(q(0) + q(1) + q(2) + q(3)), -l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::cos(q(0) + q(1) + q(2) + q(3)), -l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::cos(q(0) + q(1) + q(2) + q(3)),
+    out << -dq(0)*l1*std::cos(q(0)) - l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::cos(q(0) + q(1) + q(2) + q(3)), -l2*(dq(0) + dq(1))*std::cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::cos(q(0) + q(1) + q(2) + q(3)), -l3*(dq(0) + dq(1) + dq(2))*std::cos(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::cos(q(0) + q(1) + q(2) + q(3)), -l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::cos(q(0) + q(1) + q(2) + q(3)),
         -dq(0)*l1*std::sin(q(0)) - l2*(dq(0) + dq(1))*std::sin(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::sin(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::sin(q(0) + q(1) + q(2) + q(3)), -l2*(dq(0) + dq(1))*std::sin(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*std::sin(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::sin(q(0) + q(1) + q(2) + q(3)), -l3*(dq(0) + dq(1) + dq(2))*std::sin(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::sin(q(0) + q(1) + q(2) + q(3)), -l4*(dq(0) + dq(1) + dq(2) + dq(3))*std::sin(q(0) + q(1) + q(2) + q(3));
     
 }
