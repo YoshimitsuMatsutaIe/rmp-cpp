@@ -19,7 +19,7 @@ int main()
     og << 2.0, 1.0;
     og_dot = Eigen::VectorXd::Zero(2);
 
-    const double TiME_INTERVAL = 60.0*10;
+    const double TiME_INTERVAL = 60.0;
     const double dt = 1e-2;
     const double PI = 3.141592653589793;
 

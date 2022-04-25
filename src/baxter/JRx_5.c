@@ -5,7 +5,7 @@
  *                                                                            *
  *                    This file is part of 'JRx_5project'                     *
  ******************************************************************************/
-#include "JRx_5.h"
+#include "include/baxter/JRx_5.h"
 #include <math.h>
 
 void JRx_5(double *q, double *out_4209529851020897581) {

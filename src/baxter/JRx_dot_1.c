@@ -5,7 +5,7 @@
  *                                                                            *
  *                  This file is part of 'JRx_dot_1project'                   *
  ******************************************************************************/
-#include "JRx_dot_1.h"
+#include "include/baxter/JRx_dot_1.h"
 #include <math.h>
 
 void JRx_dot_1(double *dq, double t, double *out_3890801596269259606) {
