@@ -3,14 +3,14 @@
  *                                                                            *
  *              See http://www.sympy.org/ for more information.               *
  *                                                                            *
- *                    This file is part of 'JRx_2project'                     *
+ *                  This file is part of 'JRx_dot_1project'                   *
  ******************************************************************************/
 
 
-#ifndef JRX_2PROJECT__JRX_2__H
-#define JRX_2PROJECT__JRX_2__H
+#ifndef JRX_DOT_1PROJECT__JRX_DOT_1__H
+#define JRX_DOT_1PROJECT__JRX_DOT_1__H
 
-void JRx_2(double *q, double *out_7231911655328231185);
+void JRx_dot_1(double *dq, double *q, double *out_5887665761683630722);
 
 #endif
 

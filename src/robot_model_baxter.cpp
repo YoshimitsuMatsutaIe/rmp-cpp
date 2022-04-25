@@ -6,7 +6,6 @@
 
 robot_model_baxter::Joint_limitation::Joint_limitation(void)
 {
-    const double PI = 3.141592653589793;
     
     q_max = Eigen::VectorXd::Zero(7);
     q_min = Eigen::VectorXd::Zero(7);
@@ -16,9 +15,9 @@ robot_model_baxter::Joint_limitation::Joint_limitation(void)
     q_max << 51.0, 60.0, 173.0, 150.0, 175.0, 120.0, 175.0;
     q_min << -141.0, -123.0, -173.0, -3.0, -175.0, -90.0, -175.0;
 
-    q_neutral *= PI / 180.;
-    q_max *= PI / 180.;
-    q_min *= PI / 180.;
+    q_neutral *= M_PI / 180.;
+    q_max *= M_PI / 180.;
+    q_min *= M_PI / 180.;
 
 }
 

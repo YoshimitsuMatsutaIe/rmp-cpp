@@ -21,7 +21,6 @@ int main()
 
     const double TiME_INTERVAL = 60.0;
     const double dt = 1e-2;
-    const double PI = 3.141592653589793;
 
     /* root */
     mapping_base::Identity root_mappings;
@@ -31,7 +30,7 @@ int main()
     // q0 = Eigen::VectorXd::Zero(4);
     // q0_dot = Eigen::VectorXd::Zero(4);
 
-    q0 << PI/2.0, 0.0, 0.0, 0.0;
+    q0 << M_PI/2.0, 0.0, 0.0, 0.0;
     q0_dot << 0.0, 0.0, 0.0, 0.0;
 
     root.set_state(q0, q0_dot);

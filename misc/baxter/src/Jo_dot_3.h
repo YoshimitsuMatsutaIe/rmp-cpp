@@ -3,14 +3,14 @@
  *                                                                            *
  *              See http://www.sympy.org/ for more information.               *
  *                                                                            *
- *                  This file is part of 'JRx_dot_W0project'                  *
+ *                   This file is part of 'Jo_dot_3project'                   *
  ******************************************************************************/
 
 
-#ifndef JRX_DOT_W0PROJECT__JRX_DOT_W0__H
-#define JRX_DOT_W0PROJECT__JRX_DOT_W0__H
+#ifndef JO_DOT_3PROJECT__JO_DOT_3__H
+#define JO_DOT_3PROJECT__JO_DOT_3__H
 
-void JRx_dot_W0(double *out_394126202056194292);
+void Jo_dot_3(double L1, double L2, double L3, double *dq, double *q, double *out_3545977738159695851);
 
 #endif
 

@@ -6,15 +6,14 @@
 
 robot_model_sice::Joint_limitation::Joint_limitation(void)
 {
-    const double PI = 3.141592653589793;
     
     q_max = Eigen::VectorXd::Zero(4);
     q_min = Eigen::VectorXd::Zero(4);
     q_neutral = Eigen::VectorXd::Zero(4);
 
-    q_neutral << PI/2.0, 0.0, 0.0, 0.0;
-    q_max << (3.0/4.0 + 1.0/2.0)*PI, 3.0/4.0*PI, 3.0/4.0*PI, 3.0/4.0*PI;
-    q_min << (-3.0/4.0 + 1.0/2.0)*PI, -3.0/4.0*PI, -3.0/4.0*PI, -3.0/4.0*PI;
+    q_neutral << M_PI/2.0, 0.0, 0.0, 0.0;
+    q_max << (3.0/4.0 + 1.0/2.0)*M_PI, 3.0/4.0*M_PI, 3.0/4.0*M_PI, 3.0/4.0*M_PI;
+    q_min << (-3.0/4.0 + 1.0/2.0)*M_PI, -3.0/4.0*M_PI, -3.0/4.0*M_PI, -3.0/4.0*M_PI;
 
 }
 
