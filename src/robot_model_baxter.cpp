@@ -1,6 +1,6 @@
-#include <iostream>
+//#include <iostream>
 #include <cmath>
-#include "/usr/include/eigen3/Eigen/Core"
+//#include "/usr/include/eigen3/Eigen/Core"
 
 #include "../include/robot_model_baxter.hpp"
 #include "../baxter/include/baxter.hpp"
@@ -40,23 +40,17 @@ robot_model_baxter::Base::Base(void)
 
 void robot_model_baxter::X0::phi(const VectorXd &q, VectorXd &out)
 {
-    out(0) = -L;
-    out(1) = -h;
-    out(2) = H + L0;
+    baxter::phi_0(H, L, L0, h, out);
 }
 
 void robot_model_baxter::X1::phi(const VectorXd &q, VectorXd &out)
 {
-    out(0) = -L + L1*((1.0/2.0)*M_SQRT2*std::sin(q[0]) - 1.0/2.0*M_SQRT2*std::cos(q[0]));
-    out(1) = L1*(-1.0/2.0*M_SQRT2*std::sin(q[0]) - 1.0/2.0*M_SQRT2*std::cos(q[0])) - h;
-    out(2) = H + L0;
+    baxter::phi_1(H, L, L0, L1, h, q, out);
 }
 
 void robot_model_baxter::X2::phi(const VectorXd &q, VectorXd &out)
 {
-    out(0) = -L + L1*((1.0/2.0)*M_SQRT2*std::sin(q[0]) - 1.0/2.0*M_SQRT2*std::cos(q[0])) + L2*((1.0/2.0)*M_SQRT2*std::sin(q[0]) - 1.0/2.0*M_SQRT2*std::cos(q[0]))*std::cos(q[1]);
-    out(1) = L1*(-1.0/2.0*M_SQRT2*std::sin(q[0]) - 1.0/2.0*M_SQRT2*std::cos(q[0])) + L2*(-1.0/2.0*M_SQRT2*std::sin(q[0]) - 1.0/2.0*M_SQRT2*std::cos(q[0]))*std::cos(q[1]) - h;
-    out(2) = H + L0 - L2*std::sin(q[1]);
+    baxter::phi_2(H, L, L0, L1, L2, h, q, out);
 }
 
 void robot_model_baxter::X3::phi(const VectorXd &q, VectorXd &out)

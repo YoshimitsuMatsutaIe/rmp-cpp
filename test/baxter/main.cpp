@@ -11,9 +11,9 @@ int main()
 
     using namespace baxter;
 
-    double hoge[3];
+    Eigen::VectorXd hoge(3);
     Rx_W0(hoge);
-    std::cout << hoge[0] << std::endl;
+    std::cout << hoge << std::endl;
 
 
     std::cout << "done all!" << std::endl;
