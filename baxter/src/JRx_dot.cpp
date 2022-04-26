@@ -5,8 +5,9 @@
  *                                                                            *
  *                  This file is part of 'JRx_dot_W0project'                  *
  ******************************************************************************/
-#include "include/baxter/JRx_dot.hpp"
-#include <math.h>
+#include "../include/baxter.hpp"
+
+using namespace baxter;
 
 void JRx_dot_W0(double *out_5737084283969503882) {
 

@@ -5,8 +5,9 @@
  *                                                                            *
  *                    This file is part of 'JRx_W0project'                    *
  ******************************************************************************/
-#include "include/baxter/JRx.hpp"
-#include <math.h>
+#include "../include/baxter.hpp"
+
+using namespace baxter;
 
 void JRx_W0(double *out) {
 

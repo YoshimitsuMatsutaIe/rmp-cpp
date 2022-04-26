@@ -5,8 +5,9 @@
  *                                                                            *
  *                    This file is part of 'JRy_W0project'                    *
  ******************************************************************************/
-#include "include/baxter/JRy.hpp"
-#include <math.h>
+#include "../include/baxter.hpp"
+
+using namespace baxter;
 
 void JRy_W0(double *out_394126202056194292) {
 
