@@ -11,7 +11,8 @@
 
 namespace rmp_node{
 
-
+    using Eigen::VectorXd;
+    using Eigen::MatrixXd;
     class Node
     {
     public:
@@ -26,12 +27,12 @@ namespace rmp_node{
         class Node* parent;
         std::vector<class Node*> children;
 
-        Eigen::VectorXd x;
-        Eigen::VectorXd x_dot;
-        Eigen::MatrixXd J;
-        Eigen::MatrixXd J_dot;
-        Eigen::VectorXd f;  //所望の力
-        Eigen::MatrixXd M;  //慣性行列
+        VectorXd x;
+        VectorXd x_dot;
+        MatrixXd J;
+        MatrixXd J_dot;
+        VectorXd f;  //所望の力
+        MatrixXd M;  //慣性行列
 
         class mapping_base::Identity* mappings;
         bool have_rmp_func=false;
@@ -61,17 +62,17 @@ namespace rmp_node{
     class Root : public Node
     {
     public:
-        Eigen::VectorXd q_ddot;  //指令値
+        VectorXd q_ddot;  //指令値
         Root(
             int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings
         );
         void set_state(
-            const Eigen::VectorXd &q, const Eigen::VectorXd &q_dot
+            const VectorXd &q, const VectorXd &q_dot
         );
         void pushforward(void) override;
         void pullback(void) override;
         void resolve(void);
-        void solve(const Eigen::VectorXd& q, const Eigen::VectorXd& q_dot, Eigen::VectorXd& out_q_ddot);
+        void solve(const VectorXd& q, const VectorXd& q_dot, VectorXd& out_q_ddot);
     };
 
 
@@ -93,6 +94,8 @@ namespace rmp_node{
 
 namespace rmp_tree
 {
+    using Eigen::VectorXd;
+    using Eigen::MatrixXd;
     class RMP_Tree
     {
     private:

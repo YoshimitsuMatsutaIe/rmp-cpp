@@ -26,19 +26,19 @@ rmp_node::Node::Node(
     this->parent_dim = parent_dim;
     this->mappings = mappings;
 
-    x = Eigen::VectorXd::Zero(self_dim);
-    x_dot = Eigen::VectorXd::Zero(self_dim);
-    f = Eigen::VectorXd::Zero(self_dim);
-    M = Eigen::MatrixXd::Zero(self_dim, self_dim);
-    J = Eigen::MatrixXd::Zero(self_dim, parent_dim);
-    J_dot = Eigen::MatrixXd::Zero(self_dim, parent_dim);
+    x = VectorXd::Zero(self_dim);
+    x_dot = VectorXd::Zero(self_dim);
+    f = VectorXd::Zero(self_dim);
+    M = MatrixXd::Zero(self_dim, self_dim);
+    J = MatrixXd::Zero(self_dim, parent_dim);
+    J_dot = MatrixXd::Zero(self_dim, parent_dim);
 }
 
 
 void rmp_node::Node::initialize_rmp_natural_form(void)
 {
-    f = Eigen::VectorXd::Zero(self_dim);
-    M = Eigen::MatrixXd::Zero(self_dim, self_dim);
+    f = VectorXd::Zero(self_dim);
+    M = MatrixXd::Zero(self_dim, self_dim);
 }
 
 
@@ -150,12 +150,12 @@ rmp_node::Root::Root(
 {
     this->node_type = 0;
     this->parent = nullptr;
-    this->q_ddot = Eigen::VectorXd::Zero(this->self_dim);
+    this->q_ddot = VectorXd::Zero(this->self_dim);
 }
 
 
 void rmp_node::Root::set_state(
-    const Eigen::VectorXd& q, const Eigen::VectorXd& q_dot
+    const VectorXd& q, const VectorXd& q_dot
 )
 {
     this->x = q;
@@ -207,13 +207,13 @@ void rmp_node::Root::resolve(void)
     //q_ddot = M.inverse() * f;
     //q_ddot = M.colPivHouseholderQr().solve(f);
     //q_ddot = M.ldlt().solve(f);
-    //q_ddot = M.template bdcSvd<Eigen::ComputeThinU | Eigen::ComputeThinV>().solve(f);
+    //q_ddot = M.template bdcSvd<ComputeThinU | ComputeThinV>().solve(f);
     //q_ddot = (M.transpose() * M).ldlt().solve(M.transpose() * f);
 
     //SVD使って実装
-    // Eigen::JacobiSVD<Eigen::MatrixXd> svd(this->M, Eigen::ComputeFullU | Eigen::ComputeFullV);
-    // Eigen::VectorXd s = svd.singularValues();
-    // Eigen::MatrixXd pinv_M = svd.matrixV() * s.asDiagonal() * svd.matrixU().transpose();
+    // JacobiSVD<MatrixXd> svd(this->M, ComputeFullU | ComputeFullV);
+    // VectorXd s = svd.singularValues();
+    // MatrixXd pinv_M = svd.matrixV() * s.asDiagonal() * svd.matrixU().transpose();
     // this->q_ddot = pinv_M * this->f;
 
     // if (is_debug)
@@ -232,7 +232,7 @@ void rmp_node::Root::resolve(void)
 
 
 void rmp_node::Root::solve(
-    const Eigen::VectorXd& q, const Eigen::VectorXd& q_dot, Eigen::VectorXd& out_q_ddot
+    const VectorXd& q, const VectorXd& q_dot, VectorXd& out_q_ddot
 )
 {
     this->set_state(q, q_dot);
@@ -356,19 +356,19 @@ void rmp_tree::RMP_Tree::run(
     // file_Q << std::endl;
 
 
-    Eigen::VectorXd q(this->root->self_dim);
-    Eigen::VectorXd q_dot(this->root->self_dim);
-    Eigen::VectorXd q_ddot(this->root->self_dim);
+    VectorXd q(this->root->self_dim);
+    VectorXd q_dot(this->root->self_dim);
+    VectorXd q_ddot(this->root->self_dim);
     
     q = this->root->x;
     q_dot = this->root->x_dot;
 
 
-    // Eigen::VectorXd X(this->root->self_dim*2);
-    // Eigen::VectorXd K1(this->root->self_dim*2);
-    // Eigen::VectorXd k2(this->root->self_dim*2);
-    // Eigen::VectorXd k3(this->root->self_dim*2);
-    // Eigen::VectorXd k4(this->root->self_dim*2);
+    // VectorXd X(this->root->self_dim*2);
+    // VectorXd K1(this->root->self_dim*2);
+    // VectorXd k2(this->root->self_dim*2);
+    // VectorXd k3(this->root->self_dim*2);
+    // VectorXd k4(this->root->self_dim*2);
 
     
 

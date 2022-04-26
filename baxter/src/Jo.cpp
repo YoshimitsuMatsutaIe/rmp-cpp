@@ -7,35 +7,8 @@
  ******************************************************************************/
 #include "../include/baxter.hpp"
 
-using namespace baxter;
 
-void Jo_W0(double *out) {
-
-   out[0] = 0;
-   out[1] = 0;
-   out[2] = 0;
-   out[3] = 0;
-   out[4] = 0;
-   out[5] = 0;
-   out[6] = 0;
-   out[7] = 0;
-   out[8] = 0;
-   out[9] = 0;
-   out[10] = 0;
-   out[11] = 0;
-   out[12] = 0;
-   out[13] = 0;
-   out[14] = 0;
-   out[15] = 0;
-   out[16] = 0;
-   out[17] = 0;
-   out[18] = 0;
-   out[19] = 0;
-   out[20] = 0;
-
-}
-
-void Jo_BR(double *out) {
+void baxter::Jo_W0(MatrixXd& out) {
 
    out[0] = 0;
    out[1] = 0;
@@ -61,7 +34,7 @@ void Jo_BR(double *out) {
 
 }
 
-void Jo_0(double *out) {
+void baxter::Jo_BR(MatrixXd& out) {
 
    out[0] = 0;
    out[1] = 0;
@@ -87,7 +60,33 @@ void Jo_0(double *out) {
 
 }
 
-void Jo_1(double L1, double *q, double *out) {
+void baxter::Jo_0(MatrixXd& out) {
+
+   out[0] = 0;
+   out[1] = 0;
+   out[2] = 0;
+   out[3] = 0;
+   out[4] = 0;
+   out[5] = 0;
+   out[6] = 0;
+   out[7] = 0;
+   out[8] = 0;
+   out[9] = 0;
+   out[10] = 0;
+   out[11] = 0;
+   out[12] = 0;
+   out[13] = 0;
+   out[14] = 0;
+   out[15] = 0;
+   out[16] = 0;
+   out[17] = 0;
+   out[18] = 0;
+   out[19] = 0;
+   out[20] = 0;
+
+}
+
+void baxter::Jo_1(double L1, const VectorXd& q, MatrixXd& out) {
 
    out[0] = L1*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]));
    out[1] = 0;
@@ -115,7 +114,7 @@ void Jo_1(double L1, double *q, double *out) {
 
 
 
-void Jo_2(double L1, double L2, double *q, double *out) {
+void baxter::Jo_2(double L1, double L2, const VectorXd& q, MatrixXd& out) {
 
    out[0] = L1*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0])) + L2*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1]);
    out[1] = -L2*(0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1]);
@@ -141,7 +140,7 @@ void Jo_2(double L1, double L2, double *q, double *out) {
 
 }
 
-void Jo_3(double L1, double L2, double L3, double *q, double *out) {
+void baxter::Jo_3(double L1, double L2, double L3, const VectorXd& q, MatrixXd& out) {
 
    out[0] = L1*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0])) + L2*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1]) + L3*((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]));
    out[1] = -L2*(0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1]) + L3*(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2]);
@@ -168,7 +167,7 @@ void Jo_3(double L1, double L2, double L3, double *q, double *out) {
 }
 
 
-void Jo_4(double L1, double L2, double L3, double L4, double *q, double *out) {
+void baxter::Jo_4(double L1, double L2, double L3, double L4, const VectorXd& q, MatrixXd& out) {
 
    out[0] = L1*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0])) + L2*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1]) + L3*((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2])) - L4*((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[3]) + (-(-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) - (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*sin(q[3]));
    out[1] = -L2*(0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1]) + L3*(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2]) - L4*(-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[3]) - (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1])*cos(q[2]));
@@ -195,7 +194,7 @@ void Jo_4(double L1, double L2, double L3, double L4, double *q, double *out) {
 }
 
 
-void Jo_5(double L1, double L2, double L3, double L4, double L5, double *q, double *out) {
+void baxter::Jo_5(double L1, double L2, double L3, double L4, double L5, const VectorXd& q, MatrixXd& out) {
 
    out[0] = L1*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0])) + L2*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1]) + L3*((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2])) - L4*((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[3]) + (-(-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) - (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*sin(q[3])) + L5*(((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[2]) + (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[2]))*sin(q[4]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*cos(q[3]))*cos(q[4]));
    out[1] = -L2*(0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1]) + L3*(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2]) - L4*(-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[3]) - (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1])*cos(q[2])) + L5*((0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[2])*sin(q[4])*cos(q[1]) + (-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[3]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2])*cos(q[3]))*cos(q[4]));
@@ -222,7 +221,7 @@ void Jo_5(double L1, double L2, double L3, double L4, double L5, double *q, doub
 }
 
 
-void Jo_6(double L1, double L2, double L3, double L4, double L5, double *q, double *out) {
+void baxter::Jo_6(double L1, double L2, double L3, double L4, double L5, const VectorXd& q, MatrixXd& out) {
 
    out[0] = L1*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0])) + L2*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1]) + L3*((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2])) - L4*((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[3]) + (-(-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) - (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*sin(q[3])) + L5*(((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[2]) + (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[2]))*sin(q[4]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*cos(q[3]))*cos(q[4]));
    out[1] = -L2*(0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1]) + L3*(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2]) - L4*(-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[3]) - (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1])*cos(q[2])) + L5*((0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[2])*sin(q[4])*cos(q[1]) + (-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[3]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2])*cos(q[3]))*cos(q[4]));
@@ -249,7 +248,7 @@ void Jo_6(double L1, double L2, double L3, double L4, double L5, double *q, doub
 }
 
 
-void Jo_ee(double L1, double L2, double L3, double L4, double L5, double L6, double *q, double *out) {
+void baxter::Jo_ee(double L1, double L2, double L3, double L4, double L5, double L6, const VectorXd& q, MatrixXd& out) {
 
    out[0] = L1*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0])) + L2*(0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1]) + L3*((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2])) - L4*((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[3]) + (-(-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) - (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*sin(q[3])) + L5*(((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[2]) + (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[2]))*sin(q[4]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*cos(q[3]))*cos(q[4])) + L6*((((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[2]) + (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[2]))*sin(q[4]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*cos(q[3]))*cos(q[4]))*sin(q[5]) + ((0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[3]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*sin(q[3]))*cos(q[5]));
    out[1] = -L2*(0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1]) + L3*(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2]) - L4*(-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[3]) - (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1])*cos(q[2])) + L5*((0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[2])*sin(q[4])*cos(q[1]) + (-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[3]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2])*cos(q[3]))*cos(q[4])) + L6*(((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1])*cos(q[2]) - (0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[3]))*cos(q[5]) + ((0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[2])*sin(q[4])*cos(q[1]) + (-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[3]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2])*cos(q[3]))*cos(q[4]))*sin(q[5]));

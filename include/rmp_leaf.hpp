@@ -13,6 +13,12 @@
 */
 namespace rmp2
 {
+    using Eigen::VectorXd;
+    using Eigen::MatrixXd;
+    using std::pow;
+    using std::exp;
+
+
     class Goal_Attractor : public rmp_node::Leaf_Base
     {
     private:
@@ -26,12 +32,12 @@ namespace rmp2
         double alpha;
         double epsilon;
 
-        Eigen::VectorXd& x0;  //goal point's position
-        Eigen::VectorXd& x0_dot;  //goal point's velo
+        VectorXd& x0;  //goal point's position
+        VectorXd& x0_dot;  //goal point's velo
 
-        void calc_grad_potential2(const Eigen::VectorXd& z, Eigen::VectorXd& out);
-        void calc_inertia_matrix(const Eigen::VectorXd& z, const Eigen::VectorXd& z_dot, Eigen::MatrixXd& out);
-        void calc_force(const Eigen::VectorXd& z, const Eigen::VectorXd& z_dot, Eigen::VectorXd& out);
+        void calc_grad_potential2(const VectorXd& z, VectorXd& out);
+        void calc_inertia_matrix(const VectorXd& z, const VectorXd& z_dot, MatrixXd& out);
+        void calc_force(const VectorXd& z, const VectorXd& z_dot, VectorXd& out);
 
 
     public:
@@ -46,7 +52,7 @@ namespace rmp2
             double wl,
             double alpha,
             double epsilon,
-            Eigen::VectorXd& z0, Eigen::VectorXd& z0_dot
+            VectorXd& z0, VectorXd& z0_dot
         );
 
         void calc_natural_form(void) override;
@@ -96,9 +102,9 @@ namespace rmp2
         double gamma_d;
         double lambda;
         double sigma;
-        Eigen::VectorXd q_max;
-        Eigen::VectorXd q_min;
-        Eigen::VectorXd q_neutral;
+        VectorXd q_max;
+        VectorXd q_min;
+        VectorXd q_neutral;
 
         double alpha_upper(double q_dot);
         double alpha_lower(double q_dot);
@@ -111,9 +117,9 @@ namespace rmp2
         double a(double q, double q_dot, double qu, double ql);
         double a_dot(double q, double q_dot, double qu, double ql);
 
-        void calc_inertia_matrix(Eigen::MatrixXd& out);
-        void xi(Eigen::VectorXd& out);
-        void calc_force(Eigen::VectorXd& out);
+        void calc_inertia_matrix(MatrixXd& out);
+        void xi(VectorXd& out);
+        void calc_force(VectorXd& out);
     
 
     public:
@@ -122,9 +128,9 @@ namespace rmp2
         double gamma_d,
         double lambda,
         double sigma,
-        Eigen::VectorXd& q_max,
-        Eigen::VectorXd& q_min,
-        Eigen::VectorXd& q_neutral
+        VectorXd& q_max,
+        VectorXd& q_min,
+        VectorXd& q_neutral
         );
 
         void calc_natural_form(void) override;

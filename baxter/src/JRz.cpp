@@ -8,7 +8,7 @@
 #include "../include/baxter.hpp"
 
 
-void baxter::JRz_W0(double *out) {
+void baxter::JRz_W0(MatrixXd& out) {
 
    out[0] = 0;
    out[1] = 0;
@@ -34,7 +34,7 @@ void baxter::JRz_W0(double *out) {
 
 }
 
-void baxter::JRz_BR(double *out) {
+void baxter::JRz_BR(MatrixXd& out) {
 
    out[0] = 0;
    out[1] = 0;
@@ -59,7 +59,7 @@ void baxter::JRz_BR(double *out) {
    out[20] = 0;
 
 }
-void baxter::JRz_0(double *out) {
+void baxter::JRz_0(MatrixXd& out) {
 
    out[0] = 0;
    out[1] = 0;
@@ -84,7 +84,7 @@ void baxter::JRz_0(double *out) {
    out[20] = 0;
 
 }
-void baxter::JRz_1(double *q, double *out) {
+void baxter::JRz_1(const VectorXd& q, MatrixXd& out) {
 
    out[0] = -0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]);
    out[1] = 0;
@@ -110,7 +110,7 @@ void baxter::JRz_1(double *q, double *out) {
 
 }
 
-void baxter::JRz_2(double *q, double *out) {
+void baxter::JRz_2(const VectorXd& q, MatrixXd& out) {
 
    out[0] = (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1]);
    out[1] = -(0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1]);
@@ -136,7 +136,7 @@ void baxter::JRz_2(double *q, double *out) {
 
 }
 
-void baxter::JRz_3(double *q, double *out) {
+void baxter::JRz_3(const VectorXd& q, MatrixXd& out) {
 
    out[0] = (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[2]) + (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[2]);
    out[1] = (0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[2])*cos(q[1]);
@@ -162,7 +162,7 @@ void baxter::JRz_3(double *q, double *out) {
 
 }
 
-void baxter::JRz_4(double *q, double *out) {
+void baxter::JRz_4(const VectorXd& q, MatrixXd& out) {
 
    out[0] = (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[3]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*sin(q[3]);
    out[1] = (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1])*cos(q[2]) - (0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[3]);
@@ -188,7 +188,7 @@ void baxter::JRz_4(double *q, double *out) {
 
 }
 
-void baxter::JRz_5(double *q, double *out) {
+void baxter::JRz_5(const VectorXd& q, MatrixXd& out) {
 
    out[0] = ((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[2]) + (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[2]))*cos(q[4]) + (-(-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1]) - ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*cos(q[3]))*sin(q[4]);
    out[1] = (0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[2])*cos(q[1])*cos(q[4]) + ((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[3]) - (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2])*cos(q[3]))*sin(q[4]);
@@ -214,7 +214,7 @@ void baxter::JRz_5(double *q, double *out) {
 
 }
 
-void baxter::JRz_6(double *q, double *out) {
+void baxter::JRz_6(const VectorXd& q, MatrixXd& out) {
 
    out[0] = (((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[2]) + (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[2]))*sin(q[4]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*cos(q[3]))*cos(q[4]))*sin(q[5]) + ((0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[3]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*sin(q[3]))*cos(q[5]);
    out[1] = ((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1])*cos(q[2]) - (0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[3]))*cos(q[5]) + ((0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[2])*sin(q[4])*cos(q[1]) + (-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[3]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2])*cos(q[3]))*cos(q[4]))*sin(q[5]);
@@ -240,7 +240,7 @@ void baxter::JRz_6(double *q, double *out) {
 
 }
 
-void baxter::JRz_ee(double *q, double *out) {
+void baxter::JRz_ee(const VectorXd& q, MatrixXd& out) {
 
    out[0] = (((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[2]) + (0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[2]))*sin(q[4]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*cos(q[3]))*cos(q[4]))*sin(q[5]) + ((0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[3]) + ((-0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[2]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[2]))*sin(q[3]))*cos(q[5]);
    out[1] = ((-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[3])*cos(q[1])*cos(q[2]) - (0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*cos(q[3]))*cos(q[5]) + ((0.5*M_SQRT2*sin(q[0]) - 0.5*M_SQRT2*cos(q[0]))*sin(q[2])*sin(q[4])*cos(q[1]) + (-(-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*sin(q[1])*sin(q[3]) + (-0.5*M_SQRT2*sin(q[0]) + 0.5*M_SQRT2*cos(q[0]))*cos(q[1])*cos(q[2])*cos(q[3]))*cos(q[4]))*sin(q[5]);

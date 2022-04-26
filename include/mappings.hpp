@@ -7,6 +7,9 @@
 
 namespace mapping_base
 {
+    using Eigen::VectorXd;
+    using Eigen::MatrixXd;
+
     /**
      * @brief 恒等写像
      * 
@@ -16,9 +19,9 @@ namespace mapping_base
     public:
         std::string name;
         Identity(void);
-        virtual void phi(const Eigen::VectorXd &x, Eigen::VectorXd &out);
-        virtual void jacobian(const Eigen::VectorXd &x, Eigen::MatrixXd &out);
-        virtual void jacobian_dot(const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::MatrixXd &out);
+        virtual void phi(const VectorXd &x, VectorXd &out);
+        virtual void jacobian(const VectorXd &x, MatrixXd &out);
+        virtual void jacobian_dot(const VectorXd &x, const VectorXd &x_dot, MatrixXd &out);
     };
 
 
@@ -30,13 +33,13 @@ namespace mapping_base
     class Distance : public Identity
     {
     private:
-        Eigen::VectorXd& o;
-        Eigen::VectorXd& o_dot;
+        VectorXd& o;
+        VectorXd& o_dot;
     public:
-        Distance(Eigen::VectorXd& o, Eigen::VectorXd& o_dot);
-        void phi(const Eigen::VectorXd &x, Eigen::VectorXd &out) override;
-        void jacobian(const Eigen::VectorXd &x, Eigen::MatrixXd &out) override;
-        void jacobian_dot(const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::MatrixXd &out) override;
+        Distance(VectorXd& o, VectorXd& o_dot);
+        void phi(const VectorXd &x, VectorXd &out) override;
+        void jacobian(const VectorXd &x, MatrixXd &out) override;
+        void jacobian_dot(const VectorXd &x, const VectorXd &x_dot, MatrixXd &out) override;
     };
 };
 
