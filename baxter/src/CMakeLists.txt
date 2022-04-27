@@ -5,7 +5,7 @@ add_library(
     ${BAXTER_SOURCE}
 
 )
-# greetingライブラリのインクルードディレクトリを教えてあげる
+# greetingライブラリのインクルードディレクトリを教える
 # PROJECT_SOURCE_DIRはこのプロジェクトのルートディレクトリの絶対パス
 target_include_directories(
     baxter

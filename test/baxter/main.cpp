@@ -11,10 +11,11 @@ int main()
 
     using namespace baxter;
 
-    Eigen::VectorXd hoge(3);
-    Rx_W0(hoge);
-    std::cout << hoge << std::endl;
+    Baxter hoge;
 
+    std::cout << hoge.o_ee << std::endl;
+
+    hoge.print_all();
 
     std::cout << "done all!" << std::endl;
 }

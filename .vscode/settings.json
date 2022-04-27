@@ -64,7 +64,12 @@
         "fstream": "cpp",
         "thread": "cpp",
         "math.h": "c",
-        "jo_ee.h": "c"
+        "jo_ee.h": "c",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "mutex": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp"
     },
     "cmake.configureOnOpen": true,
     "python.autoComplete.extraPaths": [

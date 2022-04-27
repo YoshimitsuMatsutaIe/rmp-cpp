@@ -20,40 +20,49 @@ baxter::Baxter::Baxter(void)
     this->L5 = 10e-3;
     this->L6 = 368.3e-3;
 
-    this->calc_all(VectorXd::Zero(7), VectorXd::Zero(7));
+    this->q_neutral << 0.0, -31.0, 0.0, 43.0, 0.0, 72.0, 0.0;
+    this->q_max << 51.0, 60.0, 173.0, 150.0, 175.0, 120.0, 175.0;
+    this->q_min << -141.0, -123.0, -173.0, -3.0, -175.0, -90.0, -175.0;
 
-    this->phi_W0(VectorXd::Zero(7), this->static_os[0]);
-    this->phi_BR(VectorXd::Zero(7), this->static_os[1]);
-    this->Rx_W0(VectorXd::Zero(7), this->static_rxs[0]);
-    this->Rx_BR(VectorXd::Zero(7), this->static_rxs[1]);
-    this->Ry_W0(VectorXd::Zero(7), this->static_rys[0]);
-    this->Ry_BR(VectorXd::Zero(7), this->static_rys[1]);
-    this->Rz_W0(VectorXd::Zero(7), this->static_rzs[0]);
-    this->Rz_BR(VectorXd::Zero(7), this->static_rzs[1]);
+    this->q_neutral *= M_PI / 180.;
+    this->q_max *= M_PI / 180.;
+    this->q_min *= M_PI / 180.;
 
-    this->Jo_W0(VectorXd::Zero(7), this->static_jos[0]);
-    this->Jo_BR(VectorXd::Zero(7), this->static_jos[1]);
-    this->JRx_W0(VectorXd::Zero(7), this->static_jrxs[0]);
-    this->JRx_BR(VectorXd::Zero(7), this->static_jrxs[1]);
-    this->JRy_W0(VectorXd::Zero(7), this->static_jrys[0]);
-    this->JRy_BR(VectorXd::Zero(7), this->static_jrys[1]);
-    this->JRz_W0(VectorXd::Zero(7), this->static_jrzs[0]);
-    this->JRz_BR(VectorXd::Zero(7), this->static_jrzs[1]);
 
-    this->Jo_dot_W0(VectorXd::Zero(7), VectorXd::Zero(7), this->static_jo_dots[0]);
-    this->Jo_dot_BR(VectorXd::Zero(7), VectorXd::Zero(7), this->static_jo_dots[1]);
-    this->JRx_dot_W0(VectorXd::Zero(7), VectorXd::Zero(7), this->static_jrx_dots[0]);
-    this->JRx_dot_BR(VectorXd::Zero(7), VectorXd::Zero(7), this->static_jrx_dots[1]);
-    this->JRy_dot_W0(VectorXd::Zero(7), VectorXd::Zero(7), this->static_jry_dots[0]);
-    this->JRy_dot_BR(VectorXd::Zero(7), VectorXd::Zero(7), this->static_jry_dots[1]);
-    this->JRz_dot_W0(VectorXd::Zero(7), VectorXd::Zero(7), this->static_jrz_dots[0]);
-    this->JRz_dot_BR(VectorXd::Zero(7), VectorXd::Zero(7), this->static_jrz_dots[1]);
+    this->calc_all(this->q_neutral, Vector7d::Zero());
+
+    this->phi_W0(this->q_neutral, this->static_os[0]);
+    this->phi_BR(this->q_neutral, this->static_os[1]);
+    this->Rx_W0(this->q_neutral, this->static_rxs[0]);
+    this->Rx_BR(this->q_neutral, this->static_rxs[1]);
+    this->Ry_W0(this->q_neutral, this->static_rys[0]);
+    this->Ry_BR(this->q_neutral, this->static_rys[1]);
+    this->Rz_W0(this->q_neutral, this->static_rzs[0]);
+    this->Rz_BR(this->q_neutral, this->static_rzs[1]);
+
+    this->Jo_W0(this->q_neutral, this->static_jos[0]);
+    this->Jo_BR(this->q_neutral, this->static_jos[1]);
+    this->JRx_W0(this->q_neutral, this->static_jrxs[0]);
+    this->JRx_BR(this->q_neutral, this->static_jrxs[1]);
+    this->JRy_W0(this->q_neutral, this->static_jrys[0]);
+    this->JRy_BR(this->q_neutral, this->static_jrys[1]);
+    this->JRz_W0(this->q_neutral, this->static_jrzs[0]);
+    this->JRz_BR(this->q_neutral, this->static_jrzs[1]);
+
+    this->Jo_dot_W0(this->q_neutral, Vector7d::Zero(), this->static_jo_dots[0]);
+    this->Jo_dot_BR(this->q_neutral, Vector7d::Zero(), this->static_jo_dots[1]);
+    this->JRx_dot_W0(this->q_neutral, Vector7d::Zero(), this->static_jrx_dots[0]);
+    this->JRx_dot_BR(this->q_neutral, Vector7d::Zero(), this->static_jrx_dots[1]);
+    this->JRy_dot_W0(this->q_neutral, Vector7d::Zero(), this->static_jry_dots[0]);
+    this->JRy_dot_BR(this->q_neutral, Vector7d::Zero(), this->static_jry_dots[1]);
+    this->JRz_dot_W0(this->q_neutral, Vector7d::Zero(), this->static_jrz_dots[0]);
+    this->JRz_dot_BR(this->q_neutral, Vector7d::Zero(), this->static_jrz_dots[1]);
 }
 
 
-void baxter::Baxter::calc_all(const VectorXd& q, const VectorXd& q_dot)
+void baxter::Baxter::calc_all(const Vector7d& q, const Vector7d& q_dot)
 {
-
+    std::cout << "hoge4" << std::endl;
     this->phi_0(q, this->os[0]);
     this->phi_1(q, this->os[1]);
     this->phi_2(q, this->os[2]);
@@ -62,7 +71,7 @@ void baxter::Baxter::calc_all(const VectorXd& q, const VectorXd& q_dot)
     this->phi_5(q, this->os[5]);
     this->phi_6(q, this->os[6]);
     this->phi_ee(q, this->o_ee);
-
+    std::cout << "hoge5" << std::endl;
     this->Rx_0(q, this->rxs[0]);
     this->Rx_1(q, this->rxs[1]);
     this->Rx_2(q, this->rxs[2]);
@@ -163,4 +172,156 @@ void baxter::Baxter::calc_all(const VectorXd& q, const VectorXd& q_dot)
     this->JRz_dot_6(q, q_dot, this->jrz_dots[6]);
     this->JRz_dot_ee(q, q_dot, this->jrz_dot_ee);
 
+}
+
+
+
+const void baxter::Baxter::print_all(void)
+{
+    std::cout << "\nnow states ..." << std::endl;
+    
+    for (int i=0; i<2; ++i){
+        std::cout << "static_o_" << i << " = " << std::endl;
+        std::cout << static_os[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "o_" << i << " = " << std::endl;
+        std::cout << os[i] << std::endl;
+    }
+    std::cout << "o_ee" << " = " << std::endl;
+    std::cout << o_ee << "\n" << std::endl;
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_Rx_" << i << " = " << std::endl;
+        std::cout << static_rxs[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "rx_" << i << " = " << std::endl;
+        std::cout << rxs[i] << std::endl;
+    }
+    std::cout << "rx_ee" << " = " << std::endl;
+    std::cout << rx_ee << "\n" << std::endl;
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_Ry_" << i << " = " << std::endl;
+        std::cout << static_rys[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "ry_" << i << " = " << std::endl;
+        std::cout << rys[i] << std::endl;
+    }
+    std::cout << "ry_ee" << " = " << std::endl;
+    std::cout << ry_ee << "\n" << std::endl;
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_Rz_" << i << " = " << std::endl;
+        std::cout << static_rzs[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "rz_" << i << " = " << std::endl;
+        std::cout << rzs[i] << std::endl;
+    }
+    std::cout << "rz_ee" << " = " << std::endl;
+    std::cout << rz_ee << "\n" << std::endl;
+
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_jo_" << i << " = " << std::endl;
+        std::cout << static_jos[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "jo_" << i << " = " << std::endl;
+        std::cout << jos[i] << std::endl;
+    }
+    std::cout << "jo_ee" << " = " << std::endl;
+    std::cout << jo_ee << "\n" << std::endl;
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_jRx_" << i << " = " << std::endl;
+        std::cout << static_jrxs[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "jrx_" << i << " = " << std::endl;
+        std::cout << jrxs[i] << std::endl;
+    }
+    std::cout << "jrx_ee" << " = " << std::endl;
+    std::cout << jrx_ee << "\n" << std::endl;
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_jRy_" << i << " = " << std::endl;
+        std::cout << static_jrys[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "jry_" << i << " = " << std::endl;
+        std::cout << jrys[i] << std::endl;
+    }
+    std::cout << "jry_ee" << " = " << std::endl;
+    std::cout << jry_ee << "\n" << std::endl;
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_jRz_" << i << " = " << std::endl;
+        std::cout << static_jrzs[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "jrz_" << i << " = " << std::endl;
+        std::cout << jrzs[i] << std::endl;
+    }
+    std::cout << "jrz_ee" << " = " << std::endl;
+    std::cout << jrz_ee << "\n" << std::endl;
+
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_jo_dot_" << i << " = " << std::endl;
+        std::cout << static_jo_dots[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "jo_dot_" << i << " = " << std::endl;
+        std::cout << jo_dots[i] << std::endl;
+    }
+    std::cout << "jo_dot_ee" << " = " << std::endl;
+    std::cout << jo_dot_ee << "\n" << std::endl;
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_jRx_dot_" << i << " = " << std::endl;
+        std::cout << static_jrx_dots[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "jrx_dot_" << i << " = " << std::endl;
+        std::cout << jrx_dots[i] << std::endl;
+    }
+    std::cout << "jrx_dot_ee" << " = " << std::endl;
+    std::cout << jrx_dot_ee << "\n" << std::endl;
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_jRy_dot_" << i << " = " << std::endl;
+        std::cout << static_jry_dots[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "jry_dot_" << i << " = " << std::endl;
+        std::cout << jry_dots[i] << std::endl;
+    }
+    std::cout << "jry_dot_ee" << " = " << std::endl;
+    std::cout << jry_dot_ee << "\n" << std::endl;
+
+    for (int i=0; i<2; ++i){
+        std::cout << "static_jRz_dot_" << i << " = " << std::endl;
+        std::cout << static_jrz_dots[i] << std::endl;
+    }
+    for (int i=0; i<7; ++i){
+        std::cout << "jrz_dot_" << i << " = " << std::endl;
+        std::cout << jrz_dots[i] << std::endl;
+    }
+    std::cout << "jrz_dot_ee" << " = " << std::endl;
+    std::cout << jrz_dot_ee << "\n" << std::endl;
+
+
+
+    // std::for_each(
+    //     this->static_os.begin(),
+    //     this->static_os.end(),
+    //     [](Vector3d x)
+    //     {
+    //         std::cout << x << std::endl;
+    //     }
+    // );
 }
