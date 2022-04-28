@@ -10,59 +10,18 @@
 
 void baxter::Baxter::Jo_W0(const Vector7d& q, Matrix_3_7_d& out) {
 
-   out = Matrix_3_7_d::Zero();
+   out = Matrix_3_7_d::Zero(3, 7);
 
 }
 
 void baxter::Baxter::Jo_BR(const Vector7d& q, Matrix_3_7_d& out) {
 
-   out(0,0)= 0;
-   out(0,1)= 0;
-   out(0,2)= 0;
-   out(0,3)= 0;
-   out(0,4)= 0;
-   out(0,5)= 0;
-   out(0,6)= 0;
-   out(1,0)= 0;
-   out(1,1)= 0;
-   out(1,2)= 0;
-   out(1,3) = 0;
-   out(1,4) = 0;
-   out(1,5) = 0;
-   out(1,6) = 0;
-   out(2,0) = 0;
-   out(2,1) = 0;
-   out(2,2) = 0;
-   out(2,3) = 0;
-   out(2,4) = 0;
-   out(2,5) = 0;
-   out(2,6) = 0;
+   out = Matrix_3_7_d::Zero(3, 7);
 
 }
 
 void baxter::Baxter::Jo_0(const Vector7d& q, Matrix_3_7_d& out) {
-
-   out(0,0) = 0;
-   out(0,1) = 1;
-   out(0,2) = 2;
-   out(0,3) = 3;
-   out(0,4) = 4;
-   out(0,5) = 5;
-   out(0,6) = 6;
-   out(1,0) = 7;
-   out(1,1) = 8;
-   out(1,2) = 9;
-   out(1,3) = 10;
-   out(1,4) = 11;
-   out(1,5) = 12;
-   out(1,6) = 13;
-   out(2,0) = 14;
-   out(2,1) = 15;
-   out(2,2) = 16;
-   out(2,3) = 17;
-   out(2,4) = 18;
-   out(2,5) = 19;
-   out(2,6) = 20;
+   out = Matrix_3_7_d::Zero(3, 7);
 }
 
 void baxter::Baxter::Jo_1(const Vector7d& q, Matrix_3_7_d& out) {

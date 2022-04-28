@@ -20,6 +20,9 @@ baxter::Baxter::Baxter(void)
     this->L5 = 10e-3;
     this->L6 = 368.3e-3;
 
+    this->q_neutral = VectorXd::Zero(7);
+    this->q_max = VectorXd::Zero(7);
+    this->q_min = VectorXd::Zero(7);
     this->q_neutral << 0.0, -31.0, 0.0, 43.0, 0.0, 72.0, 0.0;
     this->q_max << 51.0, 60.0, 173.0, 150.0, 175.0, 120.0, 175.0;
     this->q_min << -141.0, -123.0, -173.0, -3.0, -175.0, -90.0, -175.0;
@@ -28,8 +31,49 @@ baxter::Baxter::Baxter(void)
     this->q_max *= M_PI / 180.;
     this->q_min *= M_PI / 180.;
 
+    std::cout << "hoge!" << std::endl;
 
-    this->calc_all(this->q_neutral, Vector7d::Zero());
+    for (int i=0; i<2; ++i){
+        this->static_os[i] = VectorXd::Zero(3);
+        this->static_rxs[i] = VectorXd::Zero(3);
+        this->static_rys[i] = VectorXd::Zero(3);
+        this->static_rzs[i] = VectorXd::Zero(3);
+        this->static_jos[i] = MatrixXd::Zero(3,7);
+        this->static_jrxs[i] = MatrixXd::Zero(3,7);
+        this->static_jrys[i] = MatrixXd::Zero(3,7);
+        this->static_jrzs[i] = MatrixXd::Zero(3,7);
+        this->static_jo_dots[i] = MatrixXd::Zero(3,7);
+        this->static_jrx_dots[i] = MatrixXd::Zero(3,7);
+        this->static_jry_dots[i] = MatrixXd::Zero(3,7);
+        this->static_jrz_dots[i] = MatrixXd::Zero(3,7);
+    }
+    for (int i=0; i<7; ++i){
+        this->os[i] = VectorXd::Zero(3);
+        this->rxs[i] = VectorXd::Zero(3);
+        this->rys[i] = VectorXd::Zero(3);
+        this->rzs[i] = VectorXd::Zero(3);
+        this->jos[i] = MatrixXd::Zero(3,7);
+        this->jrxs[i] = MatrixXd::Zero(3,7);
+        this->jrys[i] = MatrixXd::Zero(3,7);
+        this->jrzs[i] = MatrixXd::Zero(3,7);
+        this->jo_dots[i] = MatrixXd::Zero(3,7);
+        this->jrx_dots[i] = MatrixXd::Zero(3,7);
+        this->jry_dots[i] = MatrixXd::Zero(3,7);
+        this->jrz_dots[i] = MatrixXd::Zero(3,7);
+    }
+
+    this->o_ee = VectorXd::Zero(3);
+    this->rx_ee = VectorXd::Zero(3);
+    this->ry_ee = VectorXd::Zero(3);
+    this->rz_ee = VectorXd::Zero(3);
+    this->jo_ee = MatrixXd::Zero(3,7);
+    this->jrx_ee = MatrixXd::Zero(3,7);
+    this->jry_ee = MatrixXd::Zero(3,7);
+    this->jrz_ee = MatrixXd::Zero(3,7);
+    this->jo_dot_ee = MatrixXd::Zero(3,7);
+    this->jrx_dot_ee = MatrixXd::Zero(3,7);
+    this->jry_dot_ee = MatrixXd::Zero(3,7);
+    this->jrz_dot_ee = MatrixXd::Zero(3,7);
 
     this->phi_W0(this->q_neutral, this->static_os[0]);
     this->phi_BR(this->q_neutral, this->static_os[1]);
@@ -49,14 +93,17 @@ baxter::Baxter::Baxter(void)
     this->JRz_W0(this->q_neutral, this->static_jrzs[0]);
     this->JRz_BR(this->q_neutral, this->static_jrzs[1]);
 
-    this->Jo_dot_W0(this->q_neutral, Vector7d::Zero(), this->static_jo_dots[0]);
-    this->Jo_dot_BR(this->q_neutral, Vector7d::Zero(), this->static_jo_dots[1]);
-    this->JRx_dot_W0(this->q_neutral, Vector7d::Zero(), this->static_jrx_dots[0]);
-    this->JRx_dot_BR(this->q_neutral, Vector7d::Zero(), this->static_jrx_dots[1]);
-    this->JRy_dot_W0(this->q_neutral, Vector7d::Zero(), this->static_jry_dots[0]);
-    this->JRy_dot_BR(this->q_neutral, Vector7d::Zero(), this->static_jry_dots[1]);
-    this->JRz_dot_W0(this->q_neutral, Vector7d::Zero(), this->static_jrz_dots[0]);
-    this->JRz_dot_BR(this->q_neutral, Vector7d::Zero(), this->static_jrz_dots[1]);
+    this->Jo_dot_W0(this->q_neutral, Vector7d::Zero(7), this->static_jo_dots[0]);
+    this->Jo_dot_BR(this->q_neutral, Vector7d::Zero(7), this->static_jo_dots[1]);
+    this->JRx_dot_W0(this->q_neutral, Vector7d::Zero(7), this->static_jrx_dots[0]);
+    this->JRx_dot_BR(this->q_neutral, Vector7d::Zero(7), this->static_jrx_dots[1]);
+    this->JRy_dot_W0(this->q_neutral, Vector7d::Zero(7), this->static_jry_dots[0]);
+    this->JRy_dot_BR(this->q_neutral, Vector7d::Zero(7), this->static_jry_dots[1]);
+    this->JRz_dot_W0(this->q_neutral, Vector7d::Zero(7), this->static_jrz_dots[0]);
+    this->JRz_dot_BR(this->q_neutral, Vector7d::Zero(7), this->static_jrz_dots[1]);
+
+    this->calc_all(this->q_neutral, Vector7d::Zero(7));
+
 }
 
 
@@ -67,10 +114,12 @@ void baxter::Baxter::calc_all(const Vector7d& q, const Vector7d& q_dot)
     this->phi_1(q, this->os[1]);
     this->phi_2(q, this->os[2]);
     this->phi_3(q, this->os[3]);
+    std::cout << "hoge4.5" << std::endl;
     this->phi_4(q, this->os[4]);
     this->phi_5(q, this->os[5]);
     this->phi_6(q, this->os[6]);
     this->phi_ee(q, this->o_ee);
+
     std::cout << "hoge5" << std::endl;
     this->Rx_0(q, this->rxs[0]);
     this->Rx_1(q, this->rxs[1]);

@@ -23,16 +23,17 @@
 namespace baxter
 {
 
-    using Eigen::Vector3d;
+
 
 
     //joint vector
-    using Vector7d = Eigen::Matrix<double, 7, 1>;
-    using Matrix_3_7_d = Eigen::Matrix<double, 3, 7>;
+    using Vector7d = Eigen::VectorXd;
+    using Matrix_3_7_d = Eigen::MatrixXd;
 
     using std::cos;
     using std::sin;
-
+    using Eigen::VectorXd;
+    using Eigen::MatrixXd;
 
     /**
      * @brief 
@@ -44,15 +45,15 @@ namespace baxter
 
     public:
         double L, h, H, L0, L1, L2, L3, L4, L5, L6;
-        Vector7d q_max;
-        Vector7d q_min;
-        Vector7d q_neutral; 
+        VectorXd q_max;
+        VectorXd q_min;
+        VectorXd q_neutral;
         Baxter(void);
         const void print_all(void);
-        std::array<Vector3d, 2> static_os;
-        std::array<Vector3d, 2> static_rxs;
-        std::array<Vector3d, 2> static_rys;
-        std::array<Vector3d, 2> static_rzs;
+        std::array<VectorXd, 2> static_os;
+        std::array<VectorXd, 2> static_rxs;
+        std::array<VectorXd, 2> static_rys;
+        std::array<VectorXd, 2> static_rzs;
         std::array<Matrix_3_7_d, 2> static_jos;
         std::array<Matrix_3_7_d, 2> static_jrxs;
         std::array<Matrix_3_7_d, 2> static_jrys;
@@ -62,10 +63,10 @@ namespace baxter
         std::array<Matrix_3_7_d, 2> static_jry_dots;
         std::array<Matrix_3_7_d, 2> static_jrz_dots;
 
-        std::array<Vector3d, 7> os;
-        std::array<Vector3d, 7> rxs;
-        std::array<Vector3d, 7> rys;
-        std::array<Vector3d, 7> rzs;
+        std::array<VectorXd, 7> os;
+        std::array<VectorXd, 7> rxs;
+        std::array<VectorXd, 7> rys;
+        std::array<VectorXd, 7> rzs;
         std::array<Matrix_3_7_d, 7> jos;
         std::array<Matrix_3_7_d, 7> jrxs;
         std::array<Matrix_3_7_d, 7> jrys;
@@ -75,10 +76,10 @@ namespace baxter
         std::array<Matrix_3_7_d, 7> jry_dots;
         std::array<Matrix_3_7_d, 7> jrz_dots;
 
-        Vector3d o_ee;
-        Vector3d rx_ee;
-        Vector3d ry_ee;
-        Vector3d rz_ee;
+        VectorXd o_ee;
+        VectorXd rx_ee;
+        VectorXd ry_ee;
+        VectorXd rz_ee;
         Matrix_3_7_d jo_ee;
         Matrix_3_7_d jrx_ee;
         Matrix_3_7_d jry_ee;
@@ -90,49 +91,49 @@ namespace baxter
 
         void calc_all(const Vector7d& q, const Vector7d& q_dot);
 
-        void Rx_W0(const Vector7d& q, Vector3d& out);
-        void Rx_BR(const Vector7d& q, Vector3d& out);
-        void Rx_0(const Vector7d& q, Vector3d& out);
-        void Rx_1(const Vector7d& q, Vector3d& out);
-        void Rx_2(const Vector7d& q, Vector3d& out);
-        void Rx_3(const Vector7d& q, Vector3d& out);
-        void Rx_4(const Vector7d& q, Vector3d& out);
-        void Rx_5(const Vector7d& q, Vector3d& out);
-        void Rx_6(const Vector7d& q, Vector3d& out);
-        void Rx_ee(const Vector7d& q, Vector3d& out);
+        void Rx_W0(const Vector7d& q, VectorXd& out);
+        void Rx_BR(const Vector7d& q, VectorXd& out);
+        void Rx_0(const Vector7d& q, VectorXd& out);
+        void Rx_1(const Vector7d& q, VectorXd& out);
+        void Rx_2(const Vector7d& q, VectorXd& out);
+        void Rx_3(const Vector7d& q, VectorXd& out);
+        void Rx_4(const Vector7d& q, VectorXd& out);
+        void Rx_5(const Vector7d& q, VectorXd& out);
+        void Rx_6(const Vector7d& q, VectorXd& out);
+        void Rx_ee(const Vector7d& q, VectorXd& out);
 
-        void Ry_W0(const Vector7d& q, Vector3d& out);
-        void Ry_BR(const Vector7d& q, Vector3d& out);
-        void Ry_0(const Vector7d& q, Vector3d& out);
-        void Ry_1(const Vector7d& q, Vector3d& out);
-        void Ry_2(const Vector7d& q, Vector3d& out);
-        void Ry_3(const Vector7d& q, Vector3d& out);
-        void Ry_4(const Vector7d& q, Vector3d& out);
-        void Ry_5(const Vector7d& q, Vector3d& out);
-        void Ry_6(const Vector7d& q, Vector3d& out);
-        void Ry_ee(const Vector7d& q, Vector3d& out);
+        void Ry_W0(const Vector7d& q, VectorXd& out);
+        void Ry_BR(const Vector7d& q, VectorXd& out);
+        void Ry_0(const Vector7d& q, VectorXd& out);
+        void Ry_1(const Vector7d& q, VectorXd& out);
+        void Ry_2(const Vector7d& q, VectorXd& out);
+        void Ry_3(const Vector7d& q, VectorXd& out);
+        void Ry_4(const Vector7d& q, VectorXd& out);
+        void Ry_5(const Vector7d& q, VectorXd& out);
+        void Ry_6(const Vector7d& q, VectorXd& out);
+        void Ry_ee(const Vector7d& q, VectorXd& out);
 
-        void Rz_W0(const Vector7d& q, Vector3d& out);
-        void Rz_BR(const Vector7d& q, Vector3d& out);
-        void Rz_0(const Vector7d& q, Vector3d& out);
-        void Rz_1(const Vector7d& q, Vector3d& out);
-        void Rz_2(const Vector7d& q, Vector3d& out);
-        void Rz_3(const Vector7d& q, Vector3d& out);
-        void Rz_4(const Vector7d& q, Vector3d& out);
-        void Rz_5(const Vector7d& q, Vector3d& out);
-        void Rz_6(const Vector7d& q, Vector3d& out);
-        void Rz_ee(const Vector7d& q, Vector3d& out);
+        void Rz_W0(const Vector7d& q, VectorXd& out);
+        void Rz_BR(const Vector7d& q, VectorXd& out);
+        void Rz_0(const Vector7d& q, VectorXd& out);
+        void Rz_1(const Vector7d& q, VectorXd& out);
+        void Rz_2(const Vector7d& q, VectorXd& out);
+        void Rz_3(const Vector7d& q, VectorXd& out);
+        void Rz_4(const Vector7d& q, VectorXd& out);
+        void Rz_5(const Vector7d& q, VectorXd& out);
+        void Rz_6(const Vector7d& q, VectorXd& out);
+        void Rz_ee(const Vector7d& q, VectorXd& out);
 
-        void phi_W0(const Vector7d& q, Vector3d& out);
-        void phi_BR(const Vector7d& q, Vector3d& out);
-        void phi_0(const Vector7d& q, Vector3d& out);
-        void phi_1(const Vector7d& q, Vector3d& out);
-        void phi_2(const Vector7d& q, Vector3d& out);
-        void phi_3(const Vector7d& q, Vector3d& out);
-        void phi_4(const Vector7d& q, Vector3d& out);
-        void phi_5(const Vector7d& q, Vector3d& out);
-        void phi_6(const Vector7d& q, Vector3d& out);
-        void phi_ee(const Vector7d& q, Vector3d& out);
+        void phi_W0(const Vector7d& q, VectorXd& out);
+        void phi_BR(const Vector7d& q, VectorXd& out);
+        void phi_0(const Vector7d& q, VectorXd& out);
+        void phi_1(const Vector7d& q, VectorXd& out);
+        void phi_2(const Vector7d& q, VectorXd& out);
+        void phi_3(const Vector7d& q, VectorXd& out);
+        void phi_4(const Vector7d& q, VectorXd& out);
+        void phi_5(const Vector7d& q, VectorXd& out);
+        void phi_6(const Vector7d& q, VectorXd& out);
+        void phi_ee(const Vector7d& q, VectorXd& out);
 
         void JRx_W0(const Vector7d& q, Matrix_3_7_d& out);
         void JRx_BR(const Vector7d& q, Matrix_3_7_d& out);

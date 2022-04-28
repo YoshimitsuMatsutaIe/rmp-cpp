@@ -15,6 +15,7 @@ int main()
 
     std::cout << hoge.o_ee << std::endl;
 
+    
     hoge.print_all();
 
     std::cout << "done all!" << std::endl;
