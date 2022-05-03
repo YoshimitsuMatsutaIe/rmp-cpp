@@ -20,10 +20,138 @@ class Baxter(HTM, Jo, JRx, JRy, JRz, Jo_dot, JRx_dot, JRy_dot, JRz_dot):
     
     def __init__(self,):
         self.static_os = [self.o_W0(self.q_neutral), self.o_BR(self.q_neutral)]
+        self.static_rxs = [self.rx_W0(self.q_neutral), self.rx_BR(self.q_neutral)]
+        self.static_rys = [self.ry_W0(self.q_neutral), self.ry_BR(self.q_neutral)]
+        self.static_rzs = [self.rz_W0(self.q_neutral), self.rz_BR(self.q_neutral)]
+        self.static_jos = [self.jo_W0(self.q_neutral), self.jo_BR(self.q_neutral)]
+        self.static_jrxs = [self.jrx_W0(self.q_neutral), self.jrx_BR(self.q_neutral)]
+        self.static_jrys = [self.jry_W0(self.q_neutral), self.jry_BR(self.q_neutral)]
+        self.static_jrzs = [self.jrz_W0(self.q_neutral), self.jrz_BR(self.q_neutral)]
+        self.static_jo_dots = [self.jo_W0_dot(self.q_neutral), self.jo_BR_dot(self.q_neutral)]
+        self.static_jrx_dots = [self.jrx_W0_dot(self.q_neutral), self.jrx_BR_dot(self.q_neutral)]
+        self.static_jry_dots = [self.jry_W0_dot(self.q_neutral), self.jry_BR_dot(self.q_neutral)]
+        self.static_jrz_dots = [self.jrz_W0_dot(self.q_neutral), self.jrz_BR_dot(self.q_neutral)]
         
-    
-    
-    
+        self.os_func = [
+            self.o_0,
+            self.o_1,
+            self.o_2,
+            self.o_3,
+            self.o_4,
+            self.o_5,
+            self.o_6,
+            self.o_ee
+        ]
+        self.rxs_func = [
+            self.rx_0,
+            self.rx_1,
+            self.rx_2,
+            self.rx_3,
+            self.rx_4,
+            self.rx_5,
+            self.rx_6,
+            self.rx_ee
+        ]
+        self.rys_func = [
+            self.ry_0,
+            self.ry_1,
+            self.ry_2,
+            self.ry_3,
+            self.ry_4,
+            self.ry_5,
+            self.ry_6,
+            self.ry_ee
+        ]
+        self.rzs_func = [
+            self.rz_0,
+            self.rz_1,
+            self.rz_2,
+            self.rz_3,
+            self.rz_4,
+            self.rz_5,
+            self.rz_6,
+            self.rz_ee
+        ]
+        self.jos_func = [
+            self.jo_0,
+            self.jo_1,
+            self.jo_2,
+            self.jo_3,
+            self.jo_4,
+            self.jo_5,
+            self.jo_6,
+            self.jo_ee
+        ]
+        self.jrxs_func = [
+            self.jrx_0,
+            self.jrx_1,
+            self.jrx_2,
+            self.jrx_3,
+            self.jrx_4,
+            self.jrx_5,
+            self.jrx_6,
+            self.jrx_ee
+        ]
+        self.jrys_func = [
+            self.jry_0,
+            self.jry_1,
+            self.jry_2,
+            self.jry_3,
+            self.jry_4,
+            self.jry_5,
+            self.jry_6,
+            self.jry_ee
+        ]
+        self.jrzs_func = [
+            self.jrz_0,
+            self.jrz_1,
+            self.jrz_2,
+            self.jrz_3,
+            self.jrz_4,
+            self.jrz_5,
+            self.jrz_6,
+            self.jrz_ee
+        ]
+        self.jo_dots_func = [
+            self.jo_0_dot,
+            self.jo_1_dot,
+            self.jo_2_dot,
+            self.jo_3_dot,
+            self.jo_4_dot,
+            self.jo_5_dot,
+            self.jo_6_dot,
+            self.jo_ee_dot
+        ]
+        self.jrx_dots_func = [
+            self.jrx_0_dot,
+            self.jrx_1_dot,
+            self.jrx_2_dot,
+            self.jrx_3_dot,
+            self.jrx_4_dot,
+            self.jrx_5_dot,
+            self.jrx_6_dot,
+            self.jrx_ee_dot
+        ]
+        self.jry_dots_func = [
+            self.jry_0_dot,
+            self.jry_1_dot,
+            self.jry_2_dot,
+            self.jry_3_dot,
+            self.jry_4_dot,
+            self.jry_5_dot,
+            self.jry_6_dot,
+            self.jry_ee_dot
+        ]
+        self.jrz_dots_func = [
+            self.jrz_0_dot,
+            self.jrz_1_dot,
+            self.jrz_2_dot,
+            self.jrz_3_dot,
+            self.jrz_4_dot,
+            self.jrz_5_dot,
+            self.jrz_6_dot,
+            self.jrz_ee_dot
+        ]
     def update(q, q_dot):
         pass
 
