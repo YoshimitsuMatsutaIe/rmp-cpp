@@ -47,7 +47,7 @@ class GoalAttractor(rmp_tree.LeafBase):
     
     def __force(self,):
         xi = attractor_xi.f(self.x, self.x_dot, self.sigma_alpha, self.sigma_gamma, self.wu, self.wl, self.alpha, self.epsilon)
-        return self.M @ (-self.gain*self.__grad_phi() - self.damp*self.x_dot) - xi
+        return self.M @ (-self.gain*self.__grad_phi() - self.damp*self.x_dot)# - xi
 
 
 

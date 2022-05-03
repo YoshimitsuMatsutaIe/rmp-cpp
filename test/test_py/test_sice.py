@@ -11,7 +11,7 @@ import mappings
 import robot_model_sice
 import visualization
 
-TIME_SPAN = 60
+TIME_SPAN = 60*3
 TIME_INTERVAL = 1e-2
 q0 = np.array([[np.pi/2, 0, 0, 0]]).T
 #q0 = np.array([[-np.pi*2/4, np.pi*2.8/4, 0, 0]]).T

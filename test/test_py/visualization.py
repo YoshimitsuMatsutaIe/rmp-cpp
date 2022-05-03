@@ -122,7 +122,7 @@ def make_animation(
     
     
     fig = plt.figure()
-    ax = fig.add_subplot(projections="3d") if is3D else fig.add_subplot()
+    ax = fig.add_subplot(projection="3d") if is3D else fig.add_subplot()
     time_template = 'time = %.2f [s]'
     
     
@@ -136,7 +136,7 @@ def make_animation(
         ax.set_ylim(limits[2], limits[3])
         if is3D:
             ax.set_zlabel('Z[m]')
-            ax.set_zlim(limits[4], limits[4])
+            ax.set_zlim(limits[4], limits[5])
             
         ax.set_box_aspect((1,1,1)) if is3D else ax.set_aspect('equal')
         
