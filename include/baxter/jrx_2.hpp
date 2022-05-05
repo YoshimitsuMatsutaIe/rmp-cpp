@@ -10,7 +10,14 @@
 #ifndef JRX_2_BY_SYMPY___JRX_2__H
 #define JRX_2_BY_SYMPY___JRX_2__H
 
-void jrx_2(double *q, double *out_1967018557280381286);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void jrx_2(const VectorXd& q, MatrixXd& out);
+}
+
 
 #endif
 

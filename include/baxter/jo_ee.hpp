@@ -10,7 +10,14 @@
 #ifndef JO_EE_BY_SYMPY___JO_EE__H
 #define JO_EE_BY_SYMPY___JO_EE__H
 
-void jo_ee(double L1, double L2, double L3, double L4, double L5, double L6, double *q, double *out_2498539407201680046);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void jo_ee(const VectorXd& q, MatrixXd& out);
+}
+
 
 #endif
 

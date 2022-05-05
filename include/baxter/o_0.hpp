@@ -10,7 +10,14 @@
 #ifndef O_0_BY_SYMPY___O_0__H
 #define O_0_BY_SYMPY___O_0__H
 
-void o_0(double H, double L, double L0, double h, double *out_7786106407614932509);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void o_0(VectorXd& out);
+}
+
 
 #endif
 

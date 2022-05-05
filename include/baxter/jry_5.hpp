@@ -10,7 +10,14 @@
 #ifndef JRY_5_BY_SYMPY___JRY_5__H
 #define JRY_5_BY_SYMPY___JRY_5__H
 
-void jry_5(double *q, double *out_7175244110594358306);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void jry_5(const VectorXd& q, MatrixXd& out);
+}
+
 
 #endif
 

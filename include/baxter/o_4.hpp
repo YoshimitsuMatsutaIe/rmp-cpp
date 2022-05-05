@@ -10,7 +10,14 @@
 #ifndef O_4_BY_SYMPY___O_4__H
 #define O_4_BY_SYMPY___O_4__H
 
-void o_4(double H, double L, double L0, double L1, double L2, double L3, double L4, double h, double *q, double *out_4985272988055813909);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void o_4(const VectorXd& q, VectorXd& out);
+}
+
 
 #endif
 

@@ -10,7 +10,14 @@
 #ifndef RX_BR_BY_SYMPY___RX_BR__H
 #define RX_BR_BY_SYMPY___RX_BR__H
 
-void rx_BR(double *out_5457210672580253052);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void rx_BR(VectorXd& out);
+}
+
 
 #endif
 

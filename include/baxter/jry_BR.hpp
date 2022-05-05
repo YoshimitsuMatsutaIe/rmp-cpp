@@ -10,7 +10,14 @@
 #ifndef JRY_BR_BY_SYMPY___JRY_BR__H
 #define JRY_BR_BY_SYMPY___JRY_BR__H
 
-void jry_BR(double *out_2360554067731938590);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void jry_BR(MatrixXd& out);
+}
+
 
 #endif
 

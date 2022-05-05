@@ -10,7 +10,14 @@
 #ifndef RX_1_BY_SYMPY___RX_1__H
 #define RX_1_BY_SYMPY___RX_1__H
 
-void rx_1(double *q, double *out_3256012462887519049);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void rx_1(const VectorXd& q, VectorXd& out);
+}
+
 
 #endif
 

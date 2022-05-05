@@ -10,7 +10,14 @@
 #ifndef O_BR_BY_SYMPY___O_BR__H
 #define O_BR_BY_SYMPY___O_BR__H
 
-void o_BR(double H, double L, double L0, double h, double *out_7786106407614932509);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void o_BR(VectorXd& out);
+}
+
 
 #endif
 

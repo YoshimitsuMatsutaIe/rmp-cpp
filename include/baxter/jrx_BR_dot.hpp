@@ -10,7 +10,14 @@
 #ifndef JRX_BR_DOT_BY_SYMPY___JRX_BR_DOT__H
 #define JRX_BR_DOT_BY_SYMPY___JRX_BR_DOT__H
 
-void jrx_BR_dot(double *out_2360554067731938590);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void jrx_BR_dot(MatrixXd& out);
+}
+
 
 #endif
 

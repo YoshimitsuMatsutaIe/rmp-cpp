@@ -10,7 +10,14 @@
 #ifndef RZ_EE_BY_SYMPY___RZ_EE__H
 #define RZ_EE_BY_SYMPY___RZ_EE__H
 
-void rz_ee(double *q, double *out_6537192887944239938);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void rz_ee(const VectorXd& q, VectorXd& out);
+}
+
 
 #endif
 

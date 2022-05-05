@@ -10,7 +10,14 @@
 #ifndef O_EE_BY_SYMPY___O_EE__H
 #define O_EE_BY_SYMPY___O_EE__H
 
-void o_ee(double H, double L, double L0, double L1, double L2, double L3, double L4, double L5, double L6, double h, double *q, double *out_2436414783874441922);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void o_ee(const VectorXd& q, VectorXd& out);
+}
+
 
 #endif
 

@@ -1,5 +1,5 @@
 #include "../../include/mappings.hpp"
-#include "../../baxter/include/baxter.hpp"
+#include "../../include/baxter/wrapper.hpp"
 
 #include <eigen3/Eigen/Core>
 #include <iostream>
@@ -11,12 +11,14 @@ int main()
 
     using namespace baxter;
 
-    Baxter hoge;
+    Eigen::VectorXd q(7);
+    q << 0, 0, 0, 0, 0, 0, 0;
+    Eigen::VectorXd x(3);
 
-    std::cout << hoge.o_ee << std::endl;
+    o_W0(q, x);
 
-    
-    hoge.print_all();
+    std::cout << x << std::endl;
+
 
     std::cout << "done all!" << std::endl;
 }

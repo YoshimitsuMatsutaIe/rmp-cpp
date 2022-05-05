@@ -10,7 +10,14 @@
 #ifndef JO_EE_DOT_BY_SYMPY___JO_EE_DOT__H
 #define JO_EE_DOT_BY_SYMPY___JO_EE_DOT__H
 
-void jo_ee_dot(double L1, double L2, double L3, double L4, double L5, double L6, double *dq, double *q, double *out_87243315576822604);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void jo_ee_dot(const VectorXd& dq, const VectorXd& q, MatrixXd& out);
+}
+
 
 #endif
 

@@ -10,7 +10,14 @@
 #ifndef JRZ_EE_DOT_BY_SYMPY___JRZ_EE_DOT__H
 #define JRZ_EE_DOT_BY_SYMPY___JRZ_EE_DOT__H
 
-void jrz_ee_dot(double *dq, double *q, double *out_2223285791486632898);
+#include<eigen3/Eigen/Core>
+namespace baxter
+{
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+void jrz_ee_dot(const VectorXd& dq, const VectorXd& q, MatrixXd& out);
+}
+
 
 #endif
 

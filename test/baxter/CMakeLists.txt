@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 3.13)
 project(solution)
-#set(CMAKE_CXX_FLAGS "-j 11")
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB BAXTER_SOURCE ../../baxter/src/*.cpp)
-message(${BAXTER_SOURCE})
+file(GLOB BAXTER_NONE_CLASS ../../src/baxter/*.cpp)
+message(${BAXTER_NONE_CLASS})
 add_executable(
     main main.cpp
     ../../src/mappings.cpp
     #../../baxter/src/phi.cpp
-    ${BAXTER_SOURCE}
+    ${BAXTER_NONE_CLASS}
 )
 target_compile_options(main PUBLIC -O2 -Wall)
