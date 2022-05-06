@@ -24,28 +24,28 @@ namespace baxter
     static const double L6 = 368.3e-3;
     static const double R = 0.05;  // 腕の太さの基準．不明
 
-    static const vector<double> Q_NEUTRAL = {
+    vector<double> Q_NEUTRAL = {
         0.0, -31.0*M_PI/180, 0.0, 43.0*M_PI/180, 0.0, 72.0*M_PI/180, 0.0
     };
-    static const vector<double> Q_MAX = {
+    vector<double> Q_MAX = {
         51.0*M_PI/180, 60.0*M_PI/180, 173.0*M_PI/180, 150.0*M_PI/180, 175.0*M_PI/180, 120.0*M_PI/180, 175.0*M_PI/180
     };
-    static const vector<double> Q_MIN = {
+    vector<double> Q_MIN = {
         -141.0*M_PI/180, -123.0*M_PI/180, -173.0*M_PI/180, -3.0*M_PI/180, -175.0*M_PI/180, -90.0*M_PI/180, -175.0*M_PI/180
     };
 
 
-    static const vector<vector<double>> r_bars_0{
+    vector<vector<double>> r_bars_0{
         {0, L1/2, -L0/2, 1},
         {0, -L1/2, -L0/2, 1},
         {L1/2, 0, -L0/2, 1},
         {-L1/2, 0, -L0/2, 1}
     };
-    static const vector<vector<double>> r_bars_1{
+    vector<vector<double>> r_bars_1{
         {0, 0, L3/2, 1},
         {0, 0, -L3/2, 1}
     };
-    static const vector<vector<double>> r_bars_2{
+    vector<vector<double>> r_bars_2{
         {0, L3/2, -L2*2/3, 1},
         {0, -L3/2, -L2*2/3, 1},
         {L3/2, 0, -L2*2/3, 1},
@@ -55,11 +55,11 @@ namespace baxter
         {L3/2, 0, -L2*1/3, 1},
         {-L3/2, 0, -L2*1/3, 1}
     };
-    static const vector<vector<double>> r_bars_3{
+    vector<vector<double>> r_bars_3{
         {0, 0, L3/2, 1},
         {0, 0, -L3/2, 1}
     };
-    static const vector<vector<double>> r_bars_4{
+    vector<vector<double>> r_bars_4{
         {0, R/2, -L4/3, 1},
         {0, -R/2, -L4/3, 1},
         {R/2, 0, -L4/3, 1},
@@ -69,17 +69,17 @@ namespace baxter
         {R/2, 0, -L4/3*2, 1},
         {-R/2, 0, -L4/3*2, 1}
     };
-    static const vector<vector<double>> r_bars_5{
+    vector<vector<double>> r_bars_5{
         {0, 0, L5/2, 1},
         {0, 0, -L5/2, 1}
     };
-    static const vector<vector<double>> r_bars_6{
+    vector<vector<double>> r_bars_6{
         {0, R/2, L6/2, 1},
         {0, -R/2, L6/2, 1},
         {R/2, 0, L6/2, 1},
         {-R/2, 0, L6/2, 1}
     };
-    static const vector<vector<double>> r_bars_ee{
+    vector<vector<double>> r_bars_ee{
         {0, 0, 0, 1}
     };
 

@@ -3,18 +3,9 @@ add_library(
     baxter
     SHARED
     ${BAXTER_NONE_CLASS}
-
 )
 
-
-
-
-
 message(${BAXTER_NONE_CLASS})
-
-
-
-
 
 # greetingライブラリのインクルードディレクトリを教える
 # PROJECT_SOURCE_DIRはこのプロジェクトのルートディレクトリの絶対パス

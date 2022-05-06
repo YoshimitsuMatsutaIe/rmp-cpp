@@ -1,11 +1,9 @@
 #include "../include/baxter.hpp"
 
 
-
-
 baxter::Control_Point::Control_Point(int frame, int index)
 {
-    this->r_bar = Eigen::Map<VectorXd>(R_BARS_ALL[frame][index].data());
+    //this->r_bar = Eigen::Map<VectorXd>(R_BARS_ALL[frame][index].data());
     this->calc_htm = HTMs[frame];
     this->calc_jo = JOs[frame];
     this->calc_jrx = JRXs[frame];
