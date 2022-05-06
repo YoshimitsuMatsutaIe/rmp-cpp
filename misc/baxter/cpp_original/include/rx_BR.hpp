@@ -10,7 +10,7 @@
 #ifndef RX_BR_BY_SYMPY___RX_BR__H
 #define RX_BR_BY_SYMPY___RX_BR__H
 
-void rx_BR(double *out_7783424268786658124);
+void rx_BR(double *out_7945906601076260354);
 
 #endif
 

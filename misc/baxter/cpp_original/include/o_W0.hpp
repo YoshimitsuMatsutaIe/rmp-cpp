@@ -10,7 +10,7 @@
 #ifndef O_W0_BY_SYMPY___O_W0__H
 #define O_W0_BY_SYMPY___O_W0__H
 
-void o_W0(double H, double L, double h, double *out_537588659739812132);
+void o_W0(double H, double L, double h, double *out_3190189552192751532);
 
 #endif
 

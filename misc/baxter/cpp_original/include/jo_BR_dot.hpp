@@ -10,7 +10,7 @@
 #ifndef JO_BR_DOT_BY_SYMPY___JO_BR_DOT__H
 #define JO_BR_DOT_BY_SYMPY___JO_BR_DOT__H
 
-void jo_BR_dot(double *out_7451986002615829412);
+void jo_BR_dot(double *out_2856639359967437061);
 
 #endif
 

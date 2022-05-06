@@ -10,7 +10,7 @@
 #ifndef RX_2_BY_SYMPY___RX_2__H
 #define RX_2_BY_SYMPY___RX_2__H
 
-void rx_2(double *q, double *out_5809330253939284844);
+void rx_2(double *q, double *out_1203430430398132816);
 
 #endif
 

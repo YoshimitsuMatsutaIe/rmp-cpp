@@ -10,7 +10,7 @@
 #ifndef RX_EE_BY_SYMPY___RX_EE__H
 #define RX_EE_BY_SYMPY___RX_EE__H
 
-void rx_ee(double *q, double *out_7115744521297004954);
+void rx_ee(double *q, double *out_4812808362129871804);
 
 #endif
 

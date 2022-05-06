@@ -69,7 +69,9 @@
         "condition_variable": "cpp",
         "mutex": "cpp",
         "semaphore": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "source_location": "cpp",
+        "future": "cpp"
     },
     "cmake.configureOnOpen": true,
     "python.autoComplete.extraPaths": [

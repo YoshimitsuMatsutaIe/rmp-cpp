@@ -10,7 +10,7 @@
 #ifndef JRY_0_DOT_BY_SYMPY___JRY_0_DOT__H
 #define JRY_0_DOT_BY_SYMPY___JRY_0_DOT__H
 
-void jry_0_dot(double *dq, double *q, double *out_4291357308805884776);
+void jry_0_dot(double *dq, double *q, double *out_3206042154312427043);
 
 #endif
 

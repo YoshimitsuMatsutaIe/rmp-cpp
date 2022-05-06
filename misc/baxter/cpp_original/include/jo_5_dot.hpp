@@ -10,7 +10,7 @@
 #ifndef JO_5_DOT_BY_SYMPY___JO_5_DOT__H
 #define JO_5_DOT_BY_SYMPY___JO_5_DOT__H
 
-void jo_5_dot(double L1, double L2, double L3, double L4, double L5, double *dq, double *q, double *out_8937601926176412953);
+void jo_5_dot(double L1, double L2, double L3, double L4, double L5, double *dq, double *q, double *out_8693791595851499979);
 
 #endif
 

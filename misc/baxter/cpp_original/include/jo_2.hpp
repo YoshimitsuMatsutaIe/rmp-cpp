@@ -10,7 +10,7 @@
 #ifndef JO_2_BY_SYMPY___JO_2__H
 #define JO_2_BY_SYMPY___JO_2__H
 
-void jo_2(double L1, double L2, double *q, double *out_3257241295644526684);
+void jo_2(double L1, double L2, double *q, double *out_8590638433349391525);
 
 #endif
 

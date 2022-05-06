@@ -10,7 +10,7 @@
 #ifndef RY_6_BY_SYMPY___RY_6__H
 #define RY_6_BY_SYMPY___RY_6__H
 
-void ry_6(double *q, double *out_9045066712899296039);
+void ry_6(double *q, double *out_6001538823195485606);
 
 #endif
 

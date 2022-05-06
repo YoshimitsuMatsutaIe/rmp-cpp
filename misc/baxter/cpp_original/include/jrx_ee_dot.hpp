@@ -10,7 +10,7 @@
 #ifndef JRX_EE_DOT_BY_SYMPY___JRX_EE_DOT__H
 #define JRX_EE_DOT_BY_SYMPY___JRX_EE_DOT__H
 
-void jrx_ee_dot(double *dq, double *q, double *out_2603838723681629339);
+void jrx_ee_dot(double *dq, double *q, double *out_5256942763016346334);
 
 #endif
 

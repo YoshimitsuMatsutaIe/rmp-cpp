@@ -10,7 +10,7 @@
 #ifndef RY_BR_BY_SYMPY___RY_BR__H
 #define RY_BR_BY_SYMPY___RY_BR__H
 
-void ry_BR(double *out_6995292135600697211);
+void ry_BR(double *out_4967586762268129187);
 
 #endif
 

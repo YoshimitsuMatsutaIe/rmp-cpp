@@ -8,10 +8,10 @@
 #include "o_W0.h"
 #include <math.h>
 
-void o_W0(double H, double L, double h, double *out_537588659739812132) {
+void o_W0(double H, double L, double h, double *out_3190189552192751532) {
 
-   out_537588659739812132[0] = -L;
-   out_537588659739812132[1] = -h;
-   out_537588659739812132[2] = H;
+   out_3190189552192751532[0] = -L;
+   out_3190189552192751532[1] = -h;
+   out_3190189552192751532[2] = H;
 
 }

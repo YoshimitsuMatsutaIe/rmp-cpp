@@ -10,7 +10,7 @@
 #ifndef RX_4_BY_SYMPY___RX_4__H
 #define RX_4_BY_SYMPY___RX_4__H
 
-void rx_4(double *q, double *out_5990244525270426687);
+void rx_4(double *q, double *out_3375768124816929976);
 
 #endif
 
