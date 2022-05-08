@@ -1,8 +1,6 @@
 #include <iostream>
-// #include <cmath>
-// #include "/usr/include/eigen3/Eigen/Core"
 
-#include "../include/robot_model_sice.hpp"
+#include "../include/sice.hpp"
 
 robot_model_sice::Joint_limitation::Joint_limitation(void)
 {

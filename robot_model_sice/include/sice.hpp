@@ -1,10 +1,10 @@
-#ifndef ROBOT_MODEL_SICE__H
-#define ROBOT_MODEL_SICE__H
+#ifndef SICE__H
+#define SICE__H
 
 #include "/usr/include/eigen3/Eigen/Core"
 #include <cmath>
 
-#include "./mappings.hpp"
+#include "../../include/mappings.hpp"
 
 
 namespace robot_model_sice

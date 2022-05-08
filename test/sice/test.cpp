@@ -1,10 +1,10 @@
 #include "../../include/rmp_node.hpp"
-#include "../../include/robot_model_sice.hpp"
+#include "../../robot_model_sice/include/sice.hpp"
 #include "../../include/rmp_leaf.hpp"
 #include "../../include/mappings.hpp"
 #include "../../include/rmp_node.hpp"
 
-//#include "/usr/include/eigen3/Eigen/Core"
+
 #include <eigen3/Eigen/Core>
 #include <iostream>
 
