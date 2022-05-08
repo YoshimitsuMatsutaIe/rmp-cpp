@@ -1,8 +1,8 @@
-#ifndef XI__H
-#define XI__H
+#ifndef RMP2_ATRACTTOR_XI_3D__H
+#define RMP2_ATRACTTOR_XI_3D__H
 #include <cmath>
 #include <eigen3/Eigen/Core>
-namespace attractor_xi_3d
+namespace rmp2_attractor_xi_3d
 {
     using std::exp;
     using std::pow;

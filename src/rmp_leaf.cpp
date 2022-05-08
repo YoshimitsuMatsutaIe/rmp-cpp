@@ -3,8 +3,8 @@
 
 
 #include "../include/rmp_leaf.hpp"
-#include "../include/rmp2_attractor_xi.hpp"
-
+#include "../include/rmp2_attractor_xi_2d.hpp"
+#include "../include/rmp2_attractor_xi_3d.hpp"
 
 
 rmp2::Goal_Attractor::Goal_Attractor(
@@ -81,7 +81,12 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
     calc_grad_potential2(z, grad);
 
     VectorXd xi(self_dim);
-    rmp2_attractor_xi::f(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
+    if (this->self_dim == 2){
+        rmp2_attractor_xi_2d::func(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
+    }
+    else if ( this->self_dim == 3){
+        rmp2_attractor_xi_3d::func(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
+    }
 
     //std::cout << "xi = \n" << xi << std::endl;
     //std::cout << "grad = \n" << grad << std::endl;

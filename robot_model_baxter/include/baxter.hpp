@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <array>
+#include <tuple>
 #include "../../include/mappings.hpp"
 
 namespace baxter
@@ -162,12 +163,6 @@ namespace baxter
      */
     {
     private:
-        static void set_Qs(
-            VectorXd& out_q_neutral,
-            VectorXd& out_q_max,
-            VectorXd& out_q_min
-        );
-
         static const double L;
         static const double h;
         static const double H;
@@ -203,9 +198,7 @@ namespace baxter
         static vector<func_q_dq_matout> JRYs_dot;
         static vector<func_q_dq_matout> JRZs_dot;
 
-        const vector<vector<vector<double>>> R_BARS_ALL{
-            r_bars_0, r_bars_1, r_bars_2, r_bars_3, r_bars_4, r_bars_5, r_bars_6, r_bars_ee
-        };
+        static const vector<vector<vector<double>>> R_BARS_ALL;
 
         VectorXd r_bar;
         func_q_matout calc_htm;
@@ -233,6 +226,15 @@ namespace baxter
         void phi(const VectorXd &q, VectorXd &out) override;
         void jacobian(const VectorXd &q, MatrixXd &out) override;
         void jacobian_dot(const VectorXd &q, const VectorXd &q_dot, MatrixXd &out) override;
+
+        static void set_q_neutral(VectorXd& out);
+        static void set_q_max(VectorXd& out);
+        static void set_q_min(VectorXd& out);
+
+
+        static const vector<int> calc_points_mapping(void);
+
+    
     };
 
 };

@@ -3,12 +3,13 @@ from numpy import linalg as LA
 import matplotlib.pyplot as plt
 import time
 from scipy import integrate
-from functools import lru_cache
 
 import rmp_tree
 import rmp_leaf
 import mappings
 import visualization
+import sys
+sys.path.append('.')
 from robot_model_baxter import *
 
 TIME_SPAN = 60

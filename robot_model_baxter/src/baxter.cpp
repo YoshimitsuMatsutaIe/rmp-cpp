@@ -15,17 +15,10 @@ const double baxter::Control_Point::L6 = 368.3e-3;
 const double baxter::Control_Point::R = 0.05;
 
 
-void baxter::Control_Point::set_Qs(
-    VectorXd& out_q_neutral,
-    VectorXd& out_q_max,
-    VectorXd& out_q_min
-)
+void baxter::Control_Point::set_q_neutral(VectorXd& out)
 {
-    out_q_neutral = VectorXd::Zero(7);
-    out_q_max = VectorXd::Zero(7);
-    out_q_min = VectorXd::Zero(7);
-    
-    out_q_neutral << 
+    out = VectorXd::Zero(7);
+    out << 
         0.0,
         -31.0*M_PI/180,
         0.0,
@@ -33,8 +26,12 @@ void baxter::Control_Point::set_Qs(
         0.0,
         72.0*M_PI/180,
         0.0;
-    
-    out_q_max << 
+}
+
+void baxter::Control_Point::set_q_max(VectorXd& out)
+{
+    out = VectorXd::Zero(7);
+    out << 
         51.0*M_PI/180,
         60.0*M_PI/180,
         173.0*M_PI/180,
@@ -42,9 +39,12 @@ void baxter::Control_Point::set_Qs(
         175.0*M_PI/180,
         120.0*M_PI/180,
         175.0*M_PI/180;
-    
+}
 
-    out_q_min << 
+void baxter::Control_Point::set_q_min(VectorXd& out)
+{
+    out = VectorXd::Zero(7);
+    out << 
         -141.0*M_PI/180,
         -123.0*M_PI/180,
         -173.0*M_PI/180,
@@ -53,6 +53,18 @@ void baxter::Control_Point::set_Qs(
         -90.0*M_PI/180,
         -175.0*M_PI/180;
 }
+
+
+const std::vector<int> baxter::Control_Point::calc_points_mapping(void)
+{
+    int frame_num = baxter::Control_Point::R_BARS_ALL.size();
+    vector<int> s(frame_num);
+    for (int i=0; i<frame_num; ++i){
+        s.push_back(baxter::Control_Point::R_BARS_ALL[i].size());
+    }
+    return s;
+}
+
 
 const std::vector<std::vector<double>> baxter::Control_Point::r_bars_0{
     {0, L1/2, -L0/2, 1},
@@ -103,7 +115,9 @@ const std::vector<std::vector<double>> baxter::Control_Point::r_bars_6{
 const std::vector<std::vector<double>> baxter::Control_Point::r_bars_ee{
     {0, 0, 0, 1}
 };
-
+const std::vector<std::vector<std::vector<double>>> baxter::Control_Point::R_BARS_ALL{
+    r_bars_0, r_bars_1, r_bars_2, r_bars_3, r_bars_4, r_bars_5, r_bars_6, r_bars_ee
+};
 
 
 

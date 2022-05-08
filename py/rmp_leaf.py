@@ -3,8 +3,8 @@ from numpy import linalg as LA
 from math import exp, log
 
 import rmp_tree
-import attractor_xi
-
+import attractor_xi_2d
+import attractor_xi_3d
 
 
 class GoalAttractor(rmp_tree.LeafBase):
@@ -21,6 +21,12 @@ class GoalAttractor(rmp_tree.LeafBase):
         self.wl = wl
         self.alpha = alpha
         self.epsilon = epsilon
+        if dim == 2:
+            self.xi_func = attractor_xi_2d.f
+        elif dim == 3:
+            self.xi_func = attractor_xi_3d.f
+        else:
+            print("xiは計算無理")
         
         super().__init__(name, dim, parent, calc_mappings)
     
@@ -46,8 +52,17 @@ class GoalAttractor(rmp_tree.LeafBase):
     
     
     def __force(self,):
-        xi = attractor_xi.f(self.x, self.x_dot, self.sigma_alpha, self.sigma_gamma, self.wu, self.wl, self.alpha, self.epsilon)
-        return self.M @ (-self.gain*self.__grad_phi() - self.damp*self.x_dot)# - xi
+        xi = self.xi_func(
+            x = self.x,
+            x_dot = self.x_dot,
+            sigma_alpha = self.sigma_alpha,
+            sigma_gamma = self.sigma_gamma,
+            w_u = self.wu,
+            w_l = self.wl,
+            alpha = self.alpha,
+            epsilon = self.epsilon
+        )
+        return self.M @ (-self.gain*self.__grad_phi() - self.damp*self.x_dot) - xi
 
 
 
