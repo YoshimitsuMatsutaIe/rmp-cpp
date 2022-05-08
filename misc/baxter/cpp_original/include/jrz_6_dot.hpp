@@ -10,7 +10,7 @@
 #ifndef JRZ_6_DOT_BY_SYMPY___JRZ_6_DOT__H
 #define JRZ_6_DOT_BY_SYMPY___JRZ_6_DOT__H
 
-void jrz_6_dot(double *dq, double *q, double *out_5208042816944734802);
+void jrz_6_dot(double *dq, double *q, double *out_2500537405603926123);
 
 #endif
 

@@ -10,7 +10,7 @@
 #ifndef JRX_BR_DOT_BY_SYMPY___JRX_BR_DOT__H
 #define JRX_BR_DOT_BY_SYMPY___JRX_BR_DOT__H
 
-void jrx_BR_dot(double *out_2856639359967437061);
+void jrx_BR_dot(double *out_210064141964992050);
 
 #endif
 

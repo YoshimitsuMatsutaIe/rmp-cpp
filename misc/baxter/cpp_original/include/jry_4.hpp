@@ -10,7 +10,7 @@
 #ifndef JRY_4_BY_SYMPY___JRY_4__H
 #define JRY_4_BY_SYMPY___JRY_4__H
 
-void jry_4(double *q, double *out_6056419143655900942);
+void jry_4(double *q, double *out_2647045260824073923);
 
 #endif
 

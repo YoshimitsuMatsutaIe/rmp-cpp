@@ -13,7 +13,7 @@ using std::sin;
 using std::sqrt;
 
 
-void baxter::rz_BR(const VectorXd& q, VectorXd& out) {
+void baxter::rz_BR(const VectorXd& q, double L, double h, double H, double L0, double L1, double L2, double L3, double L4, double L5, double L6, VectorXd& out) {
 
    out(0) = 0;
    out(1) = 0;

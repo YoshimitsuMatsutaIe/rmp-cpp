@@ -10,7 +10,7 @@
 #ifndef O_5_BY_SYMPY___O_5__H
 #define O_5_BY_SYMPY___O_5__H
 
-void o_5(double H, double L, double L0, double L1, double L2, double L3, double L4, double L5, double h, double *q, double *out_7568071072663655719);
+void o_5(double H, double L, double L0, double L1, double L2, double L3, double L4, double L5, double h, double *q, double *out_8585512867107203213);
 
 #endif
 

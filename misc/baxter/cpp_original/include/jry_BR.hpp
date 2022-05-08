@@ -10,7 +10,7 @@
 #ifndef JRY_BR_BY_SYMPY___JRY_BR__H
 #define JRY_BR_BY_SYMPY___JRY_BR__H
 
-void jry_BR(double *out_2856639359967437061);
+void jry_BR(double *out_210064141964992050);
 
 #endif
 

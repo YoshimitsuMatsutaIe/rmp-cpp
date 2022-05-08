@@ -2,56 +2,137 @@
 
 
 
-// const double baxter::L = 278e-3;
-// const double baxter::h = 64e-3;
-// const double baxter::H = 1104e-3;
-// const double baxter::L0 = 270.35e-3;
-// const double baxter::L1 = 69e-3;
-// const double baxter::L2 = 364.35e-3;
-// const double baxter::L3 = 69e-3;
-// const double baxter::L4 = 374.29e-3;
-// const double baxter::L5 = 10e-3;
-// const double baxter::L6 = 368.3e-3;
-// const double baxter::R = 0.05;
+const double baxter::Control_Point::L = 278e-3;
+const double baxter::Control_Point::h = 64e-3;
+const double baxter::Control_Point::H = 1104e-3;
+const double baxter::Control_Point::L0 = 270.35e-3;
+const double baxter::Control_Point::L1 = 69e-3;
+const double baxter::Control_Point::L2 = 364.35e-3;
+const double baxter::Control_Point::L3 = 69e-3;
+const double baxter::Control_Point::L4 = 374.29e-3;
+const double baxter::Control_Point::L5 = 10e-3;
+const double baxter::Control_Point::L6 = 368.3e-3;
+const double baxter::Control_Point::R = 0.05;
 
 
-// const Eigen::VectorXd baxter::Q_NEUTRAL(
-//     0.0,
-//     -31.0*M_PI/180,
-//     0.0,
-//     43.0*M_PI/180,
-//     0.0,
-//     72.0*M_PI/180,
-//     0.0
-// );
-// const Eigen::VectorXd baxter::Q_MAX(
-//     51.0*M_PI/180,
-//     60.0*M_PI/180,
-//     173.0*M_PI/180,
-//     150.0*M_PI/180,
-//     175.0*M_PI/180,
-//     120.0*M_PI/180,
-//     175.0*M_PI/180
-// );
-// const Eigen::VectorXd baxter::Q_NEUTRAL(
-//     -141.0*M_PI/180,
-//     -123.0*M_PI/180,
-//     -173.0*M_PI/180,
-//     -3.0*M_PI/180,
-//     -175.0*M_PI/180,
-//     -90.0*M_PI/180,
-//     -175.0*M_PI/180
-// );
+void baxter::Control_Point::set_Qs(
+    VectorXd& out_q_neutral,
+    VectorXd& out_q_max,
+    VectorXd& out_q_min
+)
+{
+    out_q_neutral = VectorXd::Zero(7);
+    out_q_max = VectorXd::Zero(7);
+    out_q_min = VectorXd::Zero(7);
+    
+    out_q_neutral << 
+        0.0,
+        -31.0*M_PI/180,
+        0.0,
+        43.0*M_PI/180,
+        0.0,
+        72.0*M_PI/180,
+        0.0;
+    
+    out_q_max << 
+        51.0*M_PI/180,
+        60.0*M_PI/180,
+        173.0*M_PI/180,
+        150.0*M_PI/180,
+        175.0*M_PI/180,
+        120.0*M_PI/180,
+        175.0*M_PI/180;
+    
+
+    out_q_min << 
+        -141.0*M_PI/180,
+        -123.0*M_PI/180,
+        -173.0*M_PI/180,
+        -3.0*M_PI/180,
+        -175.0*M_PI/180,
+        -90.0*M_PI/180,
+        -175.0*M_PI/180;
+}
+
+const std::vector<std::vector<double>> baxter::Control_Point::r_bars_0{
+    {0, L1/2, -L0/2, 1},
+    {0, -L1/2, -L0/2, 1},
+    {L1/2, 0, -L0/2, 1},
+    {-L1/2, 0, -L0/2, 1}
+};
+
+const std::vector<std::vector<double>> baxter::Control_Point::r_bars_1{
+    {0, 0, L3/2, 1},
+    {0, 0, -L3/2, 1}
+};
+
+const std::vector<std::vector<double>> baxter::Control_Point::r_bars_2{
+    {0, L3/2, -L2*2/3, 1},
+    {0, -L3/2, -L2*2/3, 1},
+    {L3/2, 0, -L2*2/3, 1},
+    {-L3/2, 0, -L2*2/3, 1},
+    {0, L3/2, -L2*1/3, 1},
+    {0, -L3/2, -L2*1/3, 1},
+    {L3/2, 0, -L2*1/3, 1},
+    {-L3/2, 0, -L2*1/3, 1}
+};
+const std::vector<std::vector<double>> baxter::Control_Point::r_bars_3{
+    {0, 0, L3/2, 1},
+    {0, 0, -L3/2, 1}
+};
+const std::vector<std::vector<double>> baxter::Control_Point::r_bars_4{
+    {0, R/2, -L4/3, 1},
+    {0, -R/2, -L4/3, 1},
+    {R/2, 0, -L4/3, 1},
+    {-R/2, 0, -L4/3, 1},
+    {0, R/2, -L4/3*2, 1},
+    {0, -R/2, -L4/3*2, 1},
+    {R/2, 0, -L4/3*2, 1},
+    {-R/2, 0, -L4/3*2, 1}
+};
+const std::vector<std::vector<double>> baxter::Control_Point::r_bars_5{
+    {0, 0, L5/2, 1},
+    {0, 0, -L5/2, 1}
+};
+const std::vector<std::vector<double>> baxter::Control_Point::r_bars_6{
+    {0, R/2, L6/2, 1},
+    {0, -R/2, L6/2, 1},
+    {R/2, 0, L6/2, 1},
+    {-R/2, 0, L6/2, 1}
+};
+const std::vector<std::vector<double>> baxter::Control_Point::r_bars_ee{
+    {0, 0, 0, 1}
+};
+
+
+
+
+std::vector<baxter::func_q_vecout> baxter::Control_Point::Os =  {&o_0, &o_1, &o_2, &o_3, &o_4, &o_5, &o_6, &o_ee};
+std::vector<baxter::func_q_vecout> baxter::Control_Point::RXs = {&rx_0, &rx_1, &rx_2, &rx_3, &rx_4, &rx_5, &rx_6, &rx_ee};
+std::vector<baxter::func_q_vecout> baxter::Control_Point::RYs = {&ry_0, &ry_1, &ry_2, &ry_3, &ry_4, &ry_5, &ry_6, &ry_ee};
+std::vector<baxter::func_q_vecout> baxter::Control_Point::RZs = {&rz_0, &rz_1, &rz_2, &rz_3, &rz_4, &rz_5, &rz_6, &rz_ee};
+std::vector<baxter::func_q_matout> baxter::Control_Point::HTMs = {&htm_0, &htm_1, &htm_2, &htm_3, &htm_4, &htm_5, &htm_6, &htm_ee};
+std::vector<baxter::func_q_matout> baxter::Control_Point::JOs =  {&jo_0, &jo_1, &jo_2, &jo_3, &jo_4, &jo_5, &jo_6, &jo_ee};
+std::vector<baxter::func_q_matout> baxter::Control_Point::JRXs = {&jrx_0, &jrx_1, &jrx_2, &jrx_3, &jrx_4, &jrx_5, &jrx_6, &jrx_ee};
+std::vector<baxter::func_q_matout> baxter::Control_Point::JRYs = {&jry_0, &jry_1, &jry_2, &jry_3, &jry_4, &jry_5, &jry_6, &jry_ee};
+std::vector<baxter::func_q_matout> baxter::Control_Point::JRZs = {&jrz_0, &jrz_1, &jrz_2, &jrz_3, &jrz_4, &jrz_5, &jrz_6, &jrz_ee};
+std::vector<baxter::func_q_dq_matout> baxter::Control_Point::JOs_dot =  {&jo_0_dot, &jo_1_dot, &jo_2_dot, &jo_3_dot, &jo_4_dot, &jo_5_dot, &jo_6_dot, &jo_ee_dot};
+std::vector<baxter::func_q_dq_matout> baxter::Control_Point::JRXs_dot = {&jrx_0_dot, &jrx_1_dot, &jrx_2_dot, &jrx_3_dot, &jrx_4_dot, &jrx_5_dot, &jrx_6_dot, &jrx_ee_dot};
+std::vector<baxter::func_q_dq_matout> baxter::Control_Point::JRYs_dot = {&jry_0_dot, &jry_1_dot, &jry_2_dot, &jry_3_dot, &jry_4_dot, &jry_5_dot, &jry_6_dot, &jry_ee_dot};
+std::vector<baxter::func_q_dq_matout> baxter::Control_Point::JRZs_dot = {&jrz_0_dot, &jrz_1_dot, &jrz_2_dot, &jrz_3_dot, &jrz_4_dot, &jrz_5_dot, &jrz_6_dot, &jrz_ee_dot};
+
+
 
 
 
 
 baxter::Control_Point::Control_Point(int frame, int index)
 {
+    this->name = "baxter control point at frame=" + std::to_string(frame) + ", index=" + std::to_string(index);
     this->r_bar = VectorXd::Zero(4);
-    this->r_bar << R_BARS_ALL[frame][index][0], R_BARS_ALL[frame][index][1], R_BARS_ALL[frame][index][2], 1.0;
+    this->r_bar << this->R_BARS_ALL[frame][index][0], R_BARS_ALL[frame][index][1], R_BARS_ALL[frame][index][2], 1.0;
     this->calc_htm = HTMs[frame];
-    this->calc_jo = JOs[frame];
+    this->calc_jo = this->JOs[frame];
     this->calc_jrx = JRXs[frame];
     this->calc_jry = JRYs[frame];
     this->calc_jrz = JRZs[frame];
@@ -73,26 +154,26 @@ baxter::Control_Point::Control_Point(int frame, int index)
 
 void baxter::Control_Point::phi(const VectorXd &q, VectorXd &out)
 {
-    this->calc_htm(q, this->htm);
+    this->calc_htm(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->htm);
     out = this->htm * this->r_bar;
 }
 
 
 void baxter::Control_Point::jacobian(const VectorXd &q, MatrixXd &out)
 {
-    this->calc_jo(q, jo);
-    this->calc_jrx(q, jrx);
-    this->calc_jry(q, jry);
-    this->calc_jrz(q, jrz);
+    this->calc_jo(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, jo);
+    this->calc_jrx(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, jrx);
+    this->calc_jry(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, jry);
+    this->calc_jrz(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, jrz);
     out = jrx*r_bar(0) + jry*r_bar(1) + jrz*r_bar(2) + jo;
 }
 
 
 void baxter::Control_Point::jacobian_dot(const VectorXd &q, const VectorXd &q_dot, MatrixXd &out)
 {
-    this->calc_jo_dot(q, q_dot, jo_dot);
-    this->calc_jrx_dot(q, q_dot, jrx_dot);
-    this->calc_jry_dot(q, q_dot, jry_dot);
-    this->calc_jrz_dot(q, q_dot, jrz_dot);
+    this->calc_jo_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, jo_dot);
+    this->calc_jrx_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, jrx_dot);
+    this->calc_jry_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, jry_dot);
+    this->calc_jrz_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, jrz_dot);
     out = jrx_dot*r_bar(0) + jry_dot*r_bar(1) + jrz_dot*r_bar(2) + jo_dot;
 }

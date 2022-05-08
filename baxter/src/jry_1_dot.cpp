@@ -13,7 +13,7 @@ using std::sin;
 using std::sqrt;
 
 
-void baxter::jry_1_dot(const VectorXd& q, const VectorXd& dq, MatrixXd& out) {
+void baxter::jry_1_dot(const VectorXd& q, const VectorXd& dq, double L, double h, double H, double L0, double L1, double L2, double L3, double L4, double L5, double L6, MatrixXd& out) {
 
    out(0,0) = (1.0/2.0)*M_SQRT2*sin(q(0))*sin(q(1))*dq(1) + (1.0/2.0)*M_SQRT2*sin(q(0))*cos(q(1))*dq(0) + (1.0/2.0)*M_SQRT2*sin(q(1))*cos(q(0))*dq(1) - 1.0/2.0*M_SQRT2*cos(q(0))*cos(q(1))*dq(0);
    out(0,1) = (1.0/2.0)*M_SQRT2*sin(q(0))*sin(q(1))*dq(0) + (1.0/2.0)*M_SQRT2*sin(q(0))*cos(q(1))*dq(1) + (1.0/2.0)*M_SQRT2*sin(q(1))*cos(q(0))*dq(0) - 1.0/2.0*M_SQRT2*cos(q(0))*cos(q(1))*dq(1);

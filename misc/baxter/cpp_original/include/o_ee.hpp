@@ -10,7 +10,7 @@
 #ifndef O_EE_BY_SYMPY___O_EE__H
 #define O_EE_BY_SYMPY___O_EE__H
 
-void o_ee(double H, double L, double L0, double L1, double L2, double L3, double L4, double L5, double L6, double h, double *q, double *out_6908074115388052302);
+void o_ee(double H, double L, double L0, double L1, double L2, double L3, double L4, double L5, double L6, double h, double *q, double *out_4289182241999902115);
 
 #endif
 

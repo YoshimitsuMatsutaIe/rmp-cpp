@@ -13,7 +13,7 @@ using std::sin;
 using std::sqrt;
 
 
-void baxter::jrx_W0(const VectorXd& q, MatrixXd& out) {
+void baxter::jrx_W0(const VectorXd& q, double L, double h, double H, double L0, double L1, double L2, double L3, double L4, double L5, double L6, MatrixXd& out) {
 
    out(0,0) = 0;
    out(0,1) = 0;

@@ -10,7 +10,7 @@
 #ifndef JO_1_DOT_BY_SYMPY___JO_1_DOT__H
 #define JO_1_DOT_BY_SYMPY___JO_1_DOT__H
 
-void jo_1_dot(double L1, double *dq, double *q, double *out_3244695682529941194);
+void jo_1_dot(double L1, double *dq, double *q, double *out_5360787901403311105);
 
 #endif
 

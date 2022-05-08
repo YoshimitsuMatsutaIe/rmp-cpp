@@ -1,6 +1,6 @@
 #include <cmath>
 #include "/usr/include/eigen3/Eigen/Core"
-#include "../include/rmp2_attractor_xi.hpp"
+#include "../include/rmp2_attractor_xi_2d.hpp"
 
 void rmp2_attractor_xi::f(double alpha, double epsilon, double sigma_alpha, double sigma_gamma, double w_l, double w_u, const Eigen::VectorXd &x, const Eigen::VectorXd &x_dot, Eigen::VectorXd &out)
 {

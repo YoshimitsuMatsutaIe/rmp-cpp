@@ -1,5 +1,5 @@
-#ifndef RMP2_ATRACTTOR_XI__H
-#define RMP2_ATRACTTOR_XI__H
+#ifndef RMP2_ATRACTTOR_XI_2D__H
+#define RMP2_ATRACTTOR_XI_2D__H
 #include <cmath>
 #include "/usr/include/eigen3/Eigen/Core"
 namespace rmp2_attractor_xi

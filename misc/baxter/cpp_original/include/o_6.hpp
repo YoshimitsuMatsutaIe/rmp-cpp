@@ -10,7 +10,7 @@
 #ifndef O_6_BY_SYMPY___O_6__H
 #define O_6_BY_SYMPY___O_6__H
 
-void o_6(double H, double L, double L0, double L1, double L2, double L3, double L4, double L5, double h, double *q, double *out_7568071072663655719);
+void o_6(double H, double L, double L0, double L1, double L2, double L3, double L4, double L5, double h, double *q, double *out_8585512867107203213);
 
 #endif
 

@@ -10,7 +10,7 @@
 #ifndef JRY_EE_BY_SYMPY___JRY_EE__H
 #define JRY_EE_BY_SYMPY___JRY_EE__H
 
-void jry_ee(double *q, double *out_4709846256540104042);
+void jry_ee(double *q, double *out_2484787483424181638);
 
 #endif
 

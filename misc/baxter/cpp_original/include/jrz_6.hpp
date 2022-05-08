@@ -10,7 +10,7 @@
 #ifndef JRZ_6_BY_SYMPY___JRZ_6__H
 #define JRZ_6_BY_SYMPY___JRZ_6__H
 
-void jrz_6(double *q, double *out_7981151013213679122);
+void jrz_6(double *q, double *out_1307783001163329662);
 
 #endif
 

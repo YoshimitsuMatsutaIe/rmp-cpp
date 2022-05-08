@@ -10,7 +10,7 @@
 #ifndef RZ_4_BY_SYMPY___RZ_4__H
 #define RZ_4_BY_SYMPY___RZ_4__H
 
-void rz_4(double *q, double *out_3095785184235993875);
+void rz_4(double *q, double *out_3128776475110990802);
 
 #endif
 

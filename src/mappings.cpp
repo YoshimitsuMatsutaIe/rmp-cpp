@@ -8,7 +8,9 @@
 
 
 
-mapping_base::Identity::Identity(void){}
+mapping_base::Identity::Identity(void){
+    this->name = "identity";
+}
 
 
 void mapping_base::Identity::phi(const VectorXd &x, VectorXd &out)

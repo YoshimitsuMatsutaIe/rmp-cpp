@@ -10,7 +10,7 @@
 #ifndef JRZ_EE_BY_SYMPY___JRZ_EE__H
 #define JRZ_EE_BY_SYMPY___JRZ_EE__H
 
-void jrz_ee(double *q, double *out_7981151013213679122);
+void jrz_ee(double *q, double *out_1307783001163329662);
 
 #endif
 
