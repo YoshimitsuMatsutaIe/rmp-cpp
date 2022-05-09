@@ -3,6 +3,7 @@
 
 #include<eigen3/Eigen/Core>
 
+#include <iostream>
 #include <vector>
 #include <array>
 #include <tuple>
@@ -232,7 +233,7 @@ namespace baxter
         static void set_q_min(VectorXd& out);
 
 
-        static const vector<int> calc_points_mapping(void);
+        static const vector<std::size_t> calc_points_mapping(void);
 
     
     };

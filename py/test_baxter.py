@@ -246,10 +246,16 @@ q_data, joint_data, ee_data, cpoint_data = visualization.make_data(
 
 
 
-visualization.make_animation(
+ani = visualization.make_animation(
     t_data = sol.t,
     joint_data=joint_data,
     is3D=True,
+    epoch_max=500,
     goal_data=np.array([[g[0,0], g[1,0], g[2,0]]*len(sol.t)]).reshape(len(sol.t), 3),
-    save_dir_path="pic/"
+    save_dir_path=""
 )
+
+
+
+
+plt.show()

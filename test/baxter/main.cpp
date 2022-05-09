@@ -24,20 +24,22 @@
 
 int main()
 {
+    using std::cout;
+    using std::endl;
     using Eigen::VectorXd;
     using std::vector;
 
-    std::cout << "running...\n" << std::endl;
-
+    cout << "running...\n" << endl;
 
     VectorXd og(3);
     VectorXd og_dot(3);
-    og << 2.0, 1.0, 0,0;
-    og_dot = VectorXd::Zero(3);
+    og << 2.0, 1.0, 0.0;
+    og_dot << 0, 0, 0;
 
     const double TiME_INTERVAL = 60.0;
     const double dt = 1e-2;
 
+    cout << "construct root start" << endl;
     /* root */
     mapping_base::Identity root_mappings;
     rmp_node::Root root(7, 0, "root", &root_mappings);
@@ -48,16 +50,24 @@ int main()
     root.set_state(q0, q0_dot);
 
 
+    cout << "constract node start..." << endl;
     /* node 作成*/
     // 構造
-    vector<int> model_struct = baxter::Control_Point::calc_points_mapping();
-    
+    vector<std::size_t> model_struct = baxter::Control_Point::calc_points_mapping();
+    cout << "1" << endl;
     vector<vector<mapping_base::Identity>> temp_mappings(model_struct.size());
     vector<vector<rmp_node::Node>> cpoint_nodes;  //ノード
-    for (int i=0; i<model_struct.size(); ++i){
+    std::size_t frame_num = model_struct.size();
+    
+    cout << "for mae" << endl;
+    for (int i=0; i<frame_num; ++i){
+        cout << "i = " << i << endl;
+        cout << "    index_num = " << model_struct[i] << endl;
         for (int j=0; j<model_struct[i]; ++j){
+            cout << "    j = " << j << endl;
             temp_mappings[i].push_back(baxter::Control_Point(i, j));
-            if (i == model_struct.size()-1){
+            cout << "        hoge" << endl;
+            if (i == frame_num-1){
                 cpoint_nodes[i].push_back(
                     rmp_node::Node(3, 7, "ee", &temp_mappings[i][j])
                 );
@@ -71,6 +81,8 @@ int main()
             root.add_child(&cpoint_nodes[i][j]);
         }
     }
+
+    cout << "for owari" << endl;
 
     mapping_base::Identity id_mappings;  //恒等写像
     rmp2::Goal_Attractor attractor(

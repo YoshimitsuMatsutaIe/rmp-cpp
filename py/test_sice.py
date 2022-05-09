@@ -220,26 +220,26 @@ sol = integrate.solve_ivp(
 
 print(sol.message)
 
-fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(8, 13))
-axes[0].plot(sol.t, sol.y[0], label="q1")
-axes[0].plot(sol.t, sol.y[1], label="q2")
-axes[0].plot(sol.t, sol.y[2], label="q3")
-axes[0].plot(sol.t, sol.y[3], label="q4")
+# fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(8, 13))
+# axes[0].plot(sol.t, sol.y[0], label="q1")
+# axes[0].plot(sol.t, sol.y[1], label="q2")
+# axes[0].plot(sol.t, sol.y[2], label="q3")
+# axes[0].plot(sol.t, sol.y[3], label="q4")
 
-_x = []
-_y = []
-for i in range(len(sol.t)):
-    _X = x4.phi(np.array([[sol.y[0][i],sol.y[1][i],sol.y[2][i],sol.y[3][i]]]).T)
-    _x.append(_X[0,0])
-    _y.append(_X[1,0])
-axes[1].plot(_x, _y, label="ee")
-axes[1].scatter(g[0,0], g[1,0], marker="*", color="red")
-axes[1].set_aspect('equal')
+# _x = []
+# _y = []
+# for i in range(len(sol.t)):
+#     _X = x4.phi(np.array([[sol.y[0][i],sol.y[1][i],sol.y[2][i],sol.y[3][i]]]).T)
+#     _x.append(_X[0,0])
+#     _y.append(_X[1,0])
+# axes[1].plot(_x, _y, label="ee")
+# axes[1].scatter(g[0,0], g[1,0], marker="*", color="red")
+# axes[1].set_aspect('equal')
 
-for ax in axes.ravel():
-    ax.legend()
-    ax.grid()
-fig.savefig("solver0.png")
+# for ax in axes.ravel():
+#     ax.legend()
+#     ax.grid()
+# fig.savefig("solver0.png")
 
 
 
@@ -260,9 +260,12 @@ q_data, joint_data, ee_data, cpoint_data = visualization.make_data(
 
 
 
-visualization.make_animation(
+ani = visualization.make_animation(
     t_data = sol.t,
     joint_data=joint_data,
     is3D=False,
     goal_data=np.array([[g[0,0], g[1,0]]*len(sol.t)]).reshape(len(sol.t), 2)
 )
+
+
+plt.show()

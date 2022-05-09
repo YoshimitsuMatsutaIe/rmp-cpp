@@ -55,13 +55,17 @@ void baxter::Control_Point::set_q_min(VectorXd& out)
 }
 
 
-const std::vector<int> baxter::Control_Point::calc_points_mapping(void)
+const std::vector<std::size_t> baxter::Control_Point::calc_points_mapping(void)
 {
-    int frame_num = baxter::Control_Point::R_BARS_ALL.size();
-    vector<int> s(frame_num);
+    std::cout << "calc_points_mapping start." << std::endl;
+    std::size_t frame_num = baxter::Control_Point::R_BARS_ALL.size();
+    vector<std::size_t> s;
     for (int i=0; i<frame_num; ++i){
+        //std::cout << "i = " << i << std::endl;
+        //std::cout << "    num = " << baxter::Control_Point::R_BARS_ALL[i].size() << std::endl;
         s.push_back(baxter::Control_Point::R_BARS_ALL[i].size());
     }
+    std::cout << "done!" << std::endl;
     return s;
 }
 

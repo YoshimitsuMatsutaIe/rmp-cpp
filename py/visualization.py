@@ -5,7 +5,7 @@ import matplotlib.animation as anm
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from functools import lru_cache
+from functools import lru_cache  # これつけるとplt.show()でアニメーションがループしなくなる
 import pickle
 
 
@@ -207,15 +207,15 @@ def make_animation(
         frames = range(0, len(t_data), step)
     )
     
-    ani.save(save_dir_path + "animation0.gif", fps=30, writer='pillow')
+    ani.save(save_dir_path + "animation.gif", fps=30, writer='pillow')
     # with open(save_dir_path + 'animation.binaryfile', 'wb') as f:
     #     pickle.dump(ani, f)
     
     
     print("time = ", time.time() - start_time)
     
-    plt.show()
-    return
+    #plt.show()
+    return ani
 
 
 
