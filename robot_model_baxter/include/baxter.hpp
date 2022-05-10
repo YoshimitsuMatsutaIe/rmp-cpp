@@ -232,6 +232,8 @@ namespace baxter
         static void set_q_max(VectorXd& out);
         static void set_q_min(VectorXd& out);
 
+        const void print_state(void);
+
 
         static const vector<std::size_t> calc_points_mapping(void);
 

@@ -196,3 +196,21 @@ void baxter::Control_Point::jacobian_dot(const VectorXd &q, const VectorXd &q_do
     this->calc_jrz_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, jrz_dot);
     out = jrx_dot*r_bar(0) + jry_dot*r_bar(1) + jrz_dot*r_bar(2) + jo_dot;
 }
+
+
+const void baxter::Control_Point::print_state(void)
+{
+    using std::cout;
+    using std::endl;
+
+    cout << "htm = \n" << this->htm     << endl;
+    cout << "jo = \n" << this->jo      << endl;
+    cout << "jrx = \n" << this->jrx     << endl;
+    cout << "jry = \n" << this->jry     << endl;
+    cout << "jrz = \n" << this->jrz     << endl;
+    cout << "jo_dot = \n" << this->jo_dot  << endl;
+    cout << "jrx_dot = \n" << this->jrx_dot << endl;
+    cout << "jry_dot = \n" << this->jry_dot << endl;
+    cout << "jrz_dot = \n" << this->jrz_dot << endl;
+
+}
