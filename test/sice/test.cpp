@@ -14,8 +14,8 @@ int main()
     std::cout << "running...\n" << std::endl;
 
 
-    Eigen::VectorXd og(2);
-    Eigen::VectorXd og_dot(2);
+    Eigen::VectorXd og(2);  //goal position
+    Eigen::VectorXd og_dot(2);  //goal velo
     og << 2.0, 1.0;
     og_dot = Eigen::VectorXd::Zero(2);
 

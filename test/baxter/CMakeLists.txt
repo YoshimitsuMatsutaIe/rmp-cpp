@@ -3,7 +3,6 @@ project(solution)
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB SRC_ ../../src/*.cpp)
-
 message(${SRC_})
 
 file(GLOB BAXTER_ ../../robot_model_baxter/src/*.cpp)

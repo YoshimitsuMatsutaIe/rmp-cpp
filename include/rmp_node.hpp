@@ -51,7 +51,7 @@ namespace rmp_node{
         const void print_state(void);
         const void print_state_all_node(void);
 
-        void add_child(Node *child);
+        virtual void add_child(Node *child);
         virtual void pushforward(void);
         virtual void pullback(void);
         
@@ -76,6 +76,10 @@ namespace rmp_node{
     };
 
 
+    /**
+     * @brief リーフノード。子ノードなくて大丈夫
+     * 
+     */
     class Leaf_Base : public Node
     {
     public:
@@ -85,6 +89,7 @@ namespace rmp_node{
         virtual void calc_natural_form(void);
         void pullback(void) override;
         void set_debug(bool is_debug) override;
+        void add_child(Node *child) override;
     };
 
 };

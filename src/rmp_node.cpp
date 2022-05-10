@@ -26,19 +26,19 @@ rmp_node::Node::Node(
     this->parent_dim = parent_dim;
     this->mappings = mappings;
 
-    x = VectorXd::Zero(self_dim);
-    x_dot = VectorXd::Zero(self_dim);
-    f = VectorXd::Zero(self_dim);
-    M = MatrixXd::Zero(self_dim, self_dim);
-    J = MatrixXd::Zero(self_dim, parent_dim);
-    J_dot = MatrixXd::Zero(self_dim, parent_dim);
+    this->x = VectorXd::Zero(self_dim);
+    this->x_dot = VectorXd::Zero(self_dim);
+    this->f = VectorXd::Zero(self_dim);
+    this->M = MatrixXd::Zero(self_dim, self_dim);
+    this->J = MatrixXd::Zero(self_dim, parent_dim);
+    this->J_dot = MatrixXd::Zero(self_dim, parent_dim);
 }
 
 
 void rmp_node::Node::initialize_rmp_natural_form(void)
 {
-    f = VectorXd::Zero(self_dim);
-    M = MatrixXd::Zero(self_dim, self_dim);
+    this->f = VectorXd::Zero(self_dim);
+    this->M = MatrixXd::Zero(self_dim, self_dim);
 }
 
 
@@ -46,32 +46,34 @@ void rmp_node::Node::initialize_rmp_natural_form(void)
 
 const void rmp_node::Node::print_state(void)
 {
+    using std::cout;
+    using std::endl;
     if (this->is_debug==false){return;}
-    std::cout << "name = " << name << std::endl;
-    std::cout << "node_type = " << node_type << std::endl;
-    std::cout << "dimention = " << self_dim << std::endl;
+    cout << "name = " << this->name << endl;
+    // cout << "node_type = " << this->node_type << endl;
+    // cout << "dimention = " << this->self_dim << endl;
 
     if (node_type == 1)
     {
-        std::cout << "children = none" << std::endl;
+        cout << "children = none" << endl;
     }
     else
     {
-        std::cout << "children = ";
+        cout << "children = ";
         for (rmp_node::Node* child : children)
         {
-            std::cout << child->name << ", ";
+            cout << child->name << ", ";
         }
-        std::cout << std::endl;
+        cout << endl;
     }
     
-    std::cout << "x = \n" << x << std::endl;
-    std::cout << "x_dot = \n" << x_dot << std::endl;
-    std::cout << "J = \n" << J << std::endl;
-    std::cout << "J_dot = \n" << J_dot << std::endl;
-    std::cout << "f = \n" << f << std::endl;
-    std::cout << "M = \n" << M << std::endl;
-    std::cout << "\n" << std::endl;
+    // cout << "x = \n" << this->x << endl;
+    // cout << "x_dot = \n" << this->x_dot << endl;
+    // cout << "J = \n" << this->J << endl;
+    // cout << "J_dot = \n" << this->J_dot << endl;
+    // cout << "f = \n" << this->f << endl;
+    // cout << "M = \n" << this->M << endl;
+    cout << "\n" << endl;
 }
 
 
@@ -278,6 +280,10 @@ void rmp_node::Leaf_Base::set_debug(bool is_debug)
     this->is_debug = is_debug;
 }
 
+void rmp_node::Leaf_Base::add_child(Node *child)
+{
+    std::cout << "this node is leaf. can't add child." << std::endl;
+}
 
 
 rmp_tree::RMP_Tree::RMP_Tree(rmp_node::Root* root, std::string tree_name)
