@@ -172,6 +172,7 @@ baxter::Control_Point::Control_Point(int frame, int index)
 
 void baxter::Control_Point::phi(const VectorXd &q, VectorXd &out)
 {
+    std::cout << "calcing phi..." << std::endl;
     this->calc_htm(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->htm);
     out = this->htm * this->r_bar;
 }

@@ -48,6 +48,7 @@ int main()
     q0_dot = VectorXd::Zero(7);
 
     root.set_state(q0, q0_dot);
+    root.set_debug(true);
 
 
     cout << "constract node start..." << endl;
@@ -55,52 +56,56 @@ int main()
     // 構造
     vector<std::size_t> model_struct = baxter::Control_Point::calc_points_mapping();
     cout << "1" << endl;
-    vector<vector<mapping_base::Identity>> temp_mappings(model_struct.size());
+    vector<vector<mapping_base::Identity>> mappings(model_struct.size());
     vector<vector<rmp_node::Node>> cpoint_nodes(model_struct.size());  //ノード
-    std::size_t frame_num = model_struct.size();
+    auto frame_num = model_struct.size();
     
     cout << "for mae" << endl;
     for (int i=0; i<frame_num; ++i){
         cout << "i = " << i << endl;
         cout << "    index_num = " << model_struct[i] << endl;
         
+        vector<mapping_base::Identity> temp_mappings_(model_struct[i]);
+        vector<rmp_node::Node> temp_nodes_(model_struct[i]);
+
         for (int j=0; j<model_struct[i]; ++j){
             cout << "    j = " << j << endl;
-            temp_mappings[i].push_back(baxter::Control_Point(i, j));
+            temp_mappings_[j] = baxter::Control_Point(i, j);
             //cout << "        hoge" << endl;
             if (i == 7){
-                // cout << "        this is end-effector" << endl;
-                // cpoint_nodes[7].push_back(
-                //     rmp_node::Node(3, 7, "ee", &temp_mappings[i][j])
-                // );
-                
-                // mapping_base::Identity id_mappings;  //恒等写像
-                // rmp2::Goal_Attractor attractor(
-                //     3, 3, "ee-attractor", &id_mappings,
-                //     5.0, 5.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 0.5,
-                //     og, og_dot
-                // );
-                // cpoint_nodes[i][j].add_child(&attractor);
-                // cout << "attractor add" << endl;
+                cout << "        this is end-effector" << endl;
+                temp_nodes_[j] = rmp_node::Node(3, 7, "ee", &temp_mappings_[j]);
             }
             else{
                 std::string name_ = "cpoints_" + std::to_string(i) + "_" + std::to_string(j);
                 cout << "        name = " << name_ << endl;
-                cout << "        len = " << temp_mappings[i].size() << endl;
-                cout << "        map name = " << temp_mappings[i][j].name << endl;
-                
+
                 //cout << "        hoge" << endl;
-                cpoint_nodes[i].push_back(
-                    rmp_node::Leaf_Base(3, 7, name_, &temp_mappings[i][j])
-                );
-                
-                root.add_child(&cpoint_nodes[i][j]);
-                cout << "        node - " << cpoint_nodes[i][j].name << " add to root!" << endl;
+                temp_nodes_[j] = rmp_node::Leaf_Base(3, 7, name_, &temp_mappings_[j]);
             }
             //cout << "    root add mae" << endl;
 
         }
+        mappings[i] = temp_mappings_;
+        cpoint_nodes[i] = temp_nodes_;
     }
+
+
+    cout << "hogehoge" << endl;
+    for (int i=0; i<frame_num; ++i){
+        for (int j=0; j<model_struct[i]; ++j){
+            root.add_child(&cpoint_nodes[i][j]);
+        }
+    }
+
+    cout << "hogehogehoge" << endl;
+    mapping_base::Identity id_mappings;  //恒等写像
+    rmp2::Goal_Attractor attractor(
+        3, 3, "ee-attractor", &id_mappings,
+        5.0, 5.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 0.5,
+        og, og_dot
+    );
+    cpoint_nodes[frame_num-1][0].add_child(&attractor);
 
     cout << "for owari" << endl;
 
@@ -118,9 +123,11 @@ int main()
     root.add_child(&jl);
     cout << "jl add" << endl;
 
+    root.print_state();
     root.print_state_all_node();
-    //root.pushforward();
-    //cout << "push done" << endl;
+    cout << "print all done!!!" << endl;
+    root.pushforward();
+    cout << "push done" << endl;
     //root.print_state_all_node();
 
     // root.pullback();

@@ -167,8 +167,8 @@ void rmp_node::Root::set_state(
 
 void rmp_node::Root::pushforward(void)
 {
-    //std::cout << "pushforward running..." << std::endl;
-    //std::cout << "pushing at " << name << std::endl;
+    std::cout << "pushforward running..." << std::endl;
+    std::cout << "pushing at " << name << std::endl;
 
     // this->x_dot += this->q_ddot * dt;
     // this->x += this->x_dot * dt;
@@ -177,7 +177,10 @@ void rmp_node::Root::pushforward(void)
     for (rmp_node::Node* child : this->children)
     {
         // 子供のやつ
+        std::cout << "chid name = " << child->name << std::endl;
+        std::cout << "child mapping name = " << child->mappings->name << std::endl;
         child->mappings->phi(x, child->x);
+        std::cout << "phi done" << std::endl;
         child->mappings->jacobian(x, child->J);
         child->x_dot = child->J * x_dot;
         child->mappings->jacobian_dot(x, x_dot, child->J_dot);
