@@ -37,8 +37,8 @@ rmp_node::Node::Node(
 
 void rmp_node::Node::initialize_rmp_natural_form(void)
 {
-    this->f = VectorXd::Zero(self_dim);
-    this->M = MatrixXd::Zero(self_dim, self_dim);
+    this->f = VectorXd::Zero(this->self_dim);
+    this->M = MatrixXd::Zero(this->self_dim, this->self_dim);
 }
 
 
@@ -50,8 +50,8 @@ const void rmp_node::Node::print_state(void)
     using std::endl;
     if (this->is_debug==false){return;}
     cout << "name = " << this->name << endl;
-    // cout << "node_type = " << this->node_type << endl;
-    // cout << "dimention = " << this->self_dim << endl;
+    cout << "node_type = " << this->node_type << endl;
+    cout << "dimention = " << this->self_dim << endl;
 
     if (node_type == 1)
     {
@@ -60,19 +60,19 @@ const void rmp_node::Node::print_state(void)
     else
     {
         cout << "children = ";
-        for (rmp_node::Node* child : children)
+        for (rmp_node::Node* child : this->children)
         {
             cout << child->name << ", ";
         }
         cout << endl;
     }
     
-    // cout << "x = \n" << this->x << endl;
-    // cout << "x_dot = \n" << this->x_dot << endl;
-    // cout << "J = \n" << this->J << endl;
-    // cout << "J_dot = \n" << this->J_dot << endl;
-    // cout << "f = \n" << this->f << endl;
-    // cout << "M = \n" << this->M << endl;
+    cout << "x = \n" << this->x << endl;
+    cout << "x_dot = \n" << this->x_dot << endl;
+    cout << "J = \n" << this->J << endl;
+    cout << "J_dot = \n" << this->J_dot << endl;
+    cout << "f = \n" << this->f << endl;
+    cout << "M = \n" << this->M << endl;
     cout << "\n" << endl;
 }
 
@@ -106,13 +106,14 @@ void rmp_node::Node::add_child(rmp_node::Node* child)
 void rmp_node::Node::pushforward(void)
 {
     //std::cout << "pushing at " << name << std::endl;
+    std::cout << "pushing at " << name << std::endl;
     initialize_rmp_natural_form();
     for (rmp_node::Node* child : children)
     {
-        child->mappings->phi(x, child->x);
-        child->mappings->jacobian(x, child->J);
-        child->x_dot = child->J * x_dot;
-        child->mappings->jacobian_dot(x, x_dot, child->J_dot);
+        child->mappings->phi(this->x, child->x);
+        child->mappings->jacobian(this->x, child->J);
+        child->x_dot = child->J * this->x_dot;
+        child->mappings->jacobian_dot(this->x, this->x_dot, child->J_dot);
         if (child->node_type != 1)
         {
             child->pushforward();
@@ -124,11 +125,11 @@ void rmp_node::Node::pushforward(void)
 void rmp_node::Node::pullback(void)
 {
     //std::cout << "pullback doing at " << name << std::endl;
-    for (rmp_node::Node* child : children)
+    for (rmp_node::Node* child : this->children)
     {
         child->pullback();
-        this->parent->f += J.transpose() * (f - (M * J_dot * this->parent->x_dot));
-        this->parent->M += J.transpose() * M * J;
+        this->parent->f += this->J.transpose() * (this->f - (this->M * this->J_dot * this->parent->x_dot));
+        this->parent->M += this->J.transpose() * this->M * this->J;
     }
 }
 
@@ -136,7 +137,7 @@ void rmp_node::Node::pullback(void)
 void rmp_node::Node::set_debug(bool is_debug)
 {
     this->is_debug = is_debug;
-    for (rmp_node::Node* child : children)
+    for (rmp_node::Node* child : this->children)
     {
         child->is_debug = is_debug;
         child->set_debug(is_debug);
@@ -179,11 +180,12 @@ void rmp_node::Root::pushforward(void)
         // 子供のやつ
         std::cout << "chid name = " << child->name << std::endl;
         std::cout << "child mapping name = " << child->mappings->name << std::endl;
-        child->mappings->phi(x, child->x);
-        std::cout << "phi done" << std::endl;
-        child->mappings->jacobian(x, child->J);
-        child->x_dot = child->J * x_dot;
-        child->mappings->jacobian_dot(x, x_dot, child->J_dot);
+        child->mappings->phi(this->x, child->x);
+        child->mappings->jacobian(this->x, child->J);
+        std::cout << "J = \n" << child->J << std::endl;
+        child->x_dot = child->J * this->x_dot;
+        child->mappings->jacobian_dot(this->x, this->x_dot, child->J_dot);
+        //child->mappings->print_state();
         if (child->node_type != 1)
         {
             child->pushforward();
@@ -207,7 +209,7 @@ void rmp_node::Root::pullback(void)
 
 void rmp_node::Root::resolve(void)
 {
-    q_ddot = M.completeOrthogonalDecomposition().pseudoInverse() * f;
+    q_ddot = this->M.completeOrthogonalDecomposition().pseudoInverse() * this->f;
     //q_ddot = (M.transpose() * M).inverse() * M.transpose() * f;
     //q_ddot = M.inverse() * f;
     //q_ddot = M.colPivHouseholderQr().solve(f);
@@ -287,6 +289,9 @@ void rmp_node::Leaf_Base::add_child(Node *child)
 {
     std::cout << "this node is leaf. can't add child." << std::endl;
 }
+
+
+/*********************************************************************/
 
 
 rmp_tree::RMP_Tree::RMP_Tree(rmp_node::Root* root, std::string tree_name)

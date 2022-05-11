@@ -201,7 +201,7 @@ namespace baxter
 
         static const vector<vector<vector<double>>> R_BARS_ALL;
 
-        VectorXd r_bar;
+        VectorXd r_bar; //拡張位置ベクトル
         func_q_matout calc_htm;
         func_q_matout calc_jo;
         func_q_matout calc_jrx;
@@ -212,7 +212,7 @@ namespace baxter
         func_q_dq_matout calc_jry_dot;
         func_q_dq_matout calc_jrz_dot;
 
-        MatrixXd htm;
+        MatrixXd htm;  //同時変換行列
         MatrixXd jo;
         MatrixXd jrx;
         MatrixXd jry;

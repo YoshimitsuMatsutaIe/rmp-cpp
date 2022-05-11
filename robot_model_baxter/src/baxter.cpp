@@ -2,9 +2,9 @@
 
 
 
-const double baxter::Control_Point::L = 278e-3;
-const double baxter::Control_Point::h = 64e-3;
-const double baxter::Control_Point::H = 1104e-3;
+const double baxter::Control_Point::L  = 278e-3;
+const double baxter::Control_Point::h  = 64e-3;
+const double baxter::Control_Point::H  = 1104e-3;
 const double baxter::Control_Point::L0 = 270.35e-3;
 const double baxter::Control_Point::L1 = 69e-3;
 const double baxter::Control_Point::L2 = 364.35e-3;
@@ -12,46 +12,28 @@ const double baxter::Control_Point::L3 = 69e-3;
 const double baxter::Control_Point::L4 = 374.29e-3;
 const double baxter::Control_Point::L5 = 10e-3;
 const double baxter::Control_Point::L6 = 368.3e-3;
-const double baxter::Control_Point::R = 0.05;
+const double baxter::Control_Point::R  = 0.05;
 
 
 void baxter::Control_Point::set_q_neutral(VectorXd& out)
 {
     out = VectorXd::Zero(7);
-    out << 
-        0.0,
-        -31.0*M_PI/180,
-        0.0,
-        43.0*M_PI/180,
-        0.0,
-        72.0*M_PI/180,
-        0.0;
+    out << 0, -31.0, 0.0, 43.0, 0, 72.0, 0;
+    out *= M_PI / 180;
 }
 
 void baxter::Control_Point::set_q_max(VectorXd& out)
 {
     out = VectorXd::Zero(7);
-    out << 
-        51.0*M_PI/180,
-        60.0*M_PI/180,
-        173.0*M_PI/180,
-        150.0*M_PI/180,
-        175.0*M_PI/180,
-        120.0*M_PI/180,
-        175.0*M_PI/180;
+    out << 51.0, 60.0, 173.0, 150.0, 175.0, 120.0, 175.0;
+    out *= M_PI / 180;
 }
 
 void baxter::Control_Point::set_q_min(VectorXd& out)
 {
     out = VectorXd::Zero(7);
-    out << 
-        -141.0*M_PI/180,
-        -123.0*M_PI/180,
-        -173.0*M_PI/180,
-        -3.0*M_PI/180,
-        -175.0*M_PI/180,
-        -90.0*M_PI/180,
-        -175.0*M_PI/180;
+    out << -141, -123, -173, -3, -175, -90, -175.0;
+    out *= M_PI / 180;
 }
 
 
@@ -71,21 +53,21 @@ const std::vector<std::size_t> baxter::Control_Point::calc_points_mapping(void)
 
 
 const std::vector<std::vector<double>> baxter::Control_Point::r_bars_0{
-    {0, L1/2, -L0/2, 1},
-    {0, -L1/2, -L0/2, 1},
-    {L1/2, 0, -L0/2, 1},
-    {-L1/2, 0, -L0/2, 1}
+    {0,     L1/2,  -L0/2, 1},
+    {0,     -L1/2, -L0/2, 1},
+    {L1/2,  0,     -L0/2, 1},
+    {-L1/2, 0,     -L0/2, 1}
 };
 
 const std::vector<std::vector<double>> baxter::Control_Point::r_bars_1{
-    {0, 0, L3/2, 1},
+    {0, 0, L3/2,  1},
     {0, 0, -L3/2, 1}
 };
 
 const std::vector<std::vector<double>> baxter::Control_Point::r_bars_2{
-    {0, L3/2, -L2*2/3, 1},
-    {0, -L3/2, -L2*2/3, 1},
-    {L3/2, 0, -L2*2/3, 1},
+    {0,     L3/2, -L2*2/3, 1},
+    {0,     -L3/2, -L2*2/3, 1},
+    {L3/2,  0, -L2*2/3, 1},
     {-L3/2, 0, -L2*2/3, 1},
     {0, L3/2, -L2*1/3, 1},
     {0, -L3/2, -L2*1/3, 1},
@@ -125,7 +107,7 @@ const std::vector<std::vector<std::vector<double>>> baxter::Control_Point::R_BAR
 
 
 
-std::vector<baxter::func_q_vecout> baxter::Control_Point::Os =  {&o_0, &o_1, &o_2, &o_3, &o_4, &o_5, &o_6, &o_ee};
+std::vector<baxter::func_q_vecout> baxter::Control_Point::Os = {&o_0, &o_1, &o_2, &o_3, &o_4, &o_5, &o_6, &o_ee};
 std::vector<baxter::func_q_vecout> baxter::Control_Point::RXs = {&rx_0, &rx_1, &rx_2, &rx_3, &rx_4, &rx_5, &rx_6, &rx_ee};
 std::vector<baxter::func_q_vecout> baxter::Control_Point::RYs = {&ry_0, &ry_1, &ry_2, &ry_3, &ry_4, &ry_5, &ry_6, &ry_ee};
 std::vector<baxter::func_q_vecout> baxter::Control_Point::RZs = {&rz_0, &rz_1, &rz_2, &rz_3, &rz_4, &rz_5, &rz_6, &rz_ee};
@@ -141,23 +123,20 @@ std::vector<baxter::func_q_dq_matout> baxter::Control_Point::JRZs_dot = {&jrz_0_
 
 
 
-
-
-
 baxter::Control_Point::Control_Point(int frame, int index)
 {
     this->name = "baxter control point at frame=" + std::to_string(frame) + ", index=" + std::to_string(index);
     this->r_bar = VectorXd::Zero(4);
     this->r_bar << this->R_BARS_ALL[frame][index][0], R_BARS_ALL[frame][index][1], R_BARS_ALL[frame][index][2], 1.0;
-    this->calc_htm = HTMs[frame];
+    this->calc_htm = this->HTMs[frame];
     this->calc_jo = this->JOs[frame];
-    this->calc_jrx = JRXs[frame];
-    this->calc_jry = JRYs[frame];
-    this->calc_jrz = JRZs[frame];
-    this->calc_jo_dot = JOs_dot[frame];
-    this->calc_jrx_dot = JRXs_dot[frame];
-    this->calc_jry_dot = JRYs_dot[frame];
-    this->calc_jrz_dot = JRZs_dot[frame];
+    this->calc_jrx = this->JRXs[frame];
+    this->calc_jry = this->JRYs[frame];
+    this->calc_jrz = this->JRZs[frame];
+    this->calc_jo_dot = this->JOs_dot[frame];
+    this->calc_jrx_dot = this->JRXs_dot[frame];
+    this->calc_jry_dot = this->JRYs_dot[frame];
+    this->calc_jrz_dot = this->JRZs_dot[frame];
     this->htm = MatrixXd::Zero(4, 4);
     this->jo = MatrixXd::Zero(3, 7);
     this->jrx = MatrixXd::Zero(3, 7);
@@ -167,6 +146,8 @@ baxter::Control_Point::Control_Point(int frame, int index)
     this->jrx_dot = MatrixXd::Zero(3, 7);
     this->jry_dot = MatrixXd::Zero(3, 7);
     this->jrz_dot = MatrixXd::Zero(3, 7);
+
+    std::cout << "map (name = " << this->name << ") is created!!!!!" << std::endl;
 }
 
 
@@ -180,21 +161,25 @@ void baxter::Control_Point::phi(const VectorXd &q, VectorXd &out)
 
 void baxter::Control_Point::jacobian(const VectorXd &q, MatrixXd &out)
 {
-    this->calc_jo(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, jo);
-    this->calc_jrx(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, jrx);
-    this->calc_jry(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, jry);
-    this->calc_jrz(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, jrz);
-    out = jrx*r_bar(0) + jry*r_bar(1) + jrz*r_bar(2) + jo;
+    this->calc_jo(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->jo);
+    this->calc_jrx(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->jrx);
+    this->calc_jry(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->jry);
+    this->calc_jrz(q, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->jrz);
+    out = this->jrx*this->r_bar(0) + this->jry*this->r_bar(1) + this->jrz*this->r_bar(2) + this->jo;
+    std::cout << "jacobian = \n" << out << std::endl;
 }
 
 
 void baxter::Control_Point::jacobian_dot(const VectorXd &q, const VectorXd &q_dot, MatrixXd &out)
 {
-    this->calc_jo_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, jo_dot);
-    this->calc_jrx_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, jrx_dot);
-    this->calc_jry_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, jry_dot);
-    this->calc_jrz_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, jrz_dot);
-    out = jrx_dot*r_bar(0) + jry_dot*r_bar(1) + jrz_dot*r_bar(2) + jo_dot;
+    this->calc_jo_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->jo_dot);
+    this->calc_jrx_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->jrx_dot);
+    this->calc_jry_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->jry_dot);
+    this->calc_jrz_dot(q, q_dot, L, h, H, L0, L1, L2, L3, L4, L5, L6, this->jrz_dot);
+    out = this->jrx_dot*this->r_bar(0)
+    + this->jry_dot*this->r_bar(1)
+    + this->jrz_dot*this->r_bar(2)
+    + this->jo_dot;
 }
 
 

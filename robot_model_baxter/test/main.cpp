@@ -12,27 +12,29 @@ int main()
 
 
 
-    baxter::Control_Point hoge(0,0);
+    baxter::Control_Point hoge(7,0);
 
     cout << hoge.name << endl;
 
-    Eigen::VectorXd q0;
-    baxter::Control_Point::set_q_neutral(q0);
+    Eigen::VectorXd q;
+    baxter::Control_Point::set_q_neutral(q);
 
-    Eigen::VectorXd q0_dot(7);
-    q0_dot << 0., 0,0,0,0,0,0;
+    Eigen::VectorXd q_dot(7);
+    q_dot << 0.0, 0,0,0,0,0,0;
 
     Eigen::VectorXd x(3);
     Eigen::VectorXd x_dot(3);
     Eigen::MatrixXd J(3, 7);
     Eigen::MatrixXd J_dot(3, 7);
 
-    hoge.phi(q0, x);
-
+    hoge.phi(q, x);
+    hoge.jacobian(q, J);
+    hoge.jacobian_dot(q, q_dot, J_dot);
     hoge.print_state();
 
-
-
+    cout << "x = \n" << x << endl;
+    cout << "J = \n" << J << endl;
+    cout << "J_dot = \n" << J_dot << endl;
 
 
 
