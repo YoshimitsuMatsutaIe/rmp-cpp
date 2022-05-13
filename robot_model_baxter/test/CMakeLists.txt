@@ -8,4 +8,4 @@ add_executable(
     ../../src/mappings.cpp
     ${BAXTER_NONE_CLASS}
 )
-target_compile_options(main PUBLIC -O2 -Wall)
+target_compile_options(main PUBLIC -O2 -Wall -fopenmp)
