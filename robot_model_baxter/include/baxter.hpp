@@ -156,12 +156,11 @@ namespace baxter
 
 
 
-
-    class Control_Point : public mapping_base::Identity
     /**
      * @brief 制御点
      * 
      */
+    class Control_Point : public mapping_base::Identity
     {
     private:
         static const double L;

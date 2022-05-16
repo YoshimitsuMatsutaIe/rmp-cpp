@@ -15,7 +15,7 @@
 #include "../../include/mappings.hpp"
 #include "../../include/rmp_node.hpp"
 
-
+#include <omp.h>
 #include <eigen3/Eigen/Core>
 #include <iostream>
 #include <vector>
@@ -34,7 +34,7 @@ int main()
     VectorXd og(3);  //目標点位置
     VectorXd og_dot(3);  //目標点速度
     og << 2.0, 1.0, 0.0;
-    og_dot << 0, 0, 0;
+    og_dot << 0.0, 0.0, 0.0;
 
     const double TiME_INTERVAL = 60.0;
     const double dt = 1e-2;
@@ -51,39 +51,61 @@ int main()
     root.set_debug(true);
 
 
-    cout << "constract node start..." << endl;
     /* node 作成*/
+    // ジョイント制限
+    cout << "constract node start..." << endl;
+    VectorXd q_neutral(7), q_max(7), q_min(7);
+    baxter::Control_Point::set_q_neutral(q_neutral);
+    baxter::Control_Point::set_q_max(q_max);
+    baxter::Control_Point::set_q_min(q_min);
+    mapping_base::Identity id_mappings2;  //恒等写像
+    rmp2::Joint_Limit_Avoidance jl(
+        root.self_dim, root.self_dim, "jl-avoidance", &id_mappings2,
+        0.01, 0.05, 1.0, 0.1, q_max, q_min, q_neutral
+    );
+    root.add_child(&jl);
+    cout << "jl add to ee done" << endl;
+
+
     // 構造
     vector<std::size_t> model_struct = baxter::Control_Point::calc_points_mapping();
     auto frame_num = model_struct.size();
     
     /* 制御点のマップを構成 */
-    vector<vector<mapping_base::Identity>> mappings(model_struct.size());
+    vector<vector<mapping_base::Identity>> mappings;
     for (int i=0; i<frame_num; ++i){
-        vector<mapping_base::Identity> temp_mappings_(model_struct[i]);
+        vector<mapping_base::Identity> temp_mappings_;
         for (int j=0; j<model_struct[i]; ++j){
-            temp_mappings_[j] = baxter::Control_Point(i, j);
+            temp_mappings_.push_back(baxter::Control_Point(i, j));
+            cout << "now map name is " << temp_mappings_[j].name << endl;
+            //cout << "and jo = \n" << temp_mappings_[j].print_state() << endl;
         }
-        mappings[i] = temp_mappings_;
+        mappings.push_back(temp_mappings_);
+    }
+
+    /* マップのチェック */
+    for (auto hoge: mappings){
+        for (auto h: hoge){
+            cout << h.name << endl;
+        }
     }
 
     /* 制御点のnode構築 */
-    vector<vector<rmp_node::Node>> cpoint_nodes(model_struct.size());  //ノード
+    vector<vector<rmp_node::Node>> cpoint_nodes;  //ノード
     for (int i=0; i<frame_num; ++i){
-        vector<rmp_node::Node> temp_nodes_(model_struct[i]);
+        vector<rmp_node::Node> temp_nodes_;
         for (int j=0; j<model_struct[i]; ++j){
             std::string name;
             if (i == frame_num-1){
                 name = "ee";
-                temp_nodes_[j] = rmp_node::Node(3, root.self_dim, name, &mappings[i][j]);
+                temp_nodes_.push_back(rmp_node::Node(3, root.self_dim, name, &mappings[i][j]));
             }
             else{
                 name = "cpoints_" + std::to_string(i) + "_" + std::to_string(j);
-                temp_nodes_[j] = rmp_node::Leaf_Base(3, root.self_dim, name, &mappings[i][j]);
+                temp_nodes_.push_back(rmp_node::Leaf_Base(3, root.self_dim, name, &mappings[i][j]));
             }
-            
         }
-        cpoint_nodes[i] = temp_nodes_;
+        cpoint_nodes.push_back(temp_nodes_);
     }
 
 
@@ -105,20 +127,6 @@ int main()
     cpoint_nodes[frame_num-1][0].add_child(&attractor);
     cout << "done" << endl;
 
-
-
-
-    VectorXd q_neutral(7), q_max(7), q_min(7);
-    baxter::Control_Point::set_q_neutral(q_neutral);
-    baxter::Control_Point::set_q_max(q_max);
-    baxter::Control_Point::set_q_min(q_min);
-    mapping_base::Identity id_mappings2;  //恒等写像
-    rmp2::Joint_Limit_Avoidance jl(
-        root.self_dim, root.self_dim, "jl-avoidance", &id_mappings2,
-        0.01, 0.05, 1.0, 0.1, q_max, q_min, q_neutral
-    );
-    root.add_child(&jl);
-    cout << "jl add to ee done" << endl;
 
 
 

@@ -14,4 +14,4 @@ add_executable(
     ${SRC_}
     ${BAXTER_}
 )
-target_compile_options(main PUBLIC -O2 -Wall -fopenmp)
+target_compile_options(main PUBLIC -O2 -Wall)

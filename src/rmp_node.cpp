@@ -13,7 +13,9 @@
 
 
 
-rmp_node::Node::Node(void){};
+rmp_node::Node::Node(void){
+    std::cout << "Node よばれた" << std::endl;
+};
 rmp_node::Node::Node(
     int self_dim,
     int parent_dim,
@@ -182,7 +184,9 @@ void rmp_node::Root::pushforward(void)
         std::cout << "child mapping name = " << child->mappings->name << std::endl;
         child->mappings->phi(this->x, child->x);
         child->mappings->jacobian(this->x, child->J);
-        std::cout << "J = \n" << child->J << std::endl;
+        
+        //std::cout << "x = \n" << child->x << std::endl;
+        //std::cout << "J = \n" << child->J << std::endl;
         child->x_dot = child->J * this->x_dot;
         child->mappings->jacobian_dot(this->x, this->x_dot, child->J_dot);
         //child->mappings->print_state();

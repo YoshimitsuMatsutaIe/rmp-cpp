@@ -9,6 +9,7 @@
 
 
 mapping_base::Identity::Identity(void){
+    std::cout << "Id 呼ばれた" << std::endl;
     this->name = "identity";
 }
 
@@ -20,12 +21,12 @@ void mapping_base::Identity::phi(const VectorXd &x, VectorXd &out)
 
 void mapping_base::Identity::jacobian(const VectorXd &x, MatrixXd &out)
 {
-    std::cout << "this is Identity. dont update J" << std::endl;
+    std::cout << "this is Identity. have not to update J" << std::endl;
 }
 
 void mapping_base::Identity::jacobian_dot(const VectorXd &x, const VectorXd &x_dot, MatrixXd &out)
 {
-    std::cout << "this is Identity. dont update J_dot" << std::endl;
+    std::cout << "this is Identity. have not to update J_dot" << std::endl;
 }
 
 
