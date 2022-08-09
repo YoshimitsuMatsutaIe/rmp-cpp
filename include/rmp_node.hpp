@@ -1,9 +1,10 @@
-#ifndef RMP_NODE__H
-#define RMP_NODE__H
+#ifndef RMP_NODE__HPP
+#define RMP_NODE__HPP
 
 #include "/usr/include/eigen3/Eigen/Core"
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "./mappings.hpp"
 
@@ -92,36 +93,6 @@ namespace rmp_node{
         void add_child(Node *child) override;
     };
 
-};
-
-
-
-
-namespace rmp_tree
-{
-    using Eigen::VectorXd;
-    using Eigen::MatrixXd;
-    class RMP_Tree
-    {
-    private:
-        bool is_debug=true;
-        void update_environment();
-
-    public:
-        RMP_Tree(rmp_node::Root* root, std::string tree_name);
-        //RMP_Tree(std::map<> tree_param);
-        rmp_node::Root* root;
-        std::string tree_name = "nameless";
-
-        //void one_step(void);
-        void run(
-            double time_span, double time_interval,
-            std::string method="euler",
-            std::string save_dir_path="result"
-        );
-        void set_debug(bool is_debug);
-
-    };
 };
 
 
