@@ -82,10 +82,10 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
 
     VectorXd xi(self_dim);
     if (this->self_dim == 2){
-        rmp2_attractor_xi_2d::func(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
+        xi_2d(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
     }
     else if ( this->self_dim == 3){
-        rmp2_attractor_xi_3d::func(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
+        xi_3d(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
     }
 
     //std::cout << "xi = \n" << xi << std::endl;

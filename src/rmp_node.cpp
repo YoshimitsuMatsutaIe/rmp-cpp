@@ -9,10 +9,10 @@
 
 
 
-rmp_node::Node::Node(void){
+rmp_flow::Node::Node(void){
     std::cout << "Node よばれた" << std::endl;
 };
-rmp_node::Node::Node(
+rmp_flow::Node::Node(
     int self_dim,
     int parent_dim,
     std::string name,
@@ -33,7 +33,7 @@ rmp_node::Node::Node(
 }
 
 
-void rmp_node::Node::initialize_rmp_natural_form(void)
+void rmp_flow::Node::initialize_rmp_natural_form(void)
 {
     this->f = VectorXd::Zero(this->self_dim);
     this->M = MatrixXd::Zero(this->self_dim, this->self_dim);
@@ -42,7 +42,7 @@ void rmp_node::Node::initialize_rmp_natural_form(void)
 
 
 
-const void rmp_node::Node::print_state(void)
+const void rmp_flow::Node::print_state(void)
 {
     using std::cout;
     using std::endl;
@@ -58,7 +58,7 @@ const void rmp_node::Node::print_state(void)
     else
     {
         cout << "children = ";
-        for (rmp_node::Node* child : this->children)
+        for (Node* child : this->children)
         {
             cout << child->name << ", ";
         }
@@ -75,7 +75,7 @@ const void rmp_node::Node::print_state(void)
 }
 
 
-const void rmp_node::Node::print_state_all_node(void)
+const void rmp_flow::Node::print_state_all_node(void)
 {
     if (this->is_debug==false){return;}
     if (node_type==0)
@@ -86,7 +86,7 @@ const void rmp_node::Node::print_state_all_node(void)
     
     if (node_type != 1)
     {
-        for (rmp_node::Node* child : children)
+        for (Node* child : children)
         {
             child->print_state_all_node();
         }
@@ -94,19 +94,19 @@ const void rmp_node::Node::print_state_all_node(void)
 }
 
 
-void rmp_node::Node::add_child(rmp_node::Node* child)
+void rmp_flow::Node::add_child(rmp_flow::Node* child)
 {
     this->children.push_back(child);
     child->parent = this;
 }
 
 
-void rmp_node::Node::pushforward(void)
+void rmp_flow::Node::pushforward(void)
 {
     //std::cout << "pushing at " << name << std::endl;
     std::cout << "pushing at " << name << std::endl;
     initialize_rmp_natural_form();
-    for (rmp_node::Node* child : children)
+    for (Node* child : children)
     {
         child->mappings->phi(this->x, child->x);
         child->mappings->jacobian(this->x, child->J);
@@ -120,10 +120,10 @@ void rmp_node::Node::pushforward(void)
 }
 
 
-void rmp_node::Node::pullback(void)
+void rmp_flow::Node::pullback(void)
 {
     //std::cout << "pullback doing at " << name << std::endl;
-    for (rmp_node::Node* child : this->children)
+    for (Node* child : this->children)
     {
         child->pullback();
         this->parent->f += this->J.transpose() * (this->f - (this->M * this->J_dot * this->parent->x_dot));
@@ -132,10 +132,10 @@ void rmp_node::Node::pullback(void)
 }
 
 
-void rmp_node::Node::set_debug(bool is_debug)
+void rmp_flow::Node::set_debug(bool is_debug)
 {
     this->is_debug = is_debug;
-    for (rmp_node::Node* child : this->children)
+    for (Node* child : this->children)
     {
         child->is_debug = is_debug;
         child->set_debug(is_debug);
@@ -145,7 +145,7 @@ void rmp_node::Node::set_debug(bool is_debug)
 
 
 
-rmp_node::Root::Root(
+rmp_flow::Root::Root(
     int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings
 ) : Node(self_dim, parent_dim, name, mappings)
 {
@@ -155,7 +155,7 @@ rmp_node::Root::Root(
 }
 
 
-void rmp_node::Root::set_state(
+void rmp_flow::Root::set_state(
     const VectorXd& q, const VectorXd& q_dot
 )
 {
@@ -164,7 +164,7 @@ void rmp_node::Root::set_state(
 }
 
 
-void rmp_node::Root::pushforward(void)
+void rmp_flow::Root::pushforward(void)
 {
     std::cout << "pushforward running..." << std::endl;
     std::cout << "pushing at " << name << std::endl;
@@ -173,7 +173,7 @@ void rmp_node::Root::pushforward(void)
     // this->x += this->x_dot * dt;
     initialize_rmp_natural_form();
 
-    for (rmp_node::Node* child : this->children)
+    for (Node* child : this->children)
     {
         // 子供のやつ
         std::cout << "chid name = " << child->name << std::endl;
@@ -195,10 +195,10 @@ void rmp_node::Root::pushforward(void)
 }
 
 
-void rmp_node::Root::pullback(void)
+void rmp_flow::Root::pullback(void)
 {
     //std::cout << "pullback running..." << std::endl;
-    for (rmp_node::Node* child : this->children)
+    for (Node* child : this->children)
     {
         child->pullback();
     }
@@ -207,7 +207,7 @@ void rmp_node::Root::pullback(void)
 
 
 
-void rmp_node::Root::resolve(void)
+void rmp_flow::Root::resolve(void)
 {
     q_ddot = this->M.completeOrthogonalDecomposition().pseudoInverse() * this->f;
     //q_ddot = (M.transpose() * M).inverse() * M.transpose() * f;
@@ -238,7 +238,7 @@ void rmp_node::Root::resolve(void)
 }
 
 
-void rmp_node::Root::solve(
+void rmp_flow::Root::solve(
     const VectorXd& q, const VectorXd& q_dot, VectorXd& out_q_ddot
 )
 {
@@ -252,7 +252,7 @@ void rmp_node::Root::solve(
 
 
 
-rmp_node::Leaf_Base::Leaf_Base(
+rmp_flow::Leaf_Base::Leaf_Base(
     int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings
 ) : Node(self_dim, parent_dim, name, mappings)
 {
@@ -261,13 +261,13 @@ rmp_node::Leaf_Base::Leaf_Base(
 }
 
 
-void rmp_node::Leaf_Base::calc_natural_form(void)
+void rmp_flow::Leaf_Base::calc_natural_form(void)
 {
     // pass
 }
 
 
-void rmp_node::Leaf_Base::pullback(void)
+void rmp_flow::Leaf_Base::pullback(void)
 {
     //std::cout << "pullback doing at " << name << ", and hear is leaf!" << std::endl;
     // std::cout << "f - (M * J_dot * this->parent->x_dot) = \n" << f - (M * J_dot * this->parent->x_dot) << std::endl;
@@ -280,12 +280,12 @@ void rmp_node::Leaf_Base::pullback(void)
 }
 
 
-void rmp_node::Leaf_Base::set_debug(bool is_debug)
+void rmp_flow::Leaf_Base::set_debug(bool is_debug)
 {
     this->is_debug = is_debug;
 }
 
-void rmp_node::Leaf_Base::add_child(Node *child)
+void rmp_flow::Leaf_Base::add_child(Node *child)
 {
     std::cout << "this node is leaf. can't add child." << std::endl;
 }

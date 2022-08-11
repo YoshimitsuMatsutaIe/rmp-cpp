@@ -10,7 +10,7 @@
 #include "rmp_node.hpp"
 
 
-namespace rmp_tree
+namespace rmp_flow
 {
     using Eigen::VectorXd;
     using Eigen::MatrixXd;
@@ -23,9 +23,9 @@ namespace rmp_tree
         void update_environment();
 
     public:
-        RMP_Tree(rmp_node::Root* root, std::string tree_name);
+        RMP_Tree(Root* root, std::string tree_name);
         //RMP_Tree(std::map<> tree_param);
-        rmp_node::Root* root;
+        Root* root;
         std::string tree_name = "nameless";
 
         //void one_step(void);

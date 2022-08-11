@@ -19,7 +19,7 @@ namespace rmp2
     using std::exp;
 
 
-    class Goal_Attractor : public rmp_node::Leaf_Base
+    class Goal_Attractor : public rmp_flow::Leaf_Base
     {
     private:
         double gain;
@@ -60,7 +60,7 @@ namespace rmp2
 
 
 
-    class Obstacle_Avoidance : public rmp_node::Leaf_Base
+    class Obstacle_Avoidance : public rmp_flow::Leaf_Base
     {
     private:
         double scale_rep;
@@ -95,7 +95,7 @@ namespace rmp2
 
 
 
-    class Joint_Limit_Avoidance : public rmp_node::Leaf_Base
+    class Joint_Limit_Avoidance : public rmp_flow::Leaf_Base
     {
     private:
         double gamma_p;

@@ -1,6 +1,2 @@
 #include "../include/simulator.hpp"
 
-
-
-
-

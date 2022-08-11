@@ -10,8 +10,8 @@
 
 
 
-namespace rmp_node{
-
+namespace rmp_flow
+{
     using Eigen::VectorXd;
     using Eigen::MatrixXd;
     class Node
