@@ -10,6 +10,8 @@
 
 namespace simulator
 {
+    using std::cos;
+    using std::sin;
     using std::vector;
     using Eigen::MatrixXd;
     void rotate(float alpha, float beta, float gamma, Eigen::Matrix3d& out);

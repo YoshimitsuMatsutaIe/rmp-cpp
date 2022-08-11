@@ -10,8 +10,6 @@
  */
 void simulator::rotate(float alpha, float beta, float gamma, Eigen::Matrix3d& out)
 {
-    using std::cos;
-    using std::sin;
     Eigen::Matrix3d Rx;
     Eigen::Matrix3d Ry;
     Eigen::Matrix3d Rz;
@@ -34,12 +32,22 @@ void simulator::rotate(float alpha, float beta, float gamma, Eigen::Matrix3d& ou
 
 void simulator::set_sphere(int n, float r, float x, float y, float z, std::vector<Eigen::VectorXd&> out)
 {
-    Eigen::Vector3d q;
+    std::random_device seed_gen;
+    std::default_random_engine engine(seed_gen());
+    std::uniform_real_distribution<> dist_alpha(-1.0, 1.0);
+    std::uniform_real_distribution<> dist_beta(0, 2*M_PI);
+    float alpha;
+    float beta;
+
     for (int i=0; i<n; i++){
-        q = Eigen::MatrixXd::Random(3, 1);
+        alpha = std::acos(dist_alpha(engine));
+        beta = dist_beta(engine);
         
         VectorXd o(3);
-        o << rand
-        out.push_back()
+        o << r * sin(alpha) * cos(beta) + x,
+        r * sin(alpha) * sin(beta) + y,
+        r * cos(alpha) + z;
+
+        out.push_back(o);
     }
 }
