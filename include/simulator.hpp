@@ -14,33 +14,33 @@ namespace simulator
 
 
 
-    struct System
-    {
-        public:
-        using state = std::array<double, 3>;
-        double p;
-        double r;
-        double b;
-        System(double p_, double r_, double b_):p(p_), r(r_), b(b_){};
+    // struct System
+    // {
+    //     public:
+    //     using state = std::array<double, 3>;
+    //     double p;
+    //     double r;
+    //     double b;
+    //     System(double p_, double r_, double b_):p(p_), r(r_), b(b_){};
 
-        void operator()(const state& x, state& dx, double t)
-        {
-            dx[0] = -p*x[0] + p*x[1];
-            dx[1] = -x[0]*x[2] + r*x[0] - x[1];
-            dx[2] = x[0]*x[1] - b*x[2];
-        }
-    };
+    //     void operator()(const state& x, state& dx, double t)
+    //     {
+    //         dx[0] = -p*x[0] + p*x[1];
+    //         dx[1] = -x[0]*x[2] + r*x[0] - x[1];
+    //         dx[2] = x[0]*x[1] - b*x[2];
+    //     }
+    // };
 
-    struct csv_observer
-    {
-        using state = System::state;
-        std::ofstream fout;
-        csv_observer(const std::string& FileName) :fout(FileName){};
-        void operator()(const state& x, double t)
-        {
-            fout << t << "," << x[0] << "," << x[1] << "," << x[2] << std::endl;
-        }
-    };
+    // struct csv_observer
+    // {
+    //     using state = System::state;
+    //     std::ofstream fout;
+    //     csv_observer(const std::string& FileName) :fout(FileName){};
+    //     void operator()(const state& x, double t)
+    //     {
+    //         fout << t << "," << x[0] << "," << x[1] << "," << x[2] << std::endl;
+    //     }
+    // };
 
 
 

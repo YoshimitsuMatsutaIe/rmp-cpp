@@ -30,7 +30,7 @@ void simulator::rotate(float alpha, float beta, float gamma, Eigen::Matrix3d& ou
 }
 
 
-void simulator::set_sphere(int n, float r, float x, float y, float z, std::vector<Eigen::VectorXd&> out)
+void simulator::set_sphere(int n, float r, float x, float y, float z, std::vector<Eigen::VectorXd>& out)
 {
     std::random_device seed_gen;
     std::default_random_engine engine(seed_gen());
@@ -40,6 +40,8 @@ void simulator::set_sphere(int n, float r, float x, float y, float z, std::vecto
     float beta;
 
     for (int i=0; i<n; i++){
+        //std::cout << i << std::endl;
+
         alpha = std::acos(dist_alpha(engine));
         beta = dist_beta(engine);
         
@@ -50,4 +52,7 @@ void simulator::set_sphere(int n, float r, float x, float y, float z, std::vecto
 
         out.push_back(o);
     }
+
+    //std::cout << "n = " << n << std::endl;
+    //std::cout << "sp done!" << std::endl;
 }
