@@ -201,9 +201,9 @@ namespace franka_emika
         void jacobian(const VectorXd &q, MatrixXd &out) override;
         void jacobian_dot(const VectorXd &q, const VectorXd &q_dot, MatrixXd &out) override;
 
-        static void set_q_neutral(VectorXd& out);
-        static void set_q_max(VectorXd& out);
-        static void set_q_min(VectorXd& out);
+        // static void set_q_neutral(VectorXd& out);
+        // static void set_q_max(VectorXd& out);
+        // static void set_q_min(VectorXd& out);
 
         const void print_state(void);
 

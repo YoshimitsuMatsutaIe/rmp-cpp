@@ -69,13 +69,28 @@ const void franka_emika::Control_Point::print_state(void)
     using std::cout;
     using std::endl;
 
-    cout << "htm = \n" << this->htm     << endl;
-    cout << "jo = \n" << this->jo      << endl;
-    cout << "jrx = \n" << this->jrx     << endl;
-    cout << "jry = \n" << this->jry     << endl;
-    cout << "jrz = \n" << this->jrz     << endl;
+    cout << "htm = \n" << this->htm << endl;
+    cout << "jo = \n" << this->jo << endl;
+    cout << "jrx = \n" << this->jrx << endl;
+    cout << "jry = \n" << this->jry << endl;
+    cout << "jrz = \n" << this->jrz << endl;
     cout << "jo_dot = \n" << this->jo_dot  << endl;
     cout << "jrx_dot = \n" << this->jrx_dot << endl;
     cout << "jry_dot = \n" << this->jry_dot << endl;
     cout << "jrz_dot = \n" << this->jrz_dot << endl;
+}
+
+
+const std::vector<std::size_t> franka_emika::Control_Point::calc_points_mapping(void)
+{
+    std::cout << "calc_points_mapping start." << std::endl;
+    std::size_t frame_num = franka_emika::Kinematics::R_BARS_ALL.size();
+    vector<std::size_t> s;
+    for (int i=0; i<frame_num; ++i){
+        //std::cout << "i = " << i << std::endl;
+        //std::cout << "    num = " << baxter::Control_Point::R_BARS_ALL[i].size() << std::endl;
+        s.push_back(franka_emika::Kinematics::R_BARS_ALL[i].size());
+    }
+    std::cout << "done!" << std::endl;
+    return s;
 }

@@ -242,6 +242,7 @@ void rmp_flow::Root::solve(
     const VectorXd& q, const VectorXd& q_dot, VectorXd& out_q_ddot
 )
 {
+    std::cout << "solving ..." << std::endl;
     this->set_state(q, q_dot);
     this->pushforward();
     this->pullback();

@@ -2,13 +2,13 @@
 
 
 
-rmp_tree::RMP_Tree::RMP_Tree(rmp_node::Root* root, std::string tree_name)
+rmp_flow::RMP_Tree::RMP_Tree(Root* root, std::string tree_name)
 {
     this->root = root;
     this->tree_name = tree_name;
 }
 
-void rmp_tree::RMP_Tree::update_environment()
+void rmp_flow::RMP_Tree::update_environment()
 {
     // 後から実装．センサー値から障害物位置などを変更
 }
@@ -16,7 +16,7 @@ void rmp_tree::RMP_Tree::update_environment()
 
 
 
-void rmp_tree::RMP_Tree::run(
+void rmp_flow::RMP_Tree::run(
     double time_span, double time_interval,
     std::string method,
     std::string save_dir_path
@@ -117,7 +117,7 @@ void rmp_tree::RMP_Tree::run(
 
         if (std::isnan(q_ddot[0]))
         {
-            std::cout << "\n発散．終了．" << std::endl;
+            std::cout << "\n発散" << std::endl;
             break;
         }
         
@@ -138,13 +138,13 @@ void rmp_tree::RMP_Tree::run(
 
     end_time = std::chrono::system_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time-start_time).count(); //処理に要した時間をミリ秒に変換
-    std::cout << "time = " << elapsed/1000 << "[sec]" << std::endl;
+    std::cout << "time = " << elapsed/1000.0 << "[sec]" << std::endl;
 }
 
 
 
 
-void rmp_tree::RMP_Tree::set_debug(bool is_debug)
+void rmp_flow::RMP_Tree::set_debug(bool is_debug)
 {
     this->is_debug = is_debug;
     this->root->set_debug(is_debug);
