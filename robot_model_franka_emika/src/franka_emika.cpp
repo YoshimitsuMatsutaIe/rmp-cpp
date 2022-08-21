@@ -98,6 +98,10 @@ const std::vector<std::vector<std::vector<double>>> franka_emika::Kinematics::R_
     r_bars_0, r_bars_1, r_bars_2, r_bars_3, r_bars_4, r_bars_5, r_bars_6, r_bars_ee
 };
 
+const std::tuple<int, int> franka_emika::Kinematics::get_ee_id()
+{
+    return {7, 0};
+}
 
 std::vector<franka_emika::func_q_vecout> franka_emika::Kinematics::Os = {&o_0, &o_1, &o_2, &o_3, &o_4, &o_5, &o_6, &o_ee};
 std::vector<franka_emika::func_q_vecout> franka_emika::Kinematics::RXs = {&rx_0, &rx_1, &rx_2, &rx_3, &rx_4, &rx_5, &rx_6, &rx_ee};

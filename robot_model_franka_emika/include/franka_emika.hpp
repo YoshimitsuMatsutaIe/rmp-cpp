@@ -1,7 +1,8 @@
-#ifndef FRANAK_EMIKA_HPP
-#define FRANKA_RMIKA_HPP
+#ifndef FRANAK_EMIKA__HPP
+#define FRANKA_RMIKA__HPP
 #include <eigen3/Eigen/Core>
 #include <vector>
+#include <tuple>
 #include <iostream>
 
 #include "../../include/mappings.hpp"
@@ -162,6 +163,8 @@ namespace franka_emika
         static vector<func_q_dq_matout> JRZs_dot;
 
         static const vector<vector<vector<double>>> R_BARS_ALL;
+
+        static const std::tuple<int, int> get_ee_id();
     };
 
 

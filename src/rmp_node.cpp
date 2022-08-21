@@ -206,7 +206,6 @@ void rmp_flow::Root::pullback(void)
 }
 
 
-
 void rmp_flow::Root::resolve(void)
 {
     q_ddot = this->M.completeOrthogonalDecomposition().pseudoInverse() * this->f;

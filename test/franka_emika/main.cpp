@@ -1,3 +1,5 @@
+
+
 #include "../../include/rmp_node.hpp"
 #include "../../robot_model_franka_emika/include/franka_emika.hpp"
 #include "../../include/rmp_leaf.hpp"
@@ -75,6 +77,7 @@ int main()
         }
         mappings.push_back(temp_mappings_);
     }
+    auto [ee_frame_num, ee_n] = rm::Kinematics::get_ee_id();
 
     /* マップのチェック */
     for (auto hoge: mappings){
