@@ -10,6 +10,10 @@
 #include "../../include/mappings.hpp"
 
 
+/**
+ * @brief 平面 4-link arm
+ * 
+ */
 namespace sice
 {
     using Eigen::VectorXd;
@@ -51,12 +55,6 @@ namespace sice
         static void ry_3(const VectorXd& q, VectorXd& out);
         static void ry_ee(const VectorXd& q, VectorXd& out);
 
-        static void rz_0(const VectorXd& q, VectorXd& out);
-        static void rz_1(const VectorXd& q, VectorXd& out);
-        static void rz_2(const VectorXd& q, VectorXd& out);
-        static void rz_3(const VectorXd& q, VectorXd& out);
-        static void rz_ee(const VectorXd& q, VectorXd& out);
-
         static void jo_0(const VectorXd& q, MatrixXd& out);
         static void jo_1(const VectorXd& q, MatrixXd& out);
         static void jo_2(const VectorXd& q, MatrixXd& out);
@@ -74,12 +72,6 @@ namespace sice
         static void jry_2(const VectorXd& q, MatrixXd& out);
         static void jry_3(const VectorXd& q, MatrixXd& out);
         static void jry_ee(const VectorXd& q, MatrixXd& out);
-
-        static void jrz_0(const VectorXd& q, MatrixXd& out);
-        static void jrz_1(const VectorXd& q, MatrixXd& out);
-        static void jrz_2(const VectorXd& q, MatrixXd& out);
-        static void jrz_3(const VectorXd& q, MatrixXd& out);
-        static void jrz_ee(const VectorXd& q, MatrixXd& out);
 
         static void jo_0_dot(const VectorXd& q, const VectorXd& q_dot, MatrixXd& out);
         static void jo_1_dot(const VectorXd& q, const VectorXd& q_dot, MatrixXd& out);
@@ -99,12 +91,6 @@ namespace sice
         static void jry_3_dot(const VectorXd& q, const VectorXd& q_dot, MatrixXd& out);
         static void jry_ee_dot(const VectorXd& q, const VectorXd& q_dot, MatrixXd& out);
 
-        static void jrz_0_dot(const VectorXd& q, const VectorXd& q_dot, MatrixXd& out);
-        static void jrz_1_dot(const VectorXd& q, const VectorXd& q_dot, MatrixXd& out);
-        static void jrz_2_dot(const VectorXd& q, const VectorXd& q_dot, MatrixXd& out);
-        static void jrz_3_dot(const VectorXd& q, const VectorXd& q_dot, MatrixXd& out);
-        static void jrz_ee_dot(const VectorXd& q, const VectorXd& q_dot, MatrixXd& out);
-
     
     public:
         static void set_q_max(VectorXd& out);
@@ -119,16 +105,13 @@ namespace sice
         static vector<func_q_vecout> Os;
         static vector<func_q_vecout> RXs;
         static vector<func_q_vecout> RYs;
-        static vector<func_q_vecout> RZs;
         static vector<func_q_matout> HTMs;
         static vector<func_q_matout> JOs;
         static vector<func_q_matout> JRXs;
         static vector<func_q_matout> JRYs;
-        static vector<func_q_matout> JRZs;
         static vector<func_q_dq_matout> JOs_dot;
         static vector<func_q_dq_matout> JRXs_dot;
         static vector<func_q_dq_matout> JRYs_dot;
-        static vector<func_q_dq_matout> JRZs_dot;
 
         static const vector<vector<vector<double>>> R_BARS_ALL;
 
@@ -144,27 +127,26 @@ namespace sice
     class Control_Point : public mapping_base::Identity
     {
     private:
-
         VectorXd r_bar; //拡張位置ベクトル
         func_q_matout calc_htm;
         func_q_matout calc_jo;
         func_q_matout calc_jrx;
         func_q_matout calc_jry;
-        func_q_matout calc_jrz;
+
         func_q_dq_matout calc_jo_dot;
         func_q_dq_matout calc_jrx_dot;
         func_q_dq_matout calc_jry_dot;
-        func_q_dq_matout calc_jrz_dot;
+
 
         MatrixXd htm;  //同時変換行列
         MatrixXd jo;
         MatrixXd jrx;
         MatrixXd jry;
-        MatrixXd jrz;
+
         MatrixXd jo_dot;
         MatrixXd jrx_dot;
         MatrixXd jry_dot;
-        MatrixXd jrz_dot;
+
 
     public:
         Control_Point(int frame, int index);
@@ -174,8 +156,6 @@ namespace sice
         const void print_state(void);
         static const vector<std::size_t> calc_points_mapping(void);
     };
-
-
 };
 
 

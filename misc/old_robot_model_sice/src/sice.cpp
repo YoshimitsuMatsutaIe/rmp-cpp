@@ -106,5 +106,4 @@ void robot_model_sice::X3::jacobian_dot(const VectorXd &q, const VectorXd &dq, M
 {
     out << -dq(0)*l1*cos(q(0)) - l2*(dq(0) + dq(1))*cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*cos(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*cos(q(0) + q(1) + q(2) + q(3)), -l2*(dq(0) + dq(1))*cos(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*cos(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*cos(q(0) + q(1) + q(2) + q(3)), -l3*(dq(0) + dq(1) + dq(2))*cos(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*cos(q(0) + q(1) + q(2) + q(3)), -l4*(dq(0) + dq(1) + dq(2) + dq(3))*cos(q(0) + q(1) + q(2) + q(3)),
         -dq(0)*l1*sin(q(0)) - l2*(dq(0) + dq(1))*sin(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*sin(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*sin(q(0) + q(1) + q(2) + q(3)), -l2*(dq(0) + dq(1))*sin(q(0) + q(1)) - l3*(dq(0) + dq(1) + dq(2))*sin(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*sin(q(0) + q(1) + q(2) + q(3)), -l3*(dq(0) + dq(1) + dq(2))*sin(q(0) + q(1) + q(2)) - l4*(dq(0) + dq(1) + dq(2) + dq(3))*sin(q(0) + q(1) + q(2) + q(3)), -l4*(dq(0) + dq(1) + dq(2) + dq(3))*sin(q(0) + q(1) + q(2) + q(3));
-    
 }
