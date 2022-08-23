@@ -15,12 +15,14 @@ void sice::Kinematics::set_q_neutral(VectorXd& out)
 
 void sice::Kinematics::set_q_min(VectorXd& out)
 {
-    out << 180.0, 180.0, 180.0, 180.0;
+    out << -180.0, -180.0, -180.0, -180.0;
+    out *= M_PI/180.0;
 }
 
 void sice::Kinematics::set_q_max(VectorXd& out)
 {
-    out << -180.0, -180.0, -180.0, -180.0;
+    out << 180.0, 180.0, 180.0, 180.0;
+    out *= M_PI/180.0;
 }
 
 const std::vector<std::vector<double>> sice::Kinematics::r_bars_0{
@@ -45,7 +47,7 @@ const std::vector<std::vector<std::vector<double>>> sice::Kinematics::R_BARS_ALL
 
 const std::tuple<int, int> sice::Kinematics::get_ee_id()
 {
-    return {7, 0};
+    return {4, 0};
 }
 
 std::vector<sice::func_q_vecout> sice::Kinematics::Os = {&o_0, &o_1, &o_2, &o_3, &o_ee};
@@ -82,13 +84,9 @@ void sice::Kinematics::htm(int n, const VectorXd& q, MatrixXd& out)
     out(1,0) = rx(1);
     out(1,1) = ry(1);
     out(1,2) = o(1);
-
-    out(2,0) = rx(2);
-    out(2,1) = ry(2);
-    out(2,2) = o(2);
     
-    out(3,0) = 0;
-    out(3,1) = 0;
+    out(2,0) = 0;
+    out(2,1) = 0;
     out(3,2) = 1;
 }
 
@@ -106,7 +104,6 @@ sice::Control_Point::Control_Point(int frame, int index)
     this->r_bar = VectorXd::Zero(3);
     this->r_bar << Kinematics::R_BARS_ALL[frame][index][0],
     Kinematics::R_BARS_ALL[frame][index][1],
-    Kinematics::R_BARS_ALL[frame][index][2],
     1.0;
     
     this->calc_htm = Kinematics::HTMs[frame];

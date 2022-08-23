@@ -9,7 +9,7 @@
 
 
 mapping_base::Identity::Identity(void){
-    std::cout << "Id 呼ばれた" << std::endl;
+    //std::cout << "Id 呼ばれた" << std::endl;
     this->name = "identity";
 }
 

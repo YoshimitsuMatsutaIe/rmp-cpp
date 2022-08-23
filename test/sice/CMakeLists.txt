@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 project(solution)
-#set(CMAKE_CXX_FLAGS "-j 11")
+
 set(CMAKE_CXX_STANDARD 17)
 
 
@@ -13,8 +13,8 @@ message(${SICE_})
 
 
 add_executable(
-    test test.cpp
+    main main.cpp
     ${SRC_}
     ${SICE_}
 )
-target_compile_options(test PUBLIC -O2 -Wall)
+target_compile_options(main PUBLIC -O2 -Wall)
