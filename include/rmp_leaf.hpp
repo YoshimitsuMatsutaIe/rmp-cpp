@@ -42,7 +42,7 @@ namespace rmp2
 
     public:
         Goal_Attractor(
-            int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
+            int self_dim, int parent_dim, std::string name, mapping_base::Identity mappings,
             double max_speed,
             double gain,
             double f_alpha,
@@ -81,8 +81,9 @@ namespace rmp2
         double grad_phi1(double s);
 
     public:
+        Obstacle_Avoidance(void);
         Obstacle_Avoidance(
-            int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
+            int self_dim, int parent_dim, std::string name, mapping_base::Identity mappings,
             double scale_rep,
             double scale_damp,
             double gain,
@@ -123,14 +124,15 @@ namespace rmp2
     
 
     public:
-        Joint_Limit_Avoidance(int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
-        double gamma_p,
-        double gamma_d,
-        double lambda,
-        double sigma,
-        VectorXd& q_max,
-        VectorXd& q_min,
-        VectorXd& q_neutral
+        Joint_Limit_Avoidance(
+            int self_dim, int parent_dim, std::string name, mapping_base::Identity mappings,
+            double gamma_p,
+            double gamma_d,
+            double lambda,
+            double sigma,
+            VectorXd& q_max,
+            VectorXd& q_min,
+            VectorXd& q_neutral
         );
 
         void calc_natural_form(void) override;
