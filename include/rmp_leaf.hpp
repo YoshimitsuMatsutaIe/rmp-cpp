@@ -17,6 +17,8 @@ namespace rmp2
     using Eigen::MatrixXd;
     using std::pow;
     using std::exp;
+    using std::cout;
+    using std::endl;
 
 
     class Goal_Attractor : public rmp_flow::Leaf_Base

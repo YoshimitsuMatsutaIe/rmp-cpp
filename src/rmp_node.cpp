@@ -96,12 +96,13 @@ const void rmp_flow::Node::print_tree_structure(void)
         cout << "print tree structure" << endl;
     }
     
-    cout << "node-name = " << this->name << endl;
+    cout << "\nnode-name = " << this->name << endl;
+    //cout << "type = " << typeid(this).name() << endl;
     if (node_type == 1){
-        cout << "children = none" << endl;
+        cout << "  children = none" << endl;
     }
     else{
-        cout << "children = ";
+        cout << "  children = ";
         for (auto child : this->children){
             cout << child->name << ", ";
         }
@@ -130,8 +131,7 @@ void rmp_flow::Node::pushforward(void)
     cout << "pushing at " << name << endl;
     cout << "node-type = " << this->node_type << endl;
     initialize_rmp_natural_form();
-    for (auto child : children)
-    {
+    for (auto child : children){
         child->mappings->phi(this->x, child->x);
         child->mappings->jacobian(this->x, child->J);
         //cout << "x_dot before" << endl;
@@ -142,8 +142,7 @@ void rmp_flow::Node::pushforward(void)
         child->mappings->jacobian_dot(this->x, this->x_dot, child->J_dot);
         
 
-        if (child->node_type != 1)
-        {
+        if (child->node_type != 1){
             child->pushforward();
         }
     }
@@ -155,8 +154,7 @@ void rmp_flow::Node::pullback(void)
     cout << "pullback (node) doing at " << name << endl;
     cout << "  and this is " << this->name << ", node-type = " << this->node_type << endl;
     cout << typeid(this).name() << endl;
-    for (auto child : this->children)
-    {
+    for (auto child : this->children){
         child->pullback();
         this->parent->f += this->J.transpose() * (this->f - (this->M * this->J_dot * this->parent->x_dot));
         this->parent->M += this->J.transpose() * this->M * this->J;
@@ -167,8 +165,7 @@ void rmp_flow::Node::pullback(void)
 void rmp_flow::Node::set_debug(bool is_debug)
 {
     this->is_debug = is_debug;
-    for (Node* child : this->children)
-    {
+    for (Node* child : this->children){
         child->is_debug = is_debug;
         child->set_debug(is_debug);
     }
@@ -285,11 +282,7 @@ void rmp_flow::Root::solve(
 
 
 
-rmp_flow::Leaf_Base::Leaf_Base(void)
-{
-    /*pass*/
-}
-
+rmp_flow::Leaf_Base::Leaf_Base(void){/*pass*/}
 rmp_flow::Leaf_Base::Leaf_Base(
     int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings
 ) : Node(self_dim, parent_dim, name, mappings)
@@ -333,8 +326,8 @@ void rmp_flow::Leaf_Base::pullback(void)
     // temp2 = temp_J.transpose() * temp;
     // cout << "temp2 = \n" << temp2 << endl;
 
-    this->parent->f += this->J.transpose() * (this->f);// - (this->M * this->J_dot * parent->x_dot));
-    cout << "hogehoge" << endl;
+    this->parent->f += this->J.transpose() * (this->f - (this->M * this->J_dot * parent->x_dot));
+    //cout << "hogehoge" << endl;
     this->parent->M += this->J.transpose() * this->M * this->J;
 }
 

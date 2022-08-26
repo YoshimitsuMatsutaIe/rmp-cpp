@@ -174,6 +174,7 @@ int main()
     list<mapping_base::Distance> map_dis_s;
     list<rm::Control_Point> map_cp_s;
     list<rmp_flow::Node> node_s;
+    list<rmp2::Goal_Attractor> rmp2_at_s;
     list<rmp2::Obstacle_Avoidance> rmp2_obs_s;
 
 
@@ -207,19 +208,24 @@ int main()
                 ));
                 root.children.back()->add_child(&rmp2_obs_s.back());
                 if (i == ee_frame_num && j == ee_n){
-                    mapping_base::Identity id_mappings_at;
-                    rmp2::Goal_Attractor at(
-                        2, 2, "ee-attractor", &id_mappings_at,
+                    map_id_s.push_back(mapping_base::Identity());
+                    rmp2_at_s.push_back(rmp2::Goal_Attractor(
+                        2, 2, "ee-attractor", &map_id_s.back(),
                         5.0, 5.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 0.5,
                         og, og_dot
-                    );
-                    root.children.back()->add_child(&at);
+                    ));
+                    
+                    root.children.back()->add_child(&rmp2_at_s.back());
+                    //at.pullback();
+                    // cout << "at's address = " << &at << endl;
+                    // cout << "at's adddres = " << (root.children.back())->children.back() << endl;
                 }
                 wow+=1;;
             }
         }
         i+=1;
     }
+
 
     // cout << "\nadding child to root..." << endl;
     // for (int i=0; i<frame_num; ++i){
@@ -241,27 +247,30 @@ int main()
     
     cout << "done!\n" << endl;
 
-    for (auto c: root.children){
-        cout << c->name << endl;
-    }
+    (root.children.back())->children[0]->pullback();
 
-    root.print_tree_structure();
-    root.print_state_all_node();
-    cout << "print all done!!!" << endl;
+    // for (auto c: root.children){
+    //     cout << c->name << endl;
+    // }
+
+    //root.print_tree_structure();
+    //root.print_state_all_node();
+    // cout << "print all done!!!" << endl;
     root.pushforward();
     cout << "push done" << endl;
-    root.print_state_all_node();
+    //root.print_tree_structure();
+    //root.print_state_all_node();
 
+    //root.children.back()->children.back()->pullback();
+
+    cout << "at's adddres = " << (root.children.back())->children.back() << endl;
     root.pullback();
     root.print_state_all_node();
 
 
-    // rmp_flow::RMP_Tree tree(&root, "test_tree");
+    rmp_flow::RMP_Tree tree(&root, "test_tree");
     // //tree.set_debug(false);
-    // tree.run(TiME_INTERVAL, dt);
-
-
-
+    tree.run(TiME_INTERVAL, dt);
 
 
     cout << "done!!" << endl;

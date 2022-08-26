@@ -97,6 +97,7 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
 
 void rmp2::Goal_Attractor::calc_natural_form(void)
 {
+    cout << "calc goal-rmp" << endl;
     calc_inertia_matrix(x-x0, x_dot-x0_dot, this->M);
     calc_force(x-x0, x_dot-x0_dot, this->f);
 }
