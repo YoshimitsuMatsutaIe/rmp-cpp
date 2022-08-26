@@ -42,7 +42,11 @@ void mapping_base::Distance::phi(
     const VectorXd &x, VectorXd &out
 )
 {
+    std::cout << "dis" << std::endl;
+    std::cout << "x = \n" << x << std::endl;
+    std::cout << "o = \n" << o << std::endl;
     out(0) = (x - o).norm();
+    std::cout << "dis2" << std::endl;
 }
 
 

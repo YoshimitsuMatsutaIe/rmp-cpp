@@ -67,6 +67,7 @@ std::vector<sice::func_q_dq_matout> sice::Kinematics::JRYs_dot = {&jry_0_dot, &j
 
 void sice::Kinematics::htm(int n, const VectorXd& q, MatrixXd& out)
 {
+    std::cout << "huhuhuhuhuhu" << std::endl;
     VectorXd rx(2);
     VectorXd ry(2);
     VectorXd rz(2);
@@ -76,18 +77,18 @@ void sice::Kinematics::htm(int n, const VectorXd& q, MatrixXd& out)
     RYs[n](q, ry);
     Os[n](q, o);
 
-
+    std::cout << "hoge" << std::endl;
     out(0,0) = rx(0);
     out(0,1) = ry(0);
     out(0,2) = o(0);
-    
+    std::cout << "hoge2" << std::endl;
     out(1,0) = rx(1);
     out(1,1) = ry(1);
     out(1,2) = o(1);
     
     out(2,0) = 0;
     out(2,1) = 0;
-    out(3,2) = 1;
+    out(2,2) = 1;
 }
 
 
@@ -131,8 +132,10 @@ sice::Control_Point::Control_Point(int frame, int index)
 
 void sice::Control_Point::phi(const VectorXd &q, VectorXd &out)
 {
+    std::cout << "map-name : " << this->name << " called." << std::endl;
     this->calc_htm(q, this->htm);
-    out = this->htm * this->r_bar;
+    std::cout << "ufvhhfugfh" << std::endl;
+    out = (this->htm * this->r_bar).head(2);
 }
 
 

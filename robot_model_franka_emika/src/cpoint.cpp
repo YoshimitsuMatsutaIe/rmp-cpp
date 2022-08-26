@@ -37,7 +37,7 @@ franka_emika::Control_Point::Control_Point(int frame, int index)
 void franka_emika::Control_Point::phi(const VectorXd &q, VectorXd &out)
 {
     this->calc_htm(q, this->htm);
-    out = this->htm * this->r_bar;
+    out = (this->htm * this->r_bar).head(3);
 }
 
 

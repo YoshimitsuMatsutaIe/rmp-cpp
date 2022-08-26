@@ -17,4 +17,4 @@ add_executable(
     ${SRC_}
     ${SICE_}
 )
-target_compile_options(main PUBLIC -O2 -Wall)
+target_compile_options(main PUBLIC -O2 -Wall -g)

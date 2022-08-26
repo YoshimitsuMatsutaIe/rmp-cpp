@@ -43,7 +43,7 @@ namespace rmp_flow
         VectorXd f;  //所望の力
         MatrixXd M;  //慣性行列
 
-        class mapping_base::Identity mappings;
+        class mapping_base::Identity* mappings;
         bool have_rmp_func=false;
 
         Node(void);
@@ -51,14 +51,15 @@ namespace rmp_flow
             int self_dim,
             int parent_dim,
             std::string name,
-            mapping_base::Identity mapping
+            mapping_base::Identity *mapping
         );
 
         
         
         void initialize_rmp_natural_form(void);
-        const void print_state(void);
+        const void print_self_state(void);
         const void print_state_all_node(void);
+        const void print_tree_structure(void);
 
         virtual void add_child(Node *child);
         virtual void pushforward(void);
@@ -73,7 +74,7 @@ namespace rmp_flow
     public:
         VectorXd q_ddot;  //指令値
         Root(
-            int self_dim, int parent_dim, std::string name, mapping_base::Identity mappings
+            int self_dim, std::string name, mapping_base::Identity* mappings
         );
         void set_state(
             const VectorXd &q, const VectorXd &q_dot
@@ -94,7 +95,7 @@ namespace rmp_flow
     public:
         Leaf_Base(void);
         Leaf_Base(
-            int self_dim, int parent_dim, std::string name, mapping_base::Identity mappings
+            int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings
         );
         virtual void calc_natural_form(void);
         void pullback(void) override;

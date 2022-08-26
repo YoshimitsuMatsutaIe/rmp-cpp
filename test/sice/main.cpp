@@ -25,6 +25,7 @@
 #include <string>
 #include <numeric>
 #include <map>
+#include <list>
 
 int main()
 {
@@ -32,6 +33,7 @@ int main()
     using std::endl;
     using Eigen::VectorXd;
     using std::vector;
+    using std::list;
     using std::array;
     cout << "running...\n" << endl;
 
@@ -59,7 +61,7 @@ int main()
     cout << "construct root" << endl;
     /* root */
     mapping_base::Identity root_mappings;
-    rmp_flow::Root root(4, 0, "root", root_mappings);
+    rmp_flow::Root root(4, "root", &root_mappings);
     VectorXd q0(4), q0_dot(4);
     rm::Kinematics::set_q_neutral(q0);
     q0_dot = VectorXd::Zero(4);
@@ -79,7 +81,7 @@ int main()
     rm::Kinematics::set_q_min(q_min);
     mapping_base::Identity id_mappings2;  //恒等写像
     rmp2::Joint_Limit_Avoidance jl(
-        root.self_dim, root.self_dim, "jl-avoidance", id_mappings2,
+        root.self_dim, root.self_dim, "jl-avoidance", &id_mappings2,
         0.01, 0.05, 1.0, 0.1, q_max, q_min, q_neutral
     );
     root.add_child(&jl);
@@ -113,17 +115,68 @@ int main()
     //     }
     // }
 
-    /* 制御点のnode構築 */
-    // 格納しとくだけ
+    // /* 制御点のnode構築 */
+    // // 格納しとくだけ
 
-    // vector<vector<mapping_base::Identity>> map_id_s(frame_num);
-    // vector<vector<mapping_base::Distance>> map_dis_s(frame_num);
-    // vector<vector<rm::Control_Point>> map_cp_s(frame_num);
-    vector<rmp_flow::Node> node_s(cpoints_num);
-    //vector<rmp_flow::Leaf_Base> leaf_base_s(cpoints_num);
-    vector<rmp2::Obstacle_Avoidance> rmp2_obs(obs_s.size()*cpoints_num);
-    cout << "obs size = " << obs_s.size() << endl;
+    // // vector<vector<mapping_base::Identity>> map_id_s(frame_num);
+    // // vector<vector<mapping_base::Distance>> map_dis_s(frame_num);
+    // // vector<vector<rm::Control_Point>> map_cp_s(frame_num);
+    // vector<rmp_flow::Node> node_s(cpoints_num);
+    // //vector<rmp_flow::Leaf_Base> leaf_base_s(cpoints_num);
+    // vector<rmp2::Obstacle_Avoidance> rmp2_obs(obs_s.size()*cpoints_num);
+    // cout << "obs size = " << obs_s.size() << endl;
     
+
+    // std::string name;
+    // int i = 0;
+    // int wow = 0;
+    // for (auto num: model_struct){
+    //     for (int j=0; j<num; ++j){
+    //         cout << "i, j = " << i << ", " << j << endl;
+    //         if (i == ee_frame_num && j == ee_n){
+    //             name = "ee";
+    //         }
+    //         else{
+    //             name = "cpoints_" + std::to_string(i) + "_" + std::to_string(j);
+    //         }
+    //         node_s[i] = rmp_flow::Node(2, root.self_dim, name, rm::Control_Point(i, j));
+    //         root.add_child(&node_s[i]);
+    //         for (auto c: root.children){
+    //             cout << c->name << ", ";
+    //         }
+    //         cout << endl;
+
+    //         for (int k=0; k<obs_s.size(); ++k){
+    //             cout << "wow = " << wow << endl;
+    //             rmp2_obs[wow] = rmp2::Obstacle_Avoidance(
+    //                 2, 2, name + " : obs-num = " + std::to_string(k),
+    //                 mapping_base::Distance(obs_s[k], obs_dot_s[k]), 
+    //                 1, 1, 1, 1, 1
+    //             );
+    //             root.children[i]->add_child(&rmp2_obs[wow]);
+    //             if (i == ee_frame_num && j == ee_n){
+    //                 mapping_base::Identity id_mappings;
+    //                 rmp2::Goal_Attractor at(
+    //                     2, 2, "ee-attractor", id_mappings,
+    //                     5.0, 5.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 0.5,
+    //                     og, og_dot
+    //                 );
+    //                 root.children[i]->add_child(&at);
+    //             }
+    //             wow+=1;;
+    //         }
+    //     }
+    //     i+=1;
+    // }
+
+    // listで試す
+    list<mapping_base::Identity> map_id_s;
+    list<mapping_base::Distance> map_dis_s;
+    list<rm::Control_Point> map_cp_s;
+    list<rmp_flow::Node> node_s;
+    list<rmp2::Obstacle_Avoidance> rmp2_obs_s;
+
+
     std::string name;
     int i = 0;
     int wow = 0;
@@ -136,8 +189,9 @@ int main()
             else{
                 name = "cpoints_" + std::to_string(i) + "_" + std::to_string(j);
             }
-            node_s[i] = rmp_flow::Node(2, root.self_dim, name, rm::Control_Point(i, j));
-            root.add_child(&node_s[i]);
+            map_cp_s.push_back(rm::Control_Point(i, j));
+            node_s.push_back(rmp_flow::Node(2, root.self_dim, name, &map_cp_s.back()));
+            root.add_child(&node_s.back());
             for (auto c: root.children){
                 cout << c->name << ", ";
             }
@@ -145,20 +199,21 @@ int main()
 
             for (int k=0; k<obs_s.size(); ++k){
                 cout << "wow = " << wow << endl;
-                rmp2_obs[wow] = rmp2::Obstacle_Avoidance(
-                    2, 2, name + " : obs-num = " + std::to_string(k),
-                    mapping_base::Distance(obs_s[k], obs_dot_s[k]), 
+                map_dis_s.push_back(mapping_base::Distance(obs_s[k], obs_dot_s[k]));
+                rmp2_obs_s.push_back(rmp2::Obstacle_Avoidance(
+                    1, 2, name + ":obs-num-" + std::to_string(k),
+                    &map_dis_s.back(), 
                     1, 1, 1, 1, 1
-                );
-                root.children[i]->add_child(&rmp2_obs[wow]);
+                ));
+                root.children.back()->add_child(&rmp2_obs_s.back());
                 if (i == ee_frame_num && j == ee_n){
-                    mapping_base::Identity id_mappings;
+                    mapping_base::Identity id_mappings_at;
                     rmp2::Goal_Attractor at(
-                        2, 2, "ee-attractor", id_mappings,
+                        2, 2, "ee-attractor", &id_mappings_at,
                         5.0, 5.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 0.5,
                         og, og_dot
                     );
-                    root.children[i]->add_child(&at);
+                    root.children.back()->add_child(&at);
                 }
                 wow+=1;;
             }
@@ -190,6 +245,7 @@ int main()
         cout << c->name << endl;
     }
 
+    root.print_tree_structure();
     root.print_state_all_node();
     cout << "print all done!!!" << endl;
     root.pushforward();
