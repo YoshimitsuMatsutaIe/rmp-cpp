@@ -1,4 +1,60 @@
 #include "../include/rmp_tree.hpp"
+#include "../robot_model_sice/include/sice.hpp"
+#include "../robot_model_franka_emika/include/franka_emika.hpp"
+
+
+
+
+
+
+rmp_flow::Root rmp_flow::tree_constructor(
+    const std::string robot_name,
+    const std::vector<VectorXd &> goal,
+    const std::vector<VectorXd &> obs
+)
+{
+    cout << "construct root" << endl;
+    
+    int dim;
+    VectorXd q_neutral, q_max, q_min;
+    if (robot_name=="sice"){
+        dim = sice::Kinematics::c_dim;
+        sice::Kinematics::set_q_neutral(q_neutral);
+        sice::Kinematics::set_q_max(q_max);
+        sice::Kinematics::set_q_min(q_min);
+        
+    }
+    else if (robot_name=="franka_emika"){
+        dim = franka_emika::Kinematics::c_dim;
+        franka_emika::Kinematics::set_q_neutral(q_neutral);
+        franka_emika::Kinematics::set_q_max(q_max);
+        franka_emika::Kinematics::set_q_min(q_min);
+        
+    }
+    
+    Root root(dim, "root");
+
+    list<mapping_base::Identity> map_id_s;
+    list<mapping_base::Distance> map_dis_s;
+    
+    // どっちかしか使わん
+    list<sice::Control_Point> map_cp_s;
+    list<franka_emika::Control_Point> map_cp_s;
+
+    list<rmp_flow::Node> node_s;
+    list<rmp2::Goal_Attractor> rmp2_at_s;
+    list<rmp2::Obstacle_Avoidance> rmp2_obs_s;
+
+
+
+    return root;
+}
+
+
+
+
+
+
 
 
 

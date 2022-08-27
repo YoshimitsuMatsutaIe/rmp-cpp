@@ -128,8 +128,8 @@ void rmp_flow::Node::add_child(rmp_flow::Node* child)
 
 void rmp_flow::Node::pushforward(void)
 {
-    cout << "pushing at " << name << endl;
-    cout << "node-type = " << this->node_type << endl;
+    // cout << "pushing at " << name << endl;
+    // cout << "node-type = " << this->node_type << endl;
     initialize_rmp_natural_form();
     for (auto child : children){
         child->mappings->phi(this->x, child->x);
@@ -151,9 +151,9 @@ void rmp_flow::Node::pushforward(void)
 
 void rmp_flow::Node::pullback(void)
 {
-    cout << "pullback (node) doing at " << name << endl;
-    cout << "  and this is " << this->name << ", node-type = " << this->node_type << endl;
-    cout << typeid(this).name() << endl;
+    // cout << "pullback (node) doing at " << name << endl;
+    // cout << "  and this is " << this->name << ", node-type = " << this->node_type << endl;
+    //cout << typeid(this).name() << endl;
     for (auto child : this->children){
         child->pullback();
         this->parent->f += this->J.transpose() * (this->f - (this->M * this->J_dot * this->parent->x_dot));
@@ -175,8 +175,8 @@ void rmp_flow::Node::set_debug(bool is_debug)
 
 
 rmp_flow::Root::Root(
-    int self_dim, std::string name, mapping_base::Identity* mappings
-) : Node(self_dim, self_dim, name, mappings)
+    int self_dim, std::string name
+) : Node(self_dim, self_dim, name, nullptr)
 {
     //cout << "Root よばれた" << endl;
     this->node_type = 0;
@@ -196,8 +196,8 @@ void rmp_flow::Root::set_state(
 
 void rmp_flow::Root::pushforward(void)
 {
-    cout << "pushforward running..." << endl;
-    cout << "pushing at " << name << endl;
+    // cout << "pushforward running..." << endl;
+    // cout << "pushing at " << name << endl;
     //cout << "node-type = " << this->node_type << endl;
 
     initialize_rmp_natural_form();
@@ -205,8 +205,8 @@ void rmp_flow::Root::pushforward(void)
     for (auto child : this->children)
     {
         // 子供のやつ
-        cout << "chid name = " << child->name << endl;
-        cout << "child mapping name = " << child->mappings->name << endl;
+        // cout << "chid name = " << child->name << endl;
+        // cout << "child mapping name = " << child->mappings->name << endl;
         child->mappings->phi(this->x, child->x);
         child->mappings->jacobian(this->x, child->J);
         
@@ -220,20 +220,20 @@ void rmp_flow::Root::pushforward(void)
             child->pushforward();
         }
     }
-    cout << "pushforward done!\n" << endl;
+    //cout << "pushforward done!\n" << endl;
 }
 
 
 void rmp_flow::Root::pullback(void)
 {
-    cout << "pullback (root) running..." << endl;
-    cout << typeid(this).name() << endl;
+    //cout << "pullback (root) running..." << endl;
+    //cout << typeid(this).name() << endl;
     for (auto child : this->children)
     {
-        cout << typeid(child).name() << endl;
+        //cout << typeid(child).name() << endl;
         child->pullback();
     }
-    cout << "pullback done!\n" << endl;
+    //cout << "pullback done!\n" << endl;
 }
 
 
@@ -272,7 +272,7 @@ void rmp_flow::Root::solve(
     const VectorXd& q, const VectorXd& q_dot, VectorXd& out_q_ddot
 )
 {
-    cout << "solving ..." << endl;
+    //cout << "solving ..." << endl;
     this->set_state(q, q_dot);
     this->pushforward();
     this->pullback();
@@ -296,20 +296,20 @@ rmp_flow::Leaf_Base::Leaf_Base(
 void rmp_flow::Leaf_Base::calc_natural_form(void)
 {
     // pass
-    cout << "this node have not rmp-func" << endl;
+    //cout << "this node have not rmp-func" << endl;
 }
 
 
 void rmp_flow::Leaf_Base::pullback(void)
 {
-    cout << "pullback (leaf) doing at " << name << endl;
-    cout << typeid(this).name() << endl;
+    //cout << "pullback (leaf) doing at " << name << endl;
+    //cout << typeid(this).name() << endl;
     // cout << "f - (M * J_dot * this->parent->x_dot) = \n" << f - (M * J_dot * this->parent->x_dot) << endl;
     // cout << "J.transpose() * (f - (M * J_dot * this->parent->x_dot)) = \n" << J.transpose() * (f - (M * J_dot * this->parent->x_dot)) << endl;
     // cout << "J.transpose() * M * J = \n" << J.transpose() * M * J << endl;
 
     this->calc_natural_form();
-    cout << "rmp calc done" << endl;
+    //cout << "rmp calc done" << endl;
     // cout << "right = \n" << this->f - (this->M * this->J_dot * parent->x_dot) << endl;
     // // cout << (this->f - (this->M * this->J_dot * parent->x_dot)).rows() << endl;
     // // cout << (this->f - (this->M * this->J_dot * parent->x_dot)).cols() << endl;

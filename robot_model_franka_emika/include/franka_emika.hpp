@@ -136,6 +136,8 @@ namespace franka_emika
 
     
     public:
+        static const int c_dim;
+        static const int t_dim;
         static void set_q_max(VectorXd& out);
         static void set_q_min(VectorXd& out);
         static void set_q_neutral(VectorXd& out);

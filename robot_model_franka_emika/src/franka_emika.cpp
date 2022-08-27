@@ -10,7 +10,8 @@ const double franka_emika::Kinematics::a5 = -0.0825;
 const double franka_emika::Kinematics::a7 = 0.088;
 const double franka_emika::Kinematics::R0 = 108e-3;
 const double franka_emika::Kinematics::R = 0.088;
-
+const int franka_emika::Kinematics::c_dim = 7;
+const int franka_emika::Kinematics::t_dim = 3;
 
 void franka_emika::Kinematics::set_q_neutral(VectorXd& out)
 {

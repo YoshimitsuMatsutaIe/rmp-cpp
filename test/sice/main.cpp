@@ -55,13 +55,12 @@ int main()
     obs_dot_s.push_back(o_dot);
 
 
-    const double TiME_INTERVAL = 6.0;
+    const double TiME_INTERVAL = 120.0;
     const double dt = 1e-2;
 
     cout << "construct root" << endl;
     /* root */
-    mapping_base::Identity root_mappings;
-    rmp_flow::Root root(4, "root", &root_mappings);
+    rmp_flow::Root root(4, "root");
     VectorXd q0(4), q0_dot(4);
     rm::Kinematics::set_q_neutral(q0);
     q0_dot = VectorXd::Zero(4);
@@ -269,8 +268,10 @@ int main()
 
 
     rmp_flow::RMP_Tree tree(&root, "test_tree");
-    // //tree.set_debug(false);
+    tree.set_debug(false);
+    cout << "simulation running..." << endl;
     tree.run(TiME_INTERVAL, dt);
+    cout << "finish!\n" << endl;
 
 
     cout << "done!!" << endl;

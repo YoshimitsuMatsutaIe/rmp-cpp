@@ -74,7 +74,7 @@ namespace rmp_flow
     public:
         VectorXd q_ddot;  //指令値
         Root(
-            int self_dim, std::string name, mapping_base::Identity* mappings
+            int self_dim, std::string name
         );
         void set_state(
             const VectorXd &q, const VectorXd &q_dot

@@ -5,12 +5,12 @@ const double sice::Kinematics::l1 = 1.0;
 const double sice::Kinematics::l2 = 1.0;
 const double sice::Kinematics::l3 = 1.0;
 const double sice::Kinematics::l4 = 1.0;
-
-
+const int sice::Kinematics::c_dim = 4;
+const int sice::Kinematics::t_dim = 2;
 
 void sice::Kinematics::set_q_neutral(VectorXd& out)
 {
-    out = VectorXd::Zero(4);
+    out = VectorXd::Zero(c_dim);
 }
 
 void sice::Kinematics::set_q_min(VectorXd& out)
@@ -67,21 +67,21 @@ std::vector<sice::func_q_dq_matout> sice::Kinematics::JRYs_dot = {&jry_0_dot, &j
 
 void sice::Kinematics::htm(int n, const VectorXd& q, MatrixXd& out)
 {
-    std::cout << "huhuhuhuhuhu" << std::endl;
-    VectorXd rx(2);
-    VectorXd ry(2);
-    VectorXd rz(2);
-    VectorXd o(2);
+    //std::cout << "huhuhuhuhuhu" << std::endl;
+    VectorXd rx(t_dim);
+    VectorXd ry(t_dim);
+    VectorXd rz(t_dim);
+    VectorXd o(t_dim);
 
     RXs[n](q, rx);
     RYs[n](q, ry);
     Os[n](q, o);
 
-    std::cout << "hoge" << std::endl;
+    //std::cout << "hoge" << std::endl;
     out(0,0) = rx(0);
     out(0,1) = ry(0);
     out(0,2) = o(0);
-    std::cout << "hoge2" << std::endl;
+    //std::cout << "hoge2" << std::endl;
     out(1,0) = rx(1);
     out(1,1) = ry(1);
     out(1,2) = o(1);
@@ -101,8 +101,11 @@ void sice::Kinematics::htm_ee(const VectorXd& q, MatrixXd& out){htm(4, q, out);}
 
 sice::Control_Point::Control_Point(int frame, int index)
 {
-    this->name = "baxter control point at frame=" + std::to_string(frame) + ", index=" + std::to_string(index);
-    this->r_bar = VectorXd::Zero(3);
+    int c_dim = Kinematics::c_dim;
+    int t_dim = Kinematics::t_dim;
+
+    this->name = "sice control point at frame=" + std::to_string(frame) + ", index=" + std::to_string(index);
+    this->r_bar = VectorXd::Zero(t_dim+1);
     this->r_bar << Kinematics::R_BARS_ALL[frame][index][0],
     Kinematics::R_BARS_ALL[frame][index][1],
     1.0;
@@ -117,14 +120,14 @@ sice::Control_Point::Control_Point(int frame, int index)
     this->calc_jry_dot = Kinematics::JRYs_dot[frame];
 
 
-    this->htm = MatrixXd::Zero(3, 3);
-    this->jo = MatrixXd::Zero(2, 4);
-    this->jrx = MatrixXd::Zero(2, 4);
-    this->jry = MatrixXd::Zero(2, 4);
+    this->htm = MatrixXd::Zero(t_dim+1, t_dim+1);
+    this->jo = MatrixXd::Zero(t_dim, c_dim);
+    this->jrx = MatrixXd::Zero(t_dim, c_dim);
+    this->jry = MatrixXd::Zero(t_dim, c_dim);
 
-    this->jo_dot = MatrixXd::Zero(2, 4);
-    this->jrx_dot = MatrixXd::Zero(2, 4);
-    this->jry_dot = MatrixXd::Zero(2, 4);
+    this->jo_dot = MatrixXd::Zero(t_dim, c_dim);
+    this->jrx_dot = MatrixXd::Zero(t_dim, c_dim);
+    this->jry_dot = MatrixXd::Zero(t_dim, c_dim);
 
     std::cout << "map (name = " << this->name << ") is created!!!!!" << std::endl;
 }
@@ -132,10 +135,10 @@ sice::Control_Point::Control_Point(int frame, int index)
 
 void sice::Control_Point::phi(const VectorXd &q, VectorXd &out)
 {
-    std::cout << "map-name : " << this->name << " called." << std::endl;
+    //std::cout << "map-name : " << this->name << " called." << std::endl;
     this->calc_htm(q, this->htm);
-    std::cout << "ufvhhfugfh" << std::endl;
-    out = (this->htm * this->r_bar).head(2);
+    //std::cout << "ufvhhfugfh" << std::endl;
+    out = (this->htm * this->r_bar).head(Kinematics::t_dim);
 }
 
 

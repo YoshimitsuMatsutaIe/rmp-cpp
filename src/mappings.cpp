@@ -21,12 +21,12 @@ void mapping_base::Identity::phi(const VectorXd &x, VectorXd &out)
 
 void mapping_base::Identity::jacobian(const VectorXd &x, MatrixXd &out)
 {
-    std::cout << "this is Identity. have not to update J" << std::endl;
+    //std::cout << "this is Identity. have not to update J" << std::endl;
 }
 
 void mapping_base::Identity::jacobian_dot(const VectorXd &x, const VectorXd &x_dot, MatrixXd &out)
 {
-    std::cout << "this is Identity. have not to update J_dot" << std::endl;
+    //std::cout << "this is Identity. have not to update J_dot" << std::endl;
 }
 
 
@@ -42,11 +42,11 @@ void mapping_base::Distance::phi(
     const VectorXd &x, VectorXd &out
 )
 {
-    std::cout << "dis" << std::endl;
-    std::cout << "x = \n" << x << std::endl;
-    std::cout << "o = \n" << o << std::endl;
+    // std::cout << "dis" << std::endl;
+    // std::cout << "x = \n" << x << std::endl;
+    // std::cout << "o = \n" << o << std::endl;
     out(0) = (x - o).norm();
-    std::cout << "dis2" << std::endl;
+    //std::cout << "dis2" << std::endl;
 }
 
 
