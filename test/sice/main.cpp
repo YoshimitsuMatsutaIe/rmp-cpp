@@ -88,7 +88,7 @@ int main()
 
 
     // mapの構造
-    vector<std::size_t> model_struct = rm::Control_Point::calc_points_mapping();
+    auto model_struct = rm::Control_Point::calc_points_mapping();
     auto frame_num = model_struct.size();
     int cpoints_num = std::accumulate(model_struct.begin(), model_struct.end(), 0.0);
     
@@ -210,7 +210,7 @@ int main()
                     map_id_s.push_back(mapping_base::Identity());
                     rmp2_at_s.push_back(rmp2::Goal_Attractor(
                         2, 2, "ee-attractor", &map_id_s.back(),
-                        5.0, 5.0, 0.15, 1.0, 1.0, 10.0, 0.1, 0.15, 0.5,
+                        5.0, 5.0, 1.0, 1.0, 10.0, 0.1, 0.15, 0.5,
                         og, og_dot
                     ));
                     

@@ -26,7 +26,6 @@ namespace rmp2
     private:
         double gain;
         double damp;
-        double f_alpha;
         double sigma_alpha;
         double sigma_gamma;
         double wu;
@@ -47,7 +46,6 @@ namespace rmp2
             int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
             double max_speed,
             double gain,
-            double f_alpha,
             double sigma_alpha,
             double sigma_gamma,
             double wu,

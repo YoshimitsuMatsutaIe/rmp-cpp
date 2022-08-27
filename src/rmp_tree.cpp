@@ -1,53 +1,134 @@
 #include "../include/rmp_tree.hpp"
-#include "../robot_model_sice/include/sice.hpp"
-#include "../robot_model_franka_emika/include/franka_emika.hpp"
+
+
+
+rmp_flow::Nodes_and_Maps::Nodes_and_Maps(void){
+    /*pass*/
+}
 
 
 
 
-
-
-rmp_flow::Root rmp_flow::tree_constructor(
+std::tuple<rmp_flow::Root, rmp_flow::Nodes_and_Maps> rmp_flow::rmp_tree_constructor(
     const std::string robot_name,
-    const std::vector<VectorXd &> goal,
-    const std::vector<VectorXd &> obs
+    const nlohmann::json param,
+    const std::vector<VectorXd&> goal_position,
+    const std::vector<VectorXd&> goal_velosity,
+    const std::vector<VectorXd&> obs_position,
+    const std::vector<VectorXd&> obs_velocity
 )
 {
     cout << "construct root" << endl;
     
-    int dim;
+    Nodes_and_Maps nms;
+
+    int c_dim, t_dim;
     VectorXd q_neutral, q_max, q_min;
+    std::vector<size_t> model_struct;
+    int ee_frame_num, ee_num;
+    
     if (robot_name=="sice"){
-        dim = sice::Kinematics::c_dim;
+        c_dim = sice::Kinematics::c_dim;
+        t_dim = sice::Kinematics::t_dim;
         sice::Kinematics::set_q_neutral(q_neutral);
         sice::Kinematics::set_q_max(q_max);
         sice::Kinematics::set_q_min(q_min);
-        
+        model_struct = sice::Control_Point::calc_points_mapping();
+        auto [a, b] = sice::Kinematics::get_ee_id();
+        ee_frame_num = a;
+        ee_num = b;
+
     }
     else if (robot_name=="franka_emika"){
-        dim = franka_emika::Kinematics::c_dim;
+        c_dim = franka_emika::Kinematics::c_dim;
+        t_dim = franka_emika::Kinematics::t_dim;
         franka_emika::Kinematics::set_q_neutral(q_neutral);
         franka_emika::Kinematics::set_q_max(q_max);
         franka_emika::Kinematics::set_q_min(q_min);
-        
+        model_struct = franka_emika::Control_Point::calc_points_mapping();
+        auto [a, b] = franka_emika::Kinematics::get_ee_id();
+        ee_frame_num = a;
+        ee_num = b;
     }
     
-    Root root(dim, "root");
+    Root root(c_dim, "root");
 
-    list<mapping_base::Identity> map_id_s;
-    list<mapping_base::Distance> map_dis_s;
+    nlohmann::json jl_param = param["Joint_limit_avoidance"];
+    nlohmann::json at_param = param["goal_attractor"];
+    nlohmann::json obs_param = param["obstacle_avoidance"];
     
-    // どっちかしか使わん
-    list<sice::Control_Point> map_cp_s;
-    list<franka_emika::Control_Point> map_cp_s;
+    // joint limit
+    nms.map_id_s.push_back(mapping_base::Identity());
+    nms.rmp2_node_jl.push_back(
+        rmp2::Joint_Limit_Avoidance(
+            root.self_dim, root.self_dim, "jl-avoidance", &nms.map_id_s.back(),
+            jl_param["gamma_p"], jl_param["gamma_d"], jl_param["lam"], jl_param["sigma"],
+            q_max, q_min, q_neutral
+        )
+    );
+    root.add_child(&nms.rmp2_node_jl.back());
 
-    list<rmp_flow::Node> node_s;
-    list<rmp2::Goal_Attractor> rmp2_at_s;
-    list<rmp2::Obstacle_Avoidance> rmp2_obs_s;
 
+    auto frame_num = model_struct.size();
+    //int cpoints_num = std::accumulate(model_struct.begin(), model_struct.end(), 0.0);
 
+    std::string name;
+    for (int i=0; i<model_struct.size(); ++i){
+        for(int j=0; j<model_struct[i]; ++j){
+            cout << "i, j = " << i << ", " << j << endl;
+            if (i == ee_frame_num && j == ee_num){
+                name = "ee";
+            }
+            else{
+                name = "cpoints_" + std::to_string(i) + "-" + std::to_string(j);
+            }
+            
+            if (robot_name=="sice"){
+                nms.map_sice_cp_s.push_back(sice::Control_Point(i, j));
+            }
+            else if(robot_name=="franka_emika"){
+                nms.map_fe_cp_s.push_back(franka_emika::Control_Point(i, j));
+            }
+            nms.node_s.push_back(
+                Node(t_dim, root.self_dim, name, &nms.map_fe_cp_s.back())
+            );
 
-    return root;
+            // goal-attractor
+            if (i == ee_frame_num && j == ee_num){
+                nms.map_id_s.push_back(mapping_base::Identity());
+                nms.rmp2_node_at_s.push_back(rmp2::Goal_Attractor(
+                    t_dim, t_dim, "ee-attractor", &nms.map_id_s.back(),
+                    at_param["max_speed"],
+                    at_param["gain"],
+                    at_param["sigma_alpha"],
+                    at_param["sigma_gamma"],
+                    at_param["wu"],
+                    at_param["wl"],
+                    at_param["alpha"],
+                    at_param["epsilon"],
+                    goal_position[0], goal_velosity[0]
+                ));
+                root.children.back()->add_child(&nms.rmp2_node_at_s.back());
+            }
+
+            // obs
+            for (int k=0; k<obs_param.size(); ++k){
+                nms.map_dis_s.push_back(mapping_base::Distance(obs_position[k], obs_velocity[k]));
+                nms.rmp2_node_obs_s.push_back(rmp2::Obstacle_Avoidance(
+                    1, t_dim, name + ":obs-num-" + std::to_string(k),
+                    &nms.map_dis_s.back(), 
+                    obs_param["scale_rep"],
+                    obs_param["scale_damp"],
+                    obs_param["gain"],
+                    obs_param["sigma"],
+                    obs_param["rw"]
+                ));
+                root.children.back()->add_child(&nms.rmp2_node_obs_s.back());
+            }
+        }
+    }
+
+    return std::forward_as_tuple(root, nms);
 }
 
 
