@@ -26,6 +26,7 @@ namespace rmp_flow
 {
     using std::list;
     using std::tuple;
+    using std::vector;
     using Eigen::VectorXd;
     using Eigen::MatrixXd;
 
@@ -62,10 +63,10 @@ namespace rmp_flow
     tuple<Root, Nodes_and_Maps> rmp_tree_constructor(
         const std::string robot_name,
         const nlohmann::json param,
-        const std::vector<VectorXd&> goal_position,
-        const std::vector<VectorXd&> goal_velosity,
-        const std::vector<VectorXd&> obs_position,
-        const std::vector<VectorXd&> obs_velocity
+        const vector<VectorXd&> goal_position,
+        const vector<VectorXd&> goal_velosity,
+        const vector<VectorXd&> obs_position,
+        const vector<VectorXd&> obs_velocity
     );
 
 

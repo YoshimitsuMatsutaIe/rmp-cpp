@@ -1,21 +1,15 @@
 #include "../include/rmp_tree.hpp"
 
-
-
-rmp_flow::Nodes_and_Maps::Nodes_and_Maps(void){
-    /*pass*/
-}
-
-
+rmp_flow::Nodes_and_Maps::Nodes_and_Maps(void){/*pass*/}
 
 
 std::tuple<rmp_flow::Root, rmp_flow::Nodes_and_Maps> rmp_flow::rmp_tree_constructor(
     const std::string robot_name,
     const nlohmann::json param,
-    const std::vector<VectorXd&> goal_position,
-    const std::vector<VectorXd&> goal_velosity,
-    const std::vector<VectorXd&> obs_position,
-    const std::vector<VectorXd&> obs_velocity
+    const vector<VectorXd&> goal_position,
+    const vector<VectorXd&> goal_velosity,
+    const vector<VectorXd&> obs_position,
+    const vector<VectorXd&> obs_velocity
 )
 {
     cout << "construct root" << endl;
@@ -130,11 +124,6 @@ std::tuple<rmp_flow::Root, rmp_flow::Nodes_and_Maps> rmp_flow::rmp_tree_construc
 
     return std::forward_as_tuple(root, nms);
 }
-
-
-
-
-
 
 
 
@@ -277,7 +266,6 @@ void rmp_flow::RMP_Tree::run(
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time-start_time).count(); //処理に要した時間をミリ秒に変換
     std::cout << "time = " << elapsed/1000.0 << "[sec]" << std::endl;
 }
-
 
 
 
