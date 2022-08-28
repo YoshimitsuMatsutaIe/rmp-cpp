@@ -54,3 +54,4 @@ __pycache__/
 
 /.vscode
 .vscode/settings.json
+misc/ref_vector/a.out
