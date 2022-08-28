@@ -11,18 +11,23 @@ const int sice::Kinematics::t_dim = 2;
 void sice::Kinematics::set_q_neutral(VectorXd& out)
 {
     out = VectorXd::Zero(c_dim);
+    std::cout << "q_n" << std::endl;
 }
 
 void sice::Kinematics::set_q_min(VectorXd& out)
 {
+    out = VectorXd::Zero(c_dim);
     out << -180.0, -180.0, -180.0, -180.0;
     out *= M_PI/180.0;
+    std::cout << "q_min" << std::endl;
 }
 
 void sice::Kinematics::set_q_max(VectorXd& out)
 {
+    out = VectorXd::Zero(c_dim);
     out << 180.0, 180.0, 180.0, 180.0;
     out *= M_PI/180.0;
+    std::cout << "q_max" << std::endl;
 }
 
 const std::vector<std::vector<double>> sice::Kinematics::r_bars_0{

@@ -1,32 +1,35 @@
 #include "../include/environment.hpp"
 
-/**
- * @brief 3次元回転行列（度で指定）
- * 
- * @param alpha 
- * @param beta 
- * @param gamma 
- * @param out 
- */
-void simulator::rotate(float alpha, float beta, float gamma, Eigen::Matrix3d& out)
+void simulator::rotate(double alpha, Eigen::Matrix2d &out)
+{
+    alpha *= M_PI / 180.0;
+    out << 
+    cos(alpha), -sin(alpha),
+    sin(alpha), cos(alpha);
+}
+
+void simulator::rotate(double alpha, double beta, double gamma, Eigen::Matrix3d& out)
 {
     Eigen::Matrix3d Rx;
     Eigen::Matrix3d Ry;
     Eigen::Matrix3d Rz;
 
-    alpha = alpha * M_PI / 180.0;
-    beta = beta * M_PI / 180.0;
-    gamma = gamma * M_PI / 180.0;
+    alpha *= M_PI / 180.0;
+    beta *= M_PI / 180.0;
+    gamma *= M_PI / 180.0;
 
-    Rx << 1, 0, 0,
+    Rx <<
+    1, 0, 0,
     0, cos(alpha), -sin(alpha),
     0, sin(alpha), cos(alpha);
     
-    Ry << cos(beta), 0, sin(beta),
+    Ry <<
+    cos(beta), 0, sin(beta),
     0, 1, 0,
     -sin(beta), 0, cos(beta);
     
-    Rz << cos(gamma), -sin(gamma), 0,
+    Rz <<
+    cos(gamma), -sin(gamma), 0,
     sin(gamma), cos(gamma), 0,
     0, 0, 1;
 
@@ -35,14 +38,14 @@ void simulator::rotate(float alpha, float beta, float gamma, Eigen::Matrix3d& ou
 
 
 
-void simulator::set_sphere(int n, float r, float x, float y, float z, std::vector<Eigen::VectorXd>& out)
+void simulator::set_sphere(int n, double r, double x, double y, double z, vector<Eigen::VectorXd>& out)
 {
     std::random_device seed_gen;
     std::default_random_engine engine(seed_gen());
     std::uniform_real_distribution<> dist_alpha(-1.0, 1.0);
-    std::uniform_real_distribution<> dist_beta(0, 2*M_PI);
-    float alpha;
-    float beta;
+    std::uniform_real_distribution<> dist_beta(0, 2.0*M_PI);
+    double alpha;
+    double beta;
 
     for (int i=0; i<n; i++){
         //std::cout << i << std::endl;
@@ -51,7 +54,8 @@ void simulator::set_sphere(int n, float r, float x, float y, float z, std::vecto
         beta = dist_beta(engine);
         
         VectorXd o(3);
-        o << r * sin(alpha) * cos(beta) + x,
+        o <<
+        r * sin(alpha) * cos(beta) + x,
         r * sin(alpha) * sin(beta) + y,
         r * cos(alpha) + z;
 
@@ -64,15 +68,36 @@ void simulator::set_sphere(int n, float r, float x, float y, float z, std::vecto
 
 
 
+
+void simulator::set_sphere(int n, double r, double x, double y, vector<VectorXd>& out)
+{
+    std::random_device seed_gen;
+    std::default_random_engine engine(seed_gen());
+    std::uniform_real_distribution<> dist_beta(0, 2.0*M_PI);
+    double beta;
+
+    for (int i=0; i<n; i++){
+        beta = dist_beta(engine);
+        
+        VectorXd o(2);
+        o <<
+        r * cos(beta) + x,
+        r * sin(beta) + y,
+
+        out.push_back(o);
+    }
+}
+
+
 void simulator::set_cylinder(
-    int n, float r, float L, float x, float y, float z,
-    float alpha, float beta, float gamma,
+    int n, double r, double L, double x, double y, double z,
+    double alpha, double beta, double gamma,
     vector<VectorXd>& out
 )
 {
     std::random_device seed_gen;
     std::default_random_engine engine(seed_gen());
-    std::uniform_real_distribution<> dist_theta(0, 2*M_PI);
+    std::uniform_real_distribution<> dist_theta(0, 2.0*M_PI);
     std::uniform_real_distribution<> dist_l(-L*0.5, L*0.5);
 
     Eigen::Matrix3d R;
@@ -81,27 +106,30 @@ void simulator::set_cylinder(
     VectorXd center(3);
     center << x, y, z;
 
-    float theta;
-    float l;
+    double theta;
+    double l;
 
     for (int i=0; i<n; i++){
         theta = dist_theta(engine);
         l = dist_l(engine);
 
         VectorXd o(3);
-        o << r * cos(theta),
+        o <<
+        r * cos(theta),
         r * sin(theta),
         l;
 
-        out.push_back(R * o + center);
+        o = R * o + center;
+
+        out.push_back(o);
     }
 }
 
 
 
 void simulator::set_field(
-    int n, float lx, float ly, float x, float y, float z,
-    float alpha, float beta, float gamma,
+    int n, double lx, double ly, double x, double y, double z,
+    double alpha, double beta, double gamma,
     vector<VectorXd>& out
 )
 {
@@ -116,8 +144,8 @@ void simulator::set_field(
     VectorXd center(3);
     center << x, y, z;
 
-    float x_;
-    float y_;
+    double x_;
+    double y_;
 
     for (int i=0; i<n; i++){
         x_ = dist_x_(engine);
@@ -126,6 +154,8 @@ void simulator::set_field(
         VectorXd o(3);
         o << x_, y_, 0;
 
-        out.push_back(R * o + center);
+        o = R * o + center;
+
+        out.push_back(o);
     }
 }

@@ -11,20 +11,17 @@ rmp2::Goal_Attractor::Goal_Attractor(
     int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
     double max_speed,
     double gain,
-    double f_alpha,
     double sigma_alpha,
     double sigma_gamma,
     double wu,
     double wl,
     double alpha,
     double epsilon,
-    VectorXd& z0,
-    VectorXd& z0_dot
-) : Leaf_Base(self_dim, parent_dim, name, mappings), x0(z0), x0_dot(z0_dot)
+    const VectorXd& x0, const VectorXd& x0_dot
+) : Leaf_Base(self_dim, parent_dim, name, mappings)
 {
     this->damp = gain / max_speed;
     this->gain = gain;
-    this->f_alpha = f_alpha;
     this->sigma_alpha = sigma_alpha;
     this->sigma_gamma = sigma_gamma;
     this->wu = wu;
@@ -34,6 +31,9 @@ rmp2::Goal_Attractor::Goal_Attractor(
     this->have_rmp_func = true;
     this->J = MatrixXd::Identity(self_dim, parent_dim);
     this->J_dot = MatrixXd::Zero(self_dim, parent_dim);
+
+    this->x0 = x0;
+    this->x0_dot = x0_dot;
 }
 
 
@@ -84,7 +84,7 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
     if (this->self_dim == 2){
         xi_2d(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
     }
-    else if ( this->self_dim == 3){
+    else if (this->self_dim == 3){
         xi_3d(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
     }
 

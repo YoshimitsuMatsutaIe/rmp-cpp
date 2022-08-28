@@ -15,18 +15,18 @@ const int franka_emika::Kinematics::t_dim = 3;
 
 void franka_emika::Kinematics::set_q_neutral(VectorXd& out)
 {
-    out = VectorXd::Zero(7);
+    out = VectorXd::Zero(c_dim);
 }
 
 void franka_emika::Kinematics::set_q_min(VectorXd& out)
 {
-    out = VectorXd::Zero(7);
+    out = VectorXd::Zero(c_dim);
     out << 51.0, 60.0, 173.0, 150.0, 175.0, 120.0, 175.0;
 }
 
 void franka_emika::Kinematics::set_q_max(VectorXd& out)
 {
-    out = VectorXd::Zero(7);
+    out = VectorXd::Zero(c_dim);
     out << 2.8973, 1.7628, 2.8973, -0.0698, 2.8973, 3.7525, 2.8973;
 }
 

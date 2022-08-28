@@ -31,10 +31,12 @@ void mapping_base::Identity::jacobian_dot(const VectorXd &x, const VectorXd &x_d
 
 
 mapping_base::Distance::Distance(
-    VectorXd& o, VectorXd& o_dot
-): o(o), o_dot(o_dot)
+    const VectorXd& o, const VectorXd& o_dot
+)
 {
     this->name = "distance map";
+    this->o = o;
+    this->o_dot = o_dot;
 }
 
 

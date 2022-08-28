@@ -40,6 +40,7 @@ namespace rmp_flow
         list<mapping_base::Distance> map_dis_s;
         list<sice::Control_Point> map_sice_cp_s;
         list<franka_emika::Control_Point> map_fe_cp_s;
+
         list<rmp_flow::Node> node_s;
         list<rmp2::Joint_Limit_Avoidance> rmp2_node_jl;
         list<rmp2::Goal_Attractor> rmp2_node_at_s;
@@ -47,6 +48,7 @@ namespace rmp_flow
 
         Nodes_and_Maps(void);
     };
+
 
 
     /**
@@ -62,11 +64,11 @@ namespace rmp_flow
      */
     tuple<Root, Nodes_and_Maps> rmp_tree_constructor(
         const std::string robot_name,
-        const nlohmann::json param,
-        const vector<VectorXd&> goal_position,
-        const vector<VectorXd&> goal_velosity,
-        const vector<VectorXd&> obs_position,
-        const vector<VectorXd&> obs_velocity
+        nlohmann::json param,
+        const vector<VectorXd>& goal_position,
+        const vector<VectorXd>& goal_velosity,
+        const vector<VectorXd>& obs_position,
+        const vector<VectorXd>& obs_velocity
     );
 
 

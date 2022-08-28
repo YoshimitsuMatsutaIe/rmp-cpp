@@ -33,8 +33,8 @@ namespace rmp2
         double alpha;
         double epsilon;
 
-        VectorXd& x0;  //goal point's position
-        VectorXd& x0_dot;  //goal point's velo
+        VectorXd x0;  //goal point's position
+        VectorXd x0_dot;  //goal point's velo
 
         void calc_grad_potential2(const VectorXd& z, VectorXd& out);
         void calc_inertia_matrix(const VectorXd& z, const VectorXd& z_dot, MatrixXd& out);
@@ -52,7 +52,7 @@ namespace rmp2
             double wl,
             double alpha,
             double epsilon,
-            VectorXd& z0, VectorXd& z0_dot
+            const VectorXd& x0, const VectorXd& x0_dot
         );
 
         void calc_natural_form(void) override;

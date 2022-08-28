@@ -1,5 +1,5 @@
-#ifndef MAPPINGS__H
-#define MAPPINGS__H
+#ifndef MAPPINGS__HPP
+#define MAPPINGS__HPP
 
 #include <string>
 
@@ -33,10 +33,10 @@ namespace mapping_base
     class Distance : public Identity
     {
     private:
-        VectorXd& o;
-        VectorXd& o_dot;
+        VectorXd o;
+        VectorXd o_dot;
     public:
-        Distance(VectorXd& o, VectorXd& o_dot);
+        Distance(const VectorXd& o, const VectorXd& o_dot);
         void phi(const VectorXd &x, VectorXd &out) override;
         void jacobian(const VectorXd &x, MatrixXd &out) override;
         void jacobian_dot(const VectorXd &x, const VectorXd &x_dot, MatrixXd &out) override;

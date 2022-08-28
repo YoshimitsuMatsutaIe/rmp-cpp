@@ -12,11 +12,13 @@
 
 namespace rmp_flow
 {
+    using std::vector;
     using Eigen::VectorXd;
     using Eigen::MatrixXd;
 
     using std::cout;
     using std::endl;
+
 
     /**
      * @brief 基底
@@ -33,8 +35,8 @@ namespace rmp_flow
         bool is_cpoint;
         std::string name;
 
-        class Node* parent;
-        std::vector<class Node*> children;
+        Node* parent;
+        vector<Node*> children;
 
         VectorXd x;
         VectorXd x_dot;
@@ -54,8 +56,7 @@ namespace rmp_flow
             mapping_base::Identity *mapping
         );
 
-        
-        
+
         void initialize_rmp_natural_form(void);
         const void print_self_state(void);
         const void print_state_all_node(void);
@@ -69,6 +70,10 @@ namespace rmp_flow
     };
 
 
+    /**
+     * @brief 
+     * 
+     */
     class Root : public Node
     {
     public:

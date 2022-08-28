@@ -5,16 +5,18 @@ rmp_flow::Nodes_and_Maps::Nodes_and_Maps(void){/*pass*/}
 
 std::tuple<rmp_flow::Root, rmp_flow::Nodes_and_Maps> rmp_flow::rmp_tree_constructor(
     const std::string robot_name,
-    const nlohmann::json param,
-    const vector<VectorXd&> goal_position,
-    const vector<VectorXd&> goal_velosity,
-    const vector<VectorXd&> obs_position,
-    const vector<VectorXd&> obs_velocity
+    nlohmann::json param,
+    const vector<VectorXd>& goal_position,
+    const vector<VectorXd>& goal_velosity,
+    const vector<VectorXd>& obs_position,
+    const vector<VectorXd>& obs_velocity
 )
 {
     cout << "construct root" << endl;
     
     Nodes_and_Maps nms;
+
+    cout << "1" << endl;
 
     int c_dim, t_dim;
     VectorXd q_neutral, q_max, q_min;
@@ -22,16 +24,19 @@ std::tuple<rmp_flow::Root, rmp_flow::Nodes_and_Maps> rmp_flow::rmp_tree_construc
     int ee_frame_num, ee_num;
     
     if (robot_name=="sice"){
+        cout << robot_name << endl;
         c_dim = sice::Kinematics::c_dim;
         t_dim = sice::Kinematics::t_dim;
+        cout << 0.1 << endl;
         sice::Kinematics::set_q_neutral(q_neutral);
         sice::Kinematics::set_q_max(q_max);
         sice::Kinematics::set_q_min(q_min);
+        cout << 0.5 << endl;
         model_struct = sice::Control_Point::calc_points_mapping();
         auto [a, b] = sice::Kinematics::get_ee_id();
         ee_frame_num = a;
         ee_num = b;
-
+        cout << "wow" << endl;
     }
     else if (robot_name=="franka_emika"){
         c_dim = franka_emika::Kinematics::c_dim;
@@ -44,25 +49,36 @@ std::tuple<rmp_flow::Root, rmp_flow::Nodes_and_Maps> rmp_flow::rmp_tree_construc
         ee_frame_num = a;
         ee_num = b;
     }
+    else {
+        cout << "not exit" << endl;
+    }
     
     Root root(c_dim, "root");
 
-    nlohmann::json jl_param = param["Joint_limit_avoidance"];
+    cout << "root make" << endl;
+    cout << param << endl;
+
+    nlohmann::json jl_param = param["joint_limit_avoidance"];
     nlohmann::json at_param = param["goal_attractor"];
     nlohmann::json obs_param = param["obstacle_avoidance"];
     
+
+
     // joint limit
     nms.map_id_s.push_back(mapping_base::Identity());
     nms.rmp2_node_jl.push_back(
         rmp2::Joint_Limit_Avoidance(
             root.self_dim, root.self_dim, "jl-avoidance", &nms.map_id_s.back(),
-            jl_param["gamma_p"], jl_param["gamma_d"], jl_param["lam"], jl_param["sigma"],
+            jl_param["gamma_p"].get<double>(),
+            jl_param["gamma_d"].get<double>(),
+            jl_param["lam"].get<double>(),
+            jl_param["sigma"].get<double>(),
             q_max, q_min, q_neutral
         )
     );
     root.add_child(&nms.rmp2_node_jl.back());
 
-
+    cout << "obs and goal" << endl;
     auto frame_num = model_struct.size();
     //int cpoints_num = std::accumulate(model_struct.begin(), model_struct.end(), 0.0);
 
@@ -86,40 +102,53 @@ std::tuple<rmp_flow::Root, rmp_flow::Nodes_and_Maps> rmp_flow::rmp_tree_construc
             nms.node_s.push_back(
                 Node(t_dim, root.self_dim, name, &nms.map_fe_cp_s.back())
             );
+            root.children.push_back(&nms.node_s.back());
 
             // goal-attractor
             if (i == ee_frame_num && j == ee_num){
                 nms.map_id_s.push_back(mapping_base::Identity());
                 nms.rmp2_node_at_s.push_back(rmp2::Goal_Attractor(
                     t_dim, t_dim, "ee-attractor", &nms.map_id_s.back(),
-                    at_param["max_speed"],
-                    at_param["gain"],
-                    at_param["sigma_alpha"],
-                    at_param["sigma_gamma"],
-                    at_param["wu"],
-                    at_param["wl"],
-                    at_param["alpha"],
-                    at_param["epsilon"],
+                    at_param["max_speed"].get<double>(),
+                    at_param["gain"].get<double>(),
+                    at_param["sigma_alpha"].get<double>(),
+                    at_param["sigma_gamma"].get<double>(),
+                    at_param["wu"].get<double>(),
+                    at_param["wl"].get<double>(),
+                    at_param["alpha"].get<double>(),
+                    at_param["epsilon"].get<double>(),
                     goal_position[0], goal_velosity[0]
                 ));
                 root.children.back()->add_child(&nms.rmp2_node_at_s.back());
             }
 
             // obs
-            for (int k=0; k<obs_param.size(); ++k){
+            for (int k=0; k<obs_position.size(); ++k){
                 nms.map_dis_s.push_back(mapping_base::Distance(obs_position[k], obs_velocity[k]));
                 nms.rmp2_node_obs_s.push_back(rmp2::Obstacle_Avoidance(
                     1, t_dim, name + ":obs-num-" + std::to_string(k),
                     &nms.map_dis_s.back(), 
-                    obs_param["scale_rep"],
-                    obs_param["scale_damp"],
-                    obs_param["gain"],
-                    obs_param["sigma"],
-                    obs_param["rw"]
+                    obs_param["scale_rep"].get<double>(),
+                    obs_param["scale_damp"].get<double>(),
+                    obs_param["gain"].get<double>(),
+                    obs_param["sigma"].get<double>(),
+                    obs_param["rw"].get<double>()
                 ));
                 root.children.back()->add_child(&nms.rmp2_node_obs_s.back());
             }
         }
+    }
+
+    cout << "tree construction done\n" << endl;
+    //root.print_tree_structure();
+
+
+
+    cout << "root & = " << &root << endl;
+
+    cout << "\ncp00 child num = " << endl;;
+    for (auto c: root.children[1]->children){
+        cout << c->name << endl;
     }
 
     return std::forward_as_tuple(root, nms);
