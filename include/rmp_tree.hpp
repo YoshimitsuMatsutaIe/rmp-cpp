@@ -12,6 +12,7 @@
 #include <vector>
 #include <tuple>
 #include <list>
+#include <unordered_map>
 
 #include "mappings.hpp"
 #include "../robot_model_sice/include/sice.hpp"
@@ -27,6 +28,8 @@ namespace rmp_flow
     using std::list;
     using std::tuple;
     using std::vector;
+    using std::map;
+    
     using Eigen::VectorXd;
     using Eigen::MatrixXd;
 
@@ -51,24 +54,24 @@ namespace rmp_flow
 
 
 
-    /**
-     * @brief 並列なし
-     * 
-     * @param robot_name 
-     * @param param 
-     * @param goal_position 
-     * @param goal_velosity 
-     * @param obs_position 
-     * @param obs_velocity 
-     * @return tuple<Root, Nodes_and_Maps> 
-     */
     tuple<Root, Nodes_and_Maps> rmp_tree_constructor(
         const std::string robot_name,
-        nlohmann::json param,
+        const std::unordered_map<std::string, map<std::string, double>> rmp_param,
         const vector<VectorXd>& goal_position,
         const vector<VectorXd>& goal_velosity,
         const vector<VectorXd>& obs_position,
         const vector<VectorXd>& obs_velocity
+    );
+
+    void rmp_tree_constructor(
+        const std::string robot_name,
+        const std::unordered_map<std::string, map<std::string, double>> rmp_param,
+        const vector<VectorXd>& goal_position,
+        const vector<VectorXd>& goal_velosity,
+        const vector<VectorXd>& obs_position,
+        const vector<VectorXd>& obs_velocity,
+        Root& root,
+        Nodes_and_Maps& nms
     );
 
 

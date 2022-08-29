@@ -58,13 +58,22 @@ int main()
         o_dot.push_back(temp);
     }
 
-    auto [root, nms] = rmp_flow::rmp_tree_constructor(
+    // auto [root, nms] = rmp_flow::rmp_tree_constructor(
+    //     j["robot_name"].get<std::string>(),
+    //     j["rmp_param"],
+    //     g, g_dot, o, o_dot
+    // );
+
+
+
+    rmp_flow::Root root;
+    rmp_flow::Nodes_and_Maps nms;
+    rmp_flow::rmp_tree_constructor(
         j["robot_name"].get<std::string>(),
         j["rmp_param"],
-        g, g_dot, o, o_dot
+        g, g_dot, o, o_dot,
+        root, nms
     );
-
-
     // cout << "map_id_num =   " << nms.map_id_s.size() << endl;
     // cout << "map_dis_num =  " << nms.map_dis_s.size() << endl;
     // cout << "map_sice_num = " << nms.map_sice_cp_s.size() << endl;
@@ -74,24 +83,43 @@ int main()
     // cout << "node_at_num =  " << nms.rmp2_node_at_s.size() << endl;
     // cout << "node_obs_num = " << nms.rmp2_node_obs_s.size() << endl;
 
-    for (auto s: nms.rmp2_node_obs_s){
-        cout << s.name << endl;
-    }
+    // for (auto s: nms.rmp2_node_obs_s){
+    //     cout << s.name << endl;
+    // }
 
-    cout << "root & = " << &root << endl;
-    cout << "\ncp00 child num = " << endl;;
-    for (auto c: root.children[1]->children){
-        cout << c->name << endl;
-    }
+
+    // cout << "hoge\n" << endl;
+
+    // for(auto itr = nms.rmp2_node_obs_s.begin(); itr != nms.rmp2_node_obs_s.end(); ++itr) {
+    //     cout << itr->name << "\n";
+    // }
+    // cout << "\nparent name" << endl;
+    // for(auto itr = nms.rmp2_node_obs_s.begin(); itr != nms.rmp2_node_obs_s.end(); ++itr) {
+    //     cout << itr->parent->name << "\n";
+    // }
+
+    //cout << "at name" << root.children.back()->children[0]->parent->name << endl;
+
+    // cout << "root & = " << &root << endl;
+    // cout << "\ncp00 child num = " << endl;;
+    // for (auto c: root.children[1]->children){
+    //     cout << c->name << endl;
+    // }
+
+
 
 
     cout << "\nsimulation start..." << endl;
-    root.print_tree_structure();
+    //root.print_tree_structure();
+
+    // cout << endl;
+    // root.print_state_all_node();
+    // root.pushforward();
 
     rmp_flow::RMP_Tree tree(&root, "test_tree");
     tree.set_debug(false);
     cout << "simulation running..." << endl;
-    tree.run(j["TiME_SPAN"], j["TIME_INTERVAL"]);
+    tree.run(j["time_span"].get<double>(), j["time_interval"].get<double>());
     cout << "finish!\n" << endl;
 
 

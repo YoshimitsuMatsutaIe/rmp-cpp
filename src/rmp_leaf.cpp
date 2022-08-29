@@ -97,7 +97,7 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
 
 void rmp2::Goal_Attractor::calc_natural_form(void)
 {
-    //cout << "calc goal-rmp" << endl;
+    cout << "calc goal-rmp" << endl;
     calc_inertia_matrix(x-x0, x_dot-x0_dot, this->M);
     calc_force(x-x0, x_dot-x0_dot, this->f);
 }
@@ -210,6 +210,7 @@ double rmp2::Obstacle_Avoidance::calc_force(double s, double s_dot)
 
 void rmp2::Obstacle_Avoidance::calc_natural_form(void)
 {
+    std::cout << "obs rmp cal" << std::endl;
     f(0) = calc_force(x(0), x_dot(0));
     M(0, 0) = calc_inertia_matrix(x(0), x_dot(0));
 }
