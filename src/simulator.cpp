@@ -1,6 +1,6 @@
 #include "../include/simulator.hpp"
 
-void simulator::RMP_Simulator::set_goal(
+void simulator::RMP_Simulator::add_goal(
     string type,
     unordered_map<string, double> param
 )
@@ -25,13 +25,45 @@ void simulator::RMP_Simulator::set_goal(
 }
 
 
+void simulator::RMP_Simulator::add_obstacle(
+    string type,
+    unordered_map<string, double> param
+)
+{
+    vector<VectorXd> temp_obs_s;
+
+    if (type == "sphere"){
+        if (param.count("z") == 0){
+            simulator::set_sphere(
+                param["n"], param["r"], param["x"], param["y"], temp_obs_s
+            );
+        }
+        else{
+            simulator::set_sphere(
+                param["n"], param["r"], param["x"], param["y"], param["z"], temp_obs_s
+            );
+        }
+    }
+    else if (type == "cylinder"){
+        simulator::set_cylinder(
+            param["n"], param["r"], param["L"], param["x"], param["y"], param["z"], 
+            param["alpha"], param["beta"], param["gamma"], temp_obs_s
+        );
+    }
+
+    for (auto o_: temp_obs_s){
+        this->o.push_back(o_);
+    }
+}
+
+
 void simulator::RMP_Simulator::set_initial_value(string json_path)
 {
     std::ifstream param_json(json_path);
     auto j = nlohmann::json::parse(param_json);
 
     auto goal_param = j["env_param"]["goal"];
-    set_goal(goal_param["type"], goal_param["param"]);
+    this->add_goal(goal_param["type"], goal_param["param"]);
 
 
 }

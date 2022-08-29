@@ -12,6 +12,7 @@
 
 
 #include "rmp_node.hpp"
+#include "environment.hpp"
 
 namespace simulator
 {
@@ -26,7 +27,8 @@ namespace simulator
     private:
         bool is_debug=true;
         void update_environment(void);
-        void set_goal(string type, unordered_map<string, double> param);
+        void add_goal(string type, unordered_map<string, double> param);
+        void add_obstacle(string type, unordered_map<string, double> param);
 
     public:
         RMP_Simulator(void){};
