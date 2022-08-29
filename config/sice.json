@@ -1,7 +1,7 @@
 {
     "//" : "テスト用",
     "robot_name" : "sice",
-    "time_span" : 30.0,
+    "time_span" : 60.0,
     "time_interval" : 0.01,
     "rmp_param" : {
         "goal_attractor" : {
@@ -32,19 +32,18 @@
         "goal" : {
             "type" : "static",
             "param" : {
-                "x" : 0.5,
-                "y" : -0.08,
-                "z" : 0.5
+                "x" : 2.0,
+                "y" : 3.0
             }
         },
         "obstacle" : [
             {
                 "type" : "sphere",
                 "param" : {
-                    "r" : 0.15,
-                    "x" : 0.3,
-                    "y" : 0.0,
-                    "n" : 2
+                    "r" : 0.6,
+                    "x" : 0.5,
+                    "y" : 1.0,
+                    "n" : 1000
                 }
             }
         ]

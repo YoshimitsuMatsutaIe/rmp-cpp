@@ -47,7 +47,7 @@ int main()
     Eigen::VectorXd temp(2);
     temp <<
     j["env_param"]["goal"]["param"]["x"].get<double>(),
-    j["env_param"]["goal"]["param"]["x"].get<double>();
+    j["env_param"]["goal"]["param"]["y"].get<double>();
     g.push_back(temp);
 
     temp = Eigen::VectorXd::Zero(2);

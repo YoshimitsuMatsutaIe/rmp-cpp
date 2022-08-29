@@ -54,9 +54,20 @@ namespace rmp_flow
 
 
 
+    /**
+     * @brief バグあり
+     * 
+     * @param robot_name 
+     * @param rmp_param 
+     * @param goal_position 
+     * @param goal_velosity 
+     * @param obs_position 
+     * @param obs_velocity 
+     * @return tuple<Root, Nodes_and_Maps> 
+     */
     tuple<Root, Nodes_and_Maps> rmp_tree_constructor(
         const std::string robot_name,
-        const std::unordered_map<std::string, map<std::string, double>> rmp_param,
+        const std::unordered_map<std::string, std::unordered_map<std::string, double>> rmp_param,
         const vector<VectorXd>& goal_position,
         const vector<VectorXd>& goal_velosity,
         const vector<VectorXd>& obs_position,
@@ -65,7 +76,7 @@ namespace rmp_flow
 
     void rmp_tree_constructor(
         const std::string robot_name,
-        const std::unordered_map<std::string, map<std::string, double>> rmp_param,
+        const std::unordered_map<std::string, std::unordered_map<std::string, double>> rmp_param,
         const vector<VectorXd>& goal_position,
         const vector<VectorXd>& goal_velosity,
         const vector<VectorXd>& obs_position,
@@ -74,32 +85,6 @@ namespace rmp_flow
         Nodes_and_Maps& nms
     );
 
-
-    /**
-     * @brief 古いの
-     * 
-     */
-    class RMP_Tree
-    {
-    private:
-        bool is_debug=true;
-        void update_environment(void);
-
-    public:
-        RMP_Tree(Root* root, std::string tree_name);
-        //RMP_Tree(std::map<> tree_param);
-        Root* root;
-        std::string tree_name = "nameless";
-
-        //void one_step(void);
-        void run(
-            double time_span, double time_interval,
-            std::string method="euler",
-            std::string save_dir_path="result"
-        );
-        void set_debug(bool is_debug);
-
-    };
 };
 
 

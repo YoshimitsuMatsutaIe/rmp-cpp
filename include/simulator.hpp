@@ -1,17 +1,56 @@
 #ifndef SIMULATOR__HPP
 #define SIMULATOR__HPP
 
+#include <iostream>
+#include <filesystem>
+#include <fstream>
+#include <unordered_map>
+
 #include <eigen3/Eigen/Core>
 #include <boost/numeric/odeint.hpp>
+#include <nlohmann/json.hpp>
+
+
+#include "rmp_node.hpp"
 
 namespace simulator
 {
 
     using Eigen::VectorXd;
+    using std::unordered_map;
+    using std::string;
 
 
+    class RMP_Simulator
+    {
+    private:
+        bool is_debug=true;
+        void update_environment(void);
+        void set_goal(string type, unordered_map<string, double> param);
 
+    public:
+        RMP_Simulator(void){};
+        //RMP_Simulator(rmp_flow::Root* root, std::string tree_name);
+        //RMP_Tree(std::map<> tree_param);
+        rmp_flow::Root* root;
+        std::string tree_name = "nameless";
 
+        std::vector<Eigen::VectorXd> g;
+        std::vector<Eigen::VectorXd> g_dot;
+        std::vector<Eigen::VectorXd> o;
+        std::vector<Eigen::VectorXd> o_dot;
+
+        void set_initial_value(std::string json_path);
+
+        //void one_step(void);
+        void run(
+            double time_span, double time_interval,
+            std::string method="euler",
+            std::string save_dir_path="result"
+        );
+        void set_debug(bool is_debug);
+
+    };
 
 
     // struct System
