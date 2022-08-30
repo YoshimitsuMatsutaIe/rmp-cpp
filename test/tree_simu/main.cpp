@@ -14,9 +14,9 @@ int main()
 
     simulator::RMP_Simulator sim;
 
-    //sim.run("../../config/sice.json");
+    //sim.run("../../config/sice.json", "rk");
 
-    sim.run("../../config/franka_sphere.json");
+    sim.run("../../config/franka_sphere.json", "rk");
 
 
     cout << "done!" << endl;

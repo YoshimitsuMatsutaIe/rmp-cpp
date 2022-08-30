@@ -16,6 +16,7 @@ const int franka_emika::Kinematics::t_dim = 3;
 void franka_emika::Kinematics::set_q_neutral(VectorXd& out)
 {
     out = VectorXd::Zero(c_dim);
+    // out(0) = 1000;
 }
 
 void franka_emika::Kinematics::set_q_min(VectorXd& out)

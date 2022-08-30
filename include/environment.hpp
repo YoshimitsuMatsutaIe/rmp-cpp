@@ -30,30 +30,12 @@ namespace simulator
 
     /**
      * @brief Set the sphere object
-     * 
-     * @param n 
-     * @param r 
-     * @param x 
-     * @param y 
-     * @param z 
-     * @param out 
      */
     void set_sphere(int n, double r, double x, double y, double z, vector<VectorXd>& out);
     void set_sphere(int n, double r, double x, double y, vector<Eigen::VectorXd>& out);
 
     /**
      * @brief Set the cylinder object
-     * 
-     * @param n 
-     * @param r 
-     * @param L 
-     * @param x 
-     * @param y 
-     * @param z 
-     * @param alpha 
-     * @param beta 
-     * @param gamma 
-     * @param out 
      */
     void set_cylinder(
         int n, double r, double L, double x, double y, double z,
@@ -63,17 +45,6 @@ namespace simulator
 
     /**
      * @brief Set the field object
-     * 
-     * @param n 
-     * @param lx 
-     * @param ly 
-     * @param x 
-     * @param y 
-     * @param z 
-     * @param alpha 
-     * @param beta 
-     * @param gamma 
-     * @param out 
      */
     void set_field(
         int n, double lx, double ly, double x, double y, double z,

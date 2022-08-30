@@ -135,6 +135,12 @@ void simulator::RMP_Simulator::update_environment()
 
 
 
+// void simulator::RMP_Simulator::one_step_euler()
+// {
+
+// }
+
+
 void simulator::RMP_Simulator::run(string json_path, string method)
 {
 
@@ -195,52 +201,55 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     file_Q << std::endl;
 
     this->root.pushforward();  //初期値で全ノードデータを更新
-    // file_X << t;
-    // for (int i=0; i<root->self_dim; ++i){
-    //     file_X << "," << root->x[i];
-    // }
-    // for (int i=0; i<root->self_dim; ++i){
-    //     file_Q << "," << root->x_dot[i];
-    // }
-    // file_Q << std::endl;
+
+    VectorXd q_ddot(dim);
 
 
     VectorXd q(dim);
     VectorXd q_dot(dim);
-    VectorXd q_ddot(dim);
-    
     q = this->root.x;
     q_dot = this->root.x_dot;
 
+    VectorXd X(dim*2);  //状態ベクトル
+    VectorXd K1(dim*2), K2(dim*2), K3(dim*2), K4(dim*2);
 
-    // VectorXd X(this->root->self_dim*2);
-    // VectorXd K1(this->root->self_dim*2);
-    // VectorXd k2(this->root->self_dim*2);
-    // VectorXd k3(this->root->self_dim*2);
-    // VectorXd k4(this->root->self_dim*2);
+    auto dt = this->time_interval;
 
     std::chrono::system_clock::time_point  start_time, end_time;
     start_time = std::chrono::system_clock::now();
 
     // メインループ
-    for (int i=0; i<total_step; ++i)
-    {
+    for (int i=0; i<total_step; ++i){
         t += this->time_interval;
         if (is_debug){std::cout << "\ni = " << i << std::endl;}
 
+        if (method == "euler"){
+            //オイラー法
+            X.head(dim) = this->root.x;
+            X.tail(dim) = this->root.x_dot;
+            //std::cout << X << std::endl;
+            this->root.solve(X, K1);
+            X += dt * K1;
+            this->root.set_state(X.head(dim), X.tail(dim));
+        }
+        else if (method == "rk"){
+            //RK法
+            X.head(dim) = this->root.x;
+            X.tail(dim) = this->root.x_dot;
 
-        //オイラー法
-        this->root.solve(this->root.x, this->root.x_dot, q_ddot);
-        q += q_dot * this->time_interval;
-        q_dot += q_ddot * this->time_interval;
+            //std::cout << X << std::endl;
 
+            this->root.solve(X, K1);
+            this->root.solve(X + 0.5*dt*K1, K2);
+            this->root.solve(X + 0.5*dt*K2, K3);
+            this->root.solve(X + dt*K3, K4);
+            X += dt/6.0 *(K1 + 2.0*K2 + 2.0*K3 + K4);
 
-        // //RK法
-        // X.head(root->self_dim) = root->x;
-        // X.tail(root->self_dim) = root->x_dot;
-
-        // this->root->solve(X.head(root->self_dim), X.tail(root->self_dim), q_ddot);
-        
+            this->root.set_state(X.head(dim), X.tail(dim));
+        }
+        else {
+            return;
+        }
 
 
         if (std::isnan(q_ddot[0])){
@@ -252,14 +261,14 @@ void simulator::RMP_Simulator::run(string json_path, string method)
 
         file_Q << t;
         for (int i=0; i<dim; ++i){
-            file_Q << "," << q[i];
+            file_Q << "," << this->root.x[i];
         }
         for (int i=0; i<dim; ++i){
-            file_Q << "," << q_dot[i];
+            file_Q << "," << this->root.x_dot[i];
         }
         file_Q << std::endl;
 
-        this->root.set_state(q, q_dot);
+
     }
 
 

@@ -20,28 +20,31 @@ std::tuple<rmp_flow::Root, rmp_flow::Nodes_and_Maps> rmp_flow::rmp_tree_construc
     int ee_frame_num, ee_num;
     
     if (robot_name=="sice"){
+        namespace rm = sice;
         cout << robot_name << endl;
-        c_dim = sice::Kinematics::c_dim;
-        t_dim = sice::Kinematics::t_dim;
+        c_dim = rm::Kinematics::c_dim;
+        t_dim = rm::Kinematics::t_dim;
         cout << 0.1 << endl;
-        sice::Kinematics::set_q_neutral(q_neutral);
-        sice::Kinematics::set_q_max(q_max);
-        sice::Kinematics::set_q_min(q_min);
+        rm::Kinematics::set_q_neutral(q_neutral);
+        rm::Kinematics::set_q_max(q_max);
+        rm::Kinematics::set_q_min(q_min);
         cout << 0.5 << endl;
-        model_struct = sice::Control_Point::calc_points_mapping();
-        auto [a, b] = sice::Kinematics::get_ee_id();
+        model_struct = rm::Control_Point::calc_points_mapping();
+        auto [a, b] = rm::Kinematics::get_ee_id();
         ee_frame_num = a;
         ee_num = b;
         cout << "wow" << endl;
     }
     else if (robot_name=="franka_emika"){
-        c_dim = franka_emika::Kinematics::c_dim;
-        t_dim = franka_emika::Kinematics::t_dim;
-        franka_emika::Kinematics::set_q_neutral(q_neutral);
-        franka_emika::Kinematics::set_q_max(q_max);
-        franka_emika::Kinematics::set_q_min(q_min);
-        model_struct = franka_emika::Control_Point::calc_points_mapping();
-        auto [a, b] = franka_emika::Kinematics::get_ee_id();
+        namespace rm = franka_emika;
+        cout << robot_name << endl;
+        c_dim = rm::Kinematics::c_dim;
+        t_dim = rm::Kinematics::t_dim;
+        rm::Kinematics::set_q_neutral(q_neutral);
+        rm::Kinematics::set_q_max(q_max);
+        rm::Kinematics::set_q_min(q_min);
+        model_struct = rm::Control_Point::calc_points_mapping();
+        auto [a, b] = rm::Kinematics::get_ee_id();
         ee_frame_num = a;
         ee_num = b;
     }
@@ -300,6 +303,10 @@ void rmp_flow::rmp_tree_constructor(
             }
         }
     }
+
+
+    root.x = q_neutral;
+    cout << "nnnn" << q_neutral << endl;
 
     cout << "tree construction done\n" << endl;
 }

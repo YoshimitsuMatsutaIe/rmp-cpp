@@ -86,7 +86,13 @@ namespace rmp_flow
         void pushforward(void) override;
         void pullback(void) override;
         void resolve(void);
-        void solve(const VectorXd& q, const VectorXd& q_dot, VectorXd& out_q_ddot);
+        
+        void solve(
+            const VectorXd& q, const VectorXd& q_dot,
+            VectorXd& out_q_ddot
+        );
+
+        void solve(const VectorXd& X, VectorXd& X_dot);
     };
 
 

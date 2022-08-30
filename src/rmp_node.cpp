@@ -259,6 +259,17 @@ void rmp_flow::Root::solve(
 }
 
 
+void rmp_flow::Root::solve(const VectorXd& X, VectorXd& X_dot)
+{
+    this->set_state(X.head(this->self_dim), X.tail(this->self_dim));
+    this->pushforward();
+    this->pullback();
+    this->resolve();
+
+    X_dot.head(this->self_dim) = X.tail(this->self_dim);
+    X_dot.tail(this->self_dim) = this->q_ddot;
+}
+
 
 rmp_flow::Leaf_Base::Leaf_Base(void){/*pass*/}
 rmp_flow::Leaf_Base::Leaf_Base(

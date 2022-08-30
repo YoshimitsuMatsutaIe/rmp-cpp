@@ -16,12 +16,14 @@
 #include "environment.hpp"
 #include "rmp_tree.hpp"
 
+
+
 namespace simulator
 {
-
     using Eigen::VectorXd;
     using std::unordered_map;
     using std::string;
+    using std::vector;
 
     // 日付取得
     string gen_save_dir_name(void);
@@ -39,19 +41,20 @@ namespace simulator
         // 目標と障害物の速度をゼロにする
         void set_zero_velosity(void);
 
+        void one_step_euler(VectorXd& q, VectorXd& q_dot);
+        void one_step_rk(VectorXd& q, VectorXd& q_dot);
+
 
     public:
         RMP_Simulator(void){};
-        //RMP_Simulator(rmp_flow::Root* root, std::string tree_name);
-        //RMP_Tree(std::map<> tree_param);
-        rmp_flow::Root root;
+        rmp_flow::Root root;  //ルートノード
         rmp_flow::Nodes_and_Maps nms;
-        std::string tree_name = "nameless";
+        string tree_name = "nameless";
 
-        std::vector<Eigen::VectorXd> goal_position;
-        std::vector<Eigen::VectorXd> goal_velosity;
-        std::vector<Eigen::VectorXd> obstacle_position;
-        std::vector<Eigen::VectorXd> obstacle_velosity;
+        vector<VectorXd> goal_position;
+        vector<VectorXd> goal_velosity;
+        vector<VectorXd> obstacle_position;
+        vector<VectorXd> obstacle_velosity;
 
         void set_initial_value(string json_path);
 
