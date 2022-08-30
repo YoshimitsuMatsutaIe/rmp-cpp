@@ -2,6 +2,7 @@
 #define SIMULATOR__HPP
 
 #include <iostream>
+#include <iomanip>
 #include <filesystem>
 #include <fstream>
 #include <unordered_map>
@@ -13,6 +14,7 @@
 
 #include "rmp_node.hpp"
 #include "environment.hpp"
+#include "rmp_tree.hpp"
 
 namespace simulator
 {
@@ -21,35 +23,41 @@ namespace simulator
     using std::unordered_map;
     using std::string;
 
+    // 日付取得
+    string gen_save_dir_name(void);
 
     class RMP_Simulator
     {
     private:
+        double time_span;
+        double time_interval;
         bool is_debug=true;
         void update_environment(void);
         void add_goal(string type, unordered_map<string, double> param);
         void add_obstacle(string type, unordered_map<string, double> param);
+        
+        // 目標と障害物の速度をゼロにする
+        void set_zero_velosity(void);
+
 
     public:
         RMP_Simulator(void){};
         //RMP_Simulator(rmp_flow::Root* root, std::string tree_name);
         //RMP_Tree(std::map<> tree_param);
-        rmp_flow::Root* root;
+        rmp_flow::Root root;
+        rmp_flow::Nodes_and_Maps nms;
         std::string tree_name = "nameless";
 
-        std::vector<Eigen::VectorXd> g;
-        std::vector<Eigen::VectorXd> g_dot;
-        std::vector<Eigen::VectorXd> o;
-        std::vector<Eigen::VectorXd> o_dot;
+        std::vector<Eigen::VectorXd> goal_position;
+        std::vector<Eigen::VectorXd> goal_velosity;
+        std::vector<Eigen::VectorXd> obstacle_position;
+        std::vector<Eigen::VectorXd> obstacle_velosity;
 
-        void set_initial_value(std::string json_path);
+        void set_initial_value(string json_path);
 
         //void one_step(void);
-        void run(
-            double time_span, double time_interval,
-            std::string method="euler",
-            std::string save_dir_path="result"
-        );
+        
+        void run(string json_path, string method="euler");
         void set_debug(bool is_debug);
 
     };

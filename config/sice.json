@@ -1,7 +1,7 @@
 {
     "//" : "テスト用",
     "robot_name" : "sice",
-    "time_span" : 60.0,
+    "time_span" : 6.0,
     "time_interval" : 0.01,
     "rmp_param" : {
         "goal_attractor" : {
