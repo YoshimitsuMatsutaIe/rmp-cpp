@@ -3,12 +3,17 @@
 
 franka_emika::Control_Point::Control_Point(int frame, int index)
 {
+    auto c_dim = Kinematics::c_dim;
+    auto t_dim = Kinematics::t_dim;
+
     this->name = "baxter control point at frame=" + std::to_string(frame) + ", index=" + std::to_string(index);
-    this->r_bar = VectorXd::Zero(4);
-    this->r_bar << Kinematics::R_BARS_ALL[frame][index][0],
+    this->r_bar = VectorXd::Zero(t_dim+1);
+    this->r_bar <<
+    Kinematics::R_BARS_ALL[frame][index][0],
     Kinematics::R_BARS_ALL[frame][index][1],
     Kinematics::R_BARS_ALL[frame][index][2],
     1.0;
+
     
     this->calc_htm = Kinematics::HTMs[frame];
     this->calc_jo = Kinematics::JOs[frame];
@@ -20,24 +25,24 @@ franka_emika::Control_Point::Control_Point(int frame, int index)
     this->calc_jry_dot = Kinematics::JRYs_dot[frame];
     this->calc_jrz_dot = Kinematics::JRZs_dot[frame];
 
-    this->htm = MatrixXd::Zero(4, 4);
-    this->jo = MatrixXd::Zero(3, 7);
-    this->jrx = MatrixXd::Zero(3, 7);
-    this->jry = MatrixXd::Zero(3, 7);
-    this->jrz = MatrixXd::Zero(3, 7);
-    this->jo_dot = MatrixXd::Zero(3, 7);
-    this->jrx_dot = MatrixXd::Zero(3, 7);
-    this->jry_dot = MatrixXd::Zero(3, 7);
-    this->jrz_dot = MatrixXd::Zero(3, 7);
+    this->htm = MatrixXd::Zero(t_dim+1, t_dim+1);
+    this->jo = MatrixXd::Zero(t_dim, c_dim);
+    this->jrx = MatrixXd::Zero(t_dim, c_dim);
+    this->jry = MatrixXd::Zero(t_dim, c_dim);
+    this->jrz = MatrixXd::Zero(t_dim, c_dim);
+    this->jo_dot = MatrixXd::Zero(t_dim, c_dim);
+    this->jrx_dot = MatrixXd::Zero(t_dim, c_dim);
+    this->jry_dot = MatrixXd::Zero(t_dim, c_dim);
+    this->jrz_dot = MatrixXd::Zero(t_dim, c_dim);
 
-    std::cout << "map (name = " << this->name << ") is created!!!!!" << std::endl;
+    //std::cout << "map (name = " << this->name << ") is created!!!!!" << std::endl;
 }
 
 
 void franka_emika::Control_Point::phi(const VectorXd &q, VectorXd &out)
 {
     this->calc_htm(q, this->htm);
-    out = (this->htm * this->r_bar).head(3);
+    out = (this->htm * this->r_bar).head(Kinematics::t_dim);
 }
 
 
@@ -57,7 +62,7 @@ void franka_emika::Control_Point::jacobian_dot(const VectorXd &q, const VectorXd
     this->calc_jrx_dot(q, q_dot, this->jrx_dot);
     this->calc_jry_dot(q, q_dot, this->jry_dot);
     this->calc_jrz_dot(q, q_dot, this->jrz_dot);
-    out = this->jrx_dot*this->r_bar(0)
+    out =this->jrx_dot*this->r_bar(0)
     + this->jry_dot*this->r_bar(1)
     + this->jrz_dot*this->r_bar(2)
     + this->jo_dot;

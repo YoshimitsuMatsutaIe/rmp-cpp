@@ -1,5 +1,5 @@
 #include "../include/franka_emika.hpp"
-#include <cmath>
+
 
 const double franka_emika::Kinematics::d1 = 0.333;
 const double franka_emika::Kinematics::d3 = 0.316;
@@ -16,7 +16,6 @@ const int franka_emika::Kinematics::t_dim = 3;
 void franka_emika::Kinematics::set_q_neutral(VectorXd& out)
 {
     out = VectorXd::Zero(c_dim);
-    // out(0) = 1000;
 }
 
 void franka_emika::Kinematics::set_q_min(VectorXd& out)

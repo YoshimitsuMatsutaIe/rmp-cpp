@@ -164,7 +164,7 @@ void simulator::RMP_Simulator::run(string json_path, string method)
 
 
     std::ofstream file_Q(save_dir_path.string() + "/configration.csv");  //配置
-    std::ofstream file_X(save_dir_path.string() + "/task.csv");  //配置
+    std::ofstream file_X(save_dir_path.string() + "/task.csv");  //タスク
 
     //csvのヘッダー作成
 
@@ -202,13 +202,6 @@ void simulator::RMP_Simulator::run(string json_path, string method)
 
     this->root.pushforward();  //初期値で全ノードデータを更新
 
-    VectorXd q_ddot(dim);
-
-
-    VectorXd q(dim);
-    VectorXd q_dot(dim);
-    q = this->root.x;
-    q_dot = this->root.x_dot;
 
     VectorXd X(dim*2);  //状態ベクトル
     VectorXd K1(dim*2), K2(dim*2), K3(dim*2), K4(dim*2);
@@ -248,17 +241,18 @@ void simulator::RMP_Simulator::run(string json_path, string method)
             this->root.set_state(X.head(dim), X.tail(dim));
         }
         else {
-            return;
+            break;
         }
 
 
-        if (std::isnan(q_ddot[0])){
+        if (std::isnan(X(dim+1))){
             std::cout << "\n発散" << std::endl;
             break;
         }
         
         root.print_state_all_node();
 
+        // csv書き込み
         file_Q << t;
         for (int i=0; i<dim; ++i){
             file_Q << "," << this->root.x[i];

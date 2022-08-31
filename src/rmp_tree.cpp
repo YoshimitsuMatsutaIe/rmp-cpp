@@ -216,7 +216,7 @@ void rmp_flow::rmp_tree_constructor(
     
     root = Root(c_dim, "root");
 
-    cout << "root make" << endl;
+    //cout << "root make" << endl;
     //cout << param << endl;
 
     auto jl_param = rmp_param.at("joint_limit_avoidance");
@@ -239,14 +239,14 @@ void rmp_flow::rmp_tree_constructor(
     );
     root.add_child(&nms.rmp2_node_jl.back());
 
-    cout << "obs and goal" << endl;
+    //cout << "obs and goal" << endl;
     auto frame_num = model_struct.size();
     //int cpoints_num = std::accumulate(model_struct.begin(), model_struct.end(), 0.0);
 
     std::string name;
     for (int i=0; i<model_struct.size(); ++i){
         for(int j=0; j<model_struct[i]; ++j){
-            cout << "i, j = " << i << ", " << j << endl;
+            //cout << "i, j = " << i << ", " << j << endl;
             if (i == ee_frame_num && j == ee_num){
                 name = "ee";
             }
@@ -306,7 +306,6 @@ void rmp_flow::rmp_tree_constructor(
 
 
     root.x = q_neutral;
-    cout << "nnnn" << q_neutral << endl;
 
     cout << "tree construction done\n" << endl;
 }
