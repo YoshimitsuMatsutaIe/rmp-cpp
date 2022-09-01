@@ -36,7 +36,7 @@ void rmp_flow::Node::add_out_file(std::string path)
 {
     this->is_save = true;
     this->out_file.open(path, std::ios::out);
-    this->out_file << "t" + this->name;
+    this->out_file << "t";
     for (int i=0; i<this->self_dim; ++i){
         this->out_file << ",x" << std::to_string(i);
     }
@@ -186,13 +186,8 @@ void rmp_flow::Node::pushforward(void)
     for (auto child : children){
         child->mappings->phi(this->x, child->x);
         child->mappings->jacobian(this->x, child->J);
-
         child->mappings->velovity(this->x_dot, child->J, child->x_dot);
-        //child->x_dot = child->J * this->x_dot;
-
-        
         child->mappings->jacobian_dot(this->x, this->x_dot, child->J_dot);
-        
 
         if (child->node_type != 1){
             child->pushforward();
@@ -272,10 +267,6 @@ void rmp_flow::Root::pushforward(void)
         // cout << "child mapping name = " << child->mappings->name << endl;
         child->mappings->phi(this->x, child->x);
         child->mappings->jacobian(this->x, child->J);
-        
-        // cout << "x = \n" << child->x << endl;
-        // cout << "J = \n" << child->J << endl;
-        //child->x_dot = child->J * this->x_dot;
         child->mappings->velovity(this->x_dot, child->J, child->x_dot);
         child->mappings->jacobian_dot(this->x, this->x_dot, child->J_dot);
         //child->mappings->print_state();

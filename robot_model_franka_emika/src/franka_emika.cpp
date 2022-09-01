@@ -136,14 +136,17 @@ void franka_emika::Kinematics::htm(int n, const VectorXd& q, MatrixXd& out)
     out(0,1) = ry(0);
     out(0,2) = rz(0);
     out(0,3) = o(0);
+
     out(1,0) = rx(1);
     out(1,1) = ry(1);
     out(1,2) = rz(1);
     out(1,3) = o(1);
+    
     out(2,0) = rx(2);
     out(2,1) = ry(2);
     out(2,2) = rz(2);
     out(2,3) = o(2);
+    
     out(3,0) = 0;
     out(3,1) = 0;
     out(3,2) = 0;

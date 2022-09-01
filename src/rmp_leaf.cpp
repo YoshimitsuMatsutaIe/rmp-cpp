@@ -74,8 +74,11 @@ void rmp2::Goal_Attractor::save_state(double t)
 
 void rmp2::Goal_Attractor::calc_grad_potential2(const VectorXd& z, VectorXd& out)
 {
-    out = (1.0 - exp(-2.0 * alpha * z.norm())) / (1.0 + exp(-2.0 * alpha * z.norm())) * z / z.norm();
-    if (is_debug){std::cout << "calc_grad = \n" << out << std::endl;}
+    double z_norm = z.norm();
+    out = (1.0 - exp(-2.0 * alpha * z_norm)) / (1.0 + exp(-2.0 * alpha * z_norm)) * z / z_norm;
+    if (is_debug){
+        std::cout << "calc_grad = \n" << out << std::endl;
+    }
 }
 
 
@@ -85,10 +88,9 @@ void rmp2::Goal_Attractor::calc_inertia_matrix(
 )
 {
     double alpha_x, gamma_x, wx;
-    alpha_x = exp(-pow((z.norm()/sigma_alpha), 2.0)/2.0);
-    gamma_x = exp(-pow((z.norm()/sigma_gamma), 2.0)/2.0);
-    //std::cout << "hoge = " << -1./2*pow((z.norm()/sigma_alpha), 2) << std::endl;
-    wx = gamma_x * wu + (1.0 - gamma_x) * wl;
+    alpha_x = exp(-pow((z.norm()/sigma_alpha), 2.0) * 0.5);
+    gamma_x = exp(-pow((z.norm()/sigma_gamma), 2.0) * 0.5);
+    wx = gamma_x * this->wu + (1.0 - gamma_x) * this->wl;
 
     VectorXd grad(self_dim);
     calc_grad_potential2(z, grad);
@@ -129,6 +131,7 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
 
 void rmp2::Goal_Attractor::calc_natural_form(void)
 {
+    this->initialize_rmp_natural_form();
     //cout << "calc goal-rmp" << endl;
     calc_inertia_matrix(x, x_dot, this->M);
     calc_force(x, x_dot, this->f);
@@ -165,12 +168,10 @@ void rmp2::Obstacle_Avoidance::add_out_file_all(std::string dir_path)
 
 double rmp2::Obstacle_Avoidance::w2(double s)
 {
-    if (rw - s > 0.0)
-    {
+    if (rw - s > 0.0){
         return pow(rw - s, 2.0) / s;
     }
-    else
-    {
+    else{
         return 0.0;
     }
 }
@@ -178,12 +179,10 @@ double rmp2::Obstacle_Avoidance::w2(double s)
 
 double rmp2::Obstacle_Avoidance::w2_dot(double s)
 {
-    if (rw - s > 0.0)
-    {
+    if (rw - s > 0.0){
         return (-2.0*(rw-s)*s + (rw-s)) / pow(s, 2.0);
     }
-    else
-    {
+    else{
         return 0.0;
     }
 }
@@ -191,24 +190,22 @@ double rmp2::Obstacle_Avoidance::w2_dot(double s)
 
 double rmp2::Obstacle_Avoidance::u2(double s_dot)
 {
-    if (s_dot < 0.0)
-    {
-        return 1.0 - exp(-pow(s_dot, 2.0) / (2*pow(sigma, 2.0)));
+    if (s_dot < 0.0){
+        auto s_dot_2 = pow(s_dot, 2.0);
+        return 1.0 - exp(-s_dot_2 / (2.0*s_dot_2));
     }
-    else
-    {
+    else{
         return 0.0;
     }
 }
 
 double rmp2::Obstacle_Avoidance::u2_dot(double s_dot)
 {
-    if (s_dot < 0.0)
-    {
-        return -exp(-pow(s_dot, 2.0) / (2.0*pow(sigma, 2.0))) * (-s_dot / pow(sigma, 2.0));
+    if (s_dot < 0.0){
+        auto s_dot_2 = pow(s_dot, 2.0);
+        return -exp(-s_dot_2 / (2.0*s_dot_2)) * (-s_dot / s_dot_2);
     }
-    else
-    {
+    else{
         return 0.0;
     }
 
@@ -261,11 +258,11 @@ double rmp2::Obstacle_Avoidance::calc_force(double s, double s_dot)
 void rmp2::Obstacle_Avoidance::calc_natural_form(void)
 {
     //std::cout << "obs rmp cal" << std::endl;
-
+    this->initialize_rmp_natural_form();
     f(0) = calc_force(x(0), x_dot(0));
     M(0, 0) = calc_inertia_matrix(x(0), x_dot(0));
-
 }
+
 
 rmp2::Joint_Limit_Avoidance::Joint_Limit_Avoidance(
     int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
@@ -329,10 +326,10 @@ double rmp2::Joint_Limit_Avoidance::d_dot(double s, double s_dot)
 double rmp2::Joint_Limit_Avoidance::b(double q, double q_dot, double qu, double ql)
 {
     double s_, d_, au_, al_;
-    s_ = s(q, qu, ql);
-    d_ = d(s_);
-    au_ = alpha_upper(q_dot);
-    al_ = alpha_lower(q_dot);
+    s_ = this->s(q, qu, ql);
+    d_ = this->d(s_);
+    au_ = this->alpha_upper(q_dot);
+    al_ = this->alpha_lower(q_dot);
     return s_*(au_ * d_ + (1.0-au_)) + (1.0-s_)*(al_ * d_ + (1.0-al_));
 }
 
@@ -363,17 +360,15 @@ double rmp2::Joint_Limit_Avoidance::a_dot(double q, double q_dot, double qu, dou
 void rmp2::Joint_Limit_Avoidance::calc_inertia_matrix(MatrixXd& out)
 {
     //out = MatrixXd::Zero(self_dim, self_dim);
-    for (int i=0; i<self_dim; ++i)
-    {
-        out(i, i) = this->lambda * a(x(i), x_dot(i), q_max(i), q_min(i));
+    for (int i=0; i<self_dim; ++i){
+        out(i, i) = this->lambda * this->a(x(i), x_dot(i), q_max(i), q_min(i));
     }
 }
 
 
 void rmp2::Joint_Limit_Avoidance::xi(VectorXd& out)
 {
-    for (int i=0; i<self_dim; ++i)
-    {
+    for (int i=0; i<self_dim; ++i){
         out(i) = 0.5 * a_dot(x(i), x_dot(i), q_max(i), q_min(i)) * pow(x_dot(i), 2.0);
     }
 }
@@ -382,7 +377,7 @@ void rmp2::Joint_Limit_Avoidance::xi(VectorXd& out)
 void rmp2::Joint_Limit_Avoidance::calc_force(VectorXd& out)
 {
     VectorXd xi_(self_dim);
-    xi(xi_);
+    this->xi(xi_);
 
     out = this->M * (gamma_p*(q_neutral - x) - gamma_d*x_dot) - xi_;
 }
@@ -390,6 +385,7 @@ void rmp2::Joint_Limit_Avoidance::calc_force(VectorXd& out)
 
 void rmp2::Joint_Limit_Avoidance::calc_natural_form(void)
 {
+    this->initialize_rmp_natural_form();
     this->calc_inertia_matrix(this->M);
     this->calc_force(this->f);
 }
