@@ -146,6 +146,12 @@ void sice::Control_Point::phi(const VectorXd &q, VectorXd &out)
     out = (this->htm * this->r_bar).head(Kinematics::t_dim);
 }
 
+void sice::Control_Point::velovity(
+    const VectorXd &x_dot, const MatrixXd& J, VectorXd &out
+)
+{
+    out = J * x_dot;
+}
 
 void sice::Control_Point::jacobian(const VectorXd &q, MatrixXd &out)
 {

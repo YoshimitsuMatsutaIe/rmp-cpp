@@ -16,8 +16,7 @@ rmp2::Goal_Attractor::Goal_Attractor(
     double wu,
     double wl,
     double alpha,
-    double epsilon,
-    const VectorXd& x0, const VectorXd& x0_dot
+    double epsilon
 ) : Leaf_Base(self_dim, parent_dim, name, mappings)
 {
     this->damp = gain / max_speed;
@@ -32,12 +31,45 @@ rmp2::Goal_Attractor::Goal_Attractor(
     this->J = MatrixXd::Identity(self_dim, parent_dim);
     this->J_dot = MatrixXd::Zero(self_dim, parent_dim);
 
-    this->x0 = x0;
-    this->x0_dot = x0_dot;
+}
+
+void rmp2::Goal_Attractor::add_out_file_all(std::string dir_path)
+{
+    this->add_out_file(dir_path + "/error.csv");
 }
 
 
+void rmp2::Goal_Attractor::add_out_file(std::string path)
+{
+    this->is_save = true;
+    this->out_file.open(path, std::ios::out);
+    this->out_file << "t";
+    for (int i=0; i<this->self_dim; ++i){
+        this->out_file << ",x" << std::to_string(i);
+    }
+    for (int i=0; i<this->self_dim; ++i){
+        this->out_file << ",dx" << std::to_string(i);
+    }
+    this->out_file  << ",error" << std::endl;
+}
 
+
+void rmp2::Goal_Attractor::save_state(double t)
+{
+    if (is_save){
+        this->out_file << std::to_string(t);
+        for (int i=0; i<this->self_dim; ++i){
+            this->out_file << "," << this->x[i];
+        }
+        for (int i=0; i<this->self_dim; ++i){
+            this->out_file << "," << this->x_dot[i];
+        }
+        
+        this->out_file << "," << this->x.norm();
+        
+        this->out_file << std::endl;
+    }
+}
 
 
 void rmp2::Goal_Attractor::calc_grad_potential2(const VectorXd& z, VectorXd& out)
@@ -98,8 +130,8 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
 void rmp2::Goal_Attractor::calc_natural_form(void)
 {
     //cout << "calc goal-rmp" << endl;
-    calc_inertia_matrix(x-x0, x_dot-x0_dot, this->M);
-    calc_force(x-x0, x_dot-x0_dot, this->f);
+    calc_inertia_matrix(x, x_dot, this->M);
+    calc_force(x, x_dot, this->f);
 }
 
 
@@ -123,6 +155,11 @@ rmp2::Obstacle_Avoidance::Obstacle_Avoidance(
     this->sigma = sigma;
     this->rw = rw;
     this->have_rmp_func = true;
+}
+
+void rmp2::Obstacle_Avoidance::add_out_file_all(std::string dir_path)
+{
+    this->add_out_file(dir_path + "/task/" + this->name + ".csv");
 }
 
 
@@ -251,6 +288,11 @@ rmp2::Joint_Limit_Avoidance::Joint_Limit_Avoidance(
     this->J = MatrixXd::Identity(self_dim, parent_dim);
     this->J_dot = MatrixXd::Zero(self_dim, parent_dim);
     this->have_rmp_func = true;
+}
+
+void rmp2::Joint_Limit_Avoidance::add_out_file_all(std::string dir_path)
+{
+    // 今はなし。あとから関節制限守ってるかの記録を実装する
 }
 
 

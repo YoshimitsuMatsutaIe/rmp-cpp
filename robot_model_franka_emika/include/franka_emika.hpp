@@ -1,5 +1,6 @@
 #ifndef FRANAK_EMIKA__HPP
 #define FRANKA_RMIKA__HPP
+
 #include <eigen3/Eigen/Core>
 #include <vector>
 #include <tuple>
@@ -204,6 +205,7 @@ namespace franka_emika
         Control_Point(int frame, int index);
         void phi(const VectorXd &q, VectorXd &out) override;
         void jacobian(const VectorXd &q, MatrixXd &out) override;
+        void velovity(const VectorXd &x_dot, const MatrixXd& J, VectorXd &out) override;
         void jacobian_dot(const VectorXd &q, const VectorXd &q_dot, MatrixXd &out) override;
 
         // static void set_q_neutral(VectorXd& out);

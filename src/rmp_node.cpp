@@ -32,11 +32,58 @@ rmp_flow::Node::Node(
 }
 
 
+void rmp_flow::Node::add_out_file(std::string path)
+{
+    this->is_save = true;
+    this->out_file.open(path, std::ios::out);
+    this->out_file << "t" + this->name;
+    for (int i=0; i<this->self_dim; ++i){
+        this->out_file << ",x" << std::to_string(i);
+    }
+    for (int i=0; i<this->self_dim; ++i){
+        this->out_file << ",dx" << std::to_string(i);
+    }
+    this->out_file << std::endl;
+
+}
+
+
+void rmp_flow::Node::add_out_file_all(std::string dir_path)
+{
+    this->add_out_file(dir_path + "/control_points/" +  this->name +".csv");
+    for (auto child : this->children){
+        child->add_out_file_all(dir_path);
+    }
+}
+
+
+void rmp_flow::Node::save_state(double t)
+{
+    if (is_save){
+        this->out_file << std::to_string(t);
+        for (int i=0; i<this->self_dim; ++i){
+            this->out_file << "," << this->x[i];
+        }
+        for (int i=0; i<this->self_dim; ++i){
+            this->out_file << "," << this->x_dot[i];
+        }
+        this->out_file << std::endl;
+    }
+
+    if (this->node_type != 1){
+        for (auto node: this->children){
+            node->save_state(t);
+        }
+    }
+}
+
+
 void rmp_flow::Node::initialize_rmp_natural_form(void)
 {
     this->f = VectorXd::Zero(this->self_dim);
     this->M = MatrixXd::Zero(this->self_dim, this->self_dim);
 }
+
 
 
 
@@ -131,6 +178,7 @@ void rmp_flow::Node::add_child(rmp_flow::Node* child)
 void rmp_flow::Node::pushforward(void)
 {
     //cout << "pushing at " << name << endl;
+    //this->print_self_state();
     // cout << "node-type = " << this->node_type << endl;
     initialize_rmp_natural_form();
 
@@ -138,8 +186,11 @@ void rmp_flow::Node::pushforward(void)
     for (auto child : children){
         child->mappings->phi(this->x, child->x);
         child->mappings->jacobian(this->x, child->J);
-        child->x_dot = child->J * this->x_dot;
-        //cout << "x_dot done" << endl;
+
+        child->mappings->velovity(this->x_dot, child->J, child->x_dot);
+        //child->x_dot = child->J * this->x_dot;
+
+        
         child->mappings->jacobian_dot(this->x, this->x_dot, child->J_dot);
         
 
@@ -190,6 +241,15 @@ rmp_flow::Root::Root(
 }
 
 
+void rmp_flow::Root::add_out_file_all(std::string dir_path)
+{
+    this->add_out_file(dir_path + "/configration.csv");
+    for (auto child: this->children){
+        child->add_out_file_all(dir_path);
+    }
+}
+
+
 void rmp_flow::Root::set_state(
     const VectorXd& q, const VectorXd& q_dot
 )
@@ -215,7 +275,8 @@ void rmp_flow::Root::pushforward(void)
         
         // cout << "x = \n" << child->x << endl;
         // cout << "J = \n" << child->J << endl;
-        child->x_dot = child->J * this->x_dot;
+        //child->x_dot = child->J * this->x_dot;
+        child->mappings->velovity(this->x_dot, child->J, child->x_dot);
         child->mappings->jacobian_dot(this->x, this->x_dot, child->J_dot);
         //child->mappings->print_state();
         if (child->node_type != 1){
@@ -280,6 +341,8 @@ rmp_flow::Leaf_Base::Leaf_Base(
     this->node_type = 1;
     this->children.push_back(nullptr);
 }
+
+
 
 
 void rmp_flow::Leaf_Base::calc_natural_form(void)

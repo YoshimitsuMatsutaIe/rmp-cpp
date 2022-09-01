@@ -22,8 +22,26 @@ namespace mapping_base
         virtual void phi(const VectorXd &x, VectorXd &out);
         virtual void jacobian(const VectorXd &x, MatrixXd &out);
         virtual void jacobian_dot(const VectorXd &x, const VectorXd &x_dot, MatrixXd &out);
+        virtual void velovity(const VectorXd &x_dot, const MatrixXd& J, VectorXd &out);
     };
 
+
+    /**
+     * @brief 平行移動（目標アトラクタで使用）
+     * 
+     */
+    class Translation : public Identity
+    {
+    private:
+        VectorXd x0;
+        VectorXd x0_dot;
+    public:
+        Translation(const VectorXd& x0, const VectorXd& x0_dot);
+        void phi(const VectorXd &x, VectorXd &out) override;
+        void jacobian(const VectorXd &x, MatrixXd &out) override;
+        void jacobian_dot(const VectorXd &x, const VectorXd &x_dot, MatrixXd &out) override;
+        void velovity(const VectorXd &x_dot, const MatrixXd& J, VectorXd &out) override;
+    };
 
 
     /**
@@ -40,6 +58,7 @@ namespace mapping_base
         void phi(const VectorXd &x, VectorXd &out) override;
         void jacobian(const VectorXd &x, MatrixXd &out) override;
         void jacobian_dot(const VectorXd &x, const VectorXd &x_dot, MatrixXd &out) override;
+        void velovity(const VectorXd &x_dot, const MatrixXd& J, VectorXd &out) override;
     };
 };
 

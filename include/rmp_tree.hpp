@@ -40,6 +40,7 @@ namespace rmp_flow
     struct Nodes_and_Maps
     {
         list<mapping_base::Identity> map_id_s;
+        list<mapping_base::Translation> map_t_s;
         list<mapping_base::Distance> map_dis_s;
         list<sice::Control_Point> map_sice_cp_s;
         list<franka_emika::Control_Point> map_fe_cp_s;
@@ -54,25 +55,17 @@ namespace rmp_flow
 
 
 
-    /**
-     * @brief バグあり
-     * 
-     * @param robot_name 
-     * @param rmp_param 
-     * @param goal_position 
-     * @param goal_velosity 
-     * @param obs_position 
-     * @param obs_velocity 
-     * @return tuple<Root, Nodes_and_Maps> 
-     */
-    tuple<Root, Nodes_and_Maps> rmp_tree_constructor(
-        const std::string robot_name,
-        const std::unordered_map<std::string, std::unordered_map<std::string, double>> rmp_param,
-        const vector<VectorXd>& goal_position,
-        const vector<VectorXd>& goal_velosity,
-        const vector<VectorXd>& obs_position,
-        const vector<VectorXd>& obs_velocity
-    );
+    // /**
+    //  * @brief バグあり
+    //  */
+    // tuple<Root, Nodes_and_Maps> rmp_tree_constructor(
+    //     const std::string robot_name,
+    //     const std::unordered_map<std::string, std::unordered_map<std::string, double>> rmp_param,
+    //     const vector<VectorXd>& goal_position,
+    //     const vector<VectorXd>& goal_velosity,
+    //     const vector<VectorXd>& obs_position,
+    //     const vector<VectorXd>& obs_velocity
+    // );
 
     void rmp_tree_constructor(
         const std::string robot_name,

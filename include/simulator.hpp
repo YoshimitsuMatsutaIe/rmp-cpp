@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <fstream>
 #include <unordered_map>
+#include <array>
 
 #include <eigen3/Eigen/Core>
 #include <boost/numeric/odeint.hpp>
@@ -15,7 +16,8 @@
 #include "rmp_node.hpp"
 #include "environment.hpp"
 #include "rmp_tree.hpp"
-
+// #include "../robot_model_sice/include/sice.hpp"
+// #include "../robot_model_franka_emika/include/franka_emika.hpp"
 
 
 namespace simulator
@@ -33,6 +35,8 @@ namespace simulator
     private:
         double time_span;
         double time_interval;
+        double t;
+        std::array<int, 2> ee_id;
         bool is_debug=true;
         void update_environment(void);
         void add_goal(string type, unordered_map<string, double> param);
@@ -41,8 +45,15 @@ namespace simulator
         // 目標と障害物の速度をゼロにする
         void set_zero_velosity(void);
 
-        void one_step_euler(VectorXd& q, VectorXd& q_dot);
-        void one_step_rk(VectorXd& q, VectorXd& q_dot);
+        // シミュ中csvに書き込む
+        void one_step_csv(
+            std::ofstream& fq,
+            std::ofstream& fx,
+            std::ofstream& fe,
+            std::ofstream& fo
+        );
+
+
 
 
     public:
@@ -60,7 +71,7 @@ namespace simulator
 
         //void one_step(void);
         
-        void run(string json_path, string method="euler");
+        void run(string json_path, string method="rk");
         void set_debug(bool is_debug);
 
     };

@@ -154,6 +154,7 @@ namespace sice
         Control_Point(int frame, int index);
         void phi(const VectorXd &q, VectorXd &out) override;
         void jacobian(const VectorXd &q, MatrixXd &out) override;
+        void velovity(const VectorXd &x_dot, const MatrixXd& J, VectorXd &out) override;
         void jacobian_dot(const VectorXd &q, const VectorXd &q_dot, MatrixXd &out) override;
         const void print_state(void);
         static const vector<std::size_t> calc_points_mapping(void);
