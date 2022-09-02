@@ -59,7 +59,7 @@ namespace rmp2
 
         void add_out_file_all(std::string dir_path) override;
         void add_out_file(std::string path) override;
-        void save_state(double t) override;
+        void save_state(double t, const Eigen::IOFormat& format) override;
 
     };
 
@@ -136,11 +136,13 @@ namespace rmp2
             double gamma_d,
             double lambda,
             double sigma,
-            VectorXd& q_max,
-            VectorXd& q_min,
-            VectorXd& q_neutral
+            const VectorXd& q_max,
+            const VectorXd& q_min,
+            const VectorXd& q_neutral
         );
-
+        void set_state(
+            const VectorXd &q, const VectorXd &q_dot
+        );
         void add_out_file_all(std::string dir_path) override;
         void calc_natural_form(void) override;
     };

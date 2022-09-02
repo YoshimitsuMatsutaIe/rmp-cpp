@@ -15,8 +15,9 @@
 #include <unordered_map>
 
 #include "mappings.hpp"
-#include "../robot_model_sice/include/sice.hpp"
 #include "../robot_model_franka_emika/include/franka_emika.hpp"
+#include "../robot_model_sice/include/sice.hpp"
+
 #include "rmp_node.hpp"
 #include "rmp_leaf.hpp"
 
@@ -54,19 +55,10 @@ namespace rmp_flow
     };
 
 
-
-    // /**
-    //  * @brief バグあり
-    //  */
-    // tuple<Root, Nodes_and_Maps> rmp_tree_constructor(
-    //     const std::string robot_name,
-    //     const std::unordered_map<std::string, std::unordered_map<std::string, double>> rmp_param,
-    //     const vector<VectorXd>& goal_position,
-    //     const vector<VectorXd>& goal_velosity,
-    //     const vector<VectorXd>& obs_position,
-    //     const vector<VectorXd>& obs_velocity
-    // );
-
+    /**
+     * @brief シングルスレッドで使用
+     * 
+     */
     void rmp_tree_constructor(
         const std::string robot_name,
         const std::unordered_map<std::string, std::unordered_map<std::string, double>> rmp_param,
@@ -74,9 +66,31 @@ namespace rmp_flow
         const vector<VectorXd>& goal_velosity,
         const vector<VectorXd>& obs_position,
         const vector<VectorXd>& obs_velocity,
+        int c_dim, int t_dim,
+        const VectorXd& q_neutral, const VectorXd& q_max, const VectorXd& q_min,
+        vector<size_t> model_struct,
+        tuple<int, int> ee_index,
         Root& root,
         Nodes_and_Maps& nms
     );
+
+
+    /**
+     * @brief マルチスレッドで使用
+     * 
+     */
+    void rmp_tree_constructor(
+        int frame_num, int index_num,
+        const std::string robot_name,
+        const std::unordered_map<std::string, std::unordered_map<std::string, double>> rmp_param,
+        const vector<VectorXd>& goal_position,
+        const vector<VectorXd>& goal_velosity,
+        const vector<VectorXd>& obs_position,
+        const vector<VectorXd>& obs_velocity,
+        Node& cpoint_node,
+        Nodes_and_Maps& nms
+    );
+
 
 };
 

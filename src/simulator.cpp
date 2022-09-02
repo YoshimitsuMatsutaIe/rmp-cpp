@@ -94,18 +94,8 @@ void simulator::RMP_Simulator::set_initial_value(string json_path)
     std::ifstream param_json(json_path);
     auto j = nlohmann::json::parse(param_json);
 
-    // auto robot_name = j["robot_name"].get<string>();
-    // if (robot_name == "sice"){
-    //     auto [a, b] = sice::Kinematics::get_ee_id();
-    //     this->ee_id.at(0) = a;
-    //     this->ee_id.at(1) = b;
-    // }
-    // if (robot_name == "franka_emika"){
-    //     auto [a, b] = franka_emika::Kinematics::get_ee_id();
-    //     this->ee_id.at(0) = a;
-    //     this->ee_id.at(1) = b;
-    // }
 
+    this->robot_name = j["robot_name"].get<string>();
     this->time_span = j["time_span"].get<double>();
     this->time_interval = j["time_interval"].get<double>();
 
@@ -118,23 +108,40 @@ void simulator::RMP_Simulator::set_initial_value(string json_path)
 
     this->set_zero_velosity();
 
+    this->rmp_param = j["rmp_param"].get<unordered_map<string, unordered_map<string, double>>>();
 
-    // ツリー構築
-    //rmp_flow::Root root = this->root;
-    //rmp_flow::Nodes_and_Maps nms;
-    rmp_flow::rmp_tree_constructor(
-        j["robot_name"].get<std::string>(),
-        j["rmp_param"],
-        this->goal_position,
-        this->goal_velosity,
-        this->obstacle_position,
-        this->obstacle_velosity,
-        this->root,
-        this->nms
-    );
+    if (this->robot_name=="sice"){
+        namespace rm = sice;
+        this->c_dim = rm::Kinematics::c_dim;
+        this->t_dim = rm::Kinematics::t_dim;
+        rm::Kinematics::set_q_neutral(this->q_neutral);
+        rm::Kinematics::set_q_max(this->q_max);
+        rm::Kinematics::set_q_min(this->q_min);
+        this->model_struct = rm::Control_Point::calc_points_mapping();
+        this->ee_index = rm::Kinematics::get_ee_id();
+    }
+    else if (this->robot_name=="franka_emika"){
+        namespace rm = franka_emika;
+        this->c_dim = rm::Kinematics::c_dim;
+        this->t_dim = rm::Kinematics::t_dim;
+        rm::Kinematics::set_q_neutral(this->q_neutral);
+        rm::Kinematics::set_q_max(this->q_max);
+        rm::Kinematics::set_q_min(this->q_min);
+        this->model_struct = rm::Control_Point::calc_points_mapping();
+        this->ee_index = rm::Kinematics::get_ee_id();
+    }
+    else {
+        cout << "not exit" << endl;
+    }
 
 
-    this->set_debug(false);
+    this->cpoint_num = 0;
+    for (int s: this->model_struct){
+        this->cpoint_num += s;
+    }
+
+
+
 }
 
 
@@ -146,36 +153,126 @@ void simulator::RMP_Simulator::update_environment()
 
 
 
+// namespace {
+//     void _solve(const Eigen::VectorXd* parent_x, const Eigen::VectorXd* parent_x_dot, Eigen::VectorXd* out_f, Eigen::MatrixXd* out_M)
+//     {
 
-// void simulator::RMP_Simulator::one_step_euler()
-// {
-
+//     }
 // }
 
 
-void simulator::RMP_Simulator::one_step_csv(std::ofstream& fq, std::ofstream& fx, std::ofstream& fe, std::ofstream& fo)
+void simulator::RMP_Simulator::solve_multi(
+    const VectorXd& X, VectorXd& out_X_dot,
+    const std::unordered_map<std::string, std::unordered_map<std::string, double>> rmp_param
+)
 {
-    fq << this->t;
-    for (int i=0; i<this->root.self_dim; ++i){
-        fq << "," << this->root.x[i];
-    }
-    for (int i=0; i<this->root.self_dim; ++i){
-        fq << "," << this->root.x_dot[i];
-    }
-    fq << std::endl;
+    std::vector<rmp_flow::Node> cpoint_node_s(this->cpoint_num);
+    std::vector<rmp_flow::Nodes_and_Maps> nm_s(this->cpoint_num);
+    
 
-    // auto error = (this->root.children[ee_id.at(0)]->children[0]->x - this->root.children[ee_id.at(0)]->children[0]->x0).norm();
-    // fe << this->t;
-    // fe << error;
-    // fe << std::endl;
+    std::vector<VectorXd> fs(this->cpoint_num);
+    std::vector<VectorXd> Ms(this->cpoint_num);
 
+
+    vector<std::thread> thrs;
+
+    auto dim = this->c_dim;
+    VectorXd q = X.head(dim);
+    VectorXd q_dot = X.tail(dim);
+
+    int k = 0;  // カウンター
+    for (int i=0; i<this->model_struct.size(); ++i){
+        for (int j=0; j<model_struct[i]; ++j){
+            rmp_flow::rmp_tree_constructor(
+                i, j, this->robot_name, rmp_param,
+                this->goal_position,
+                this->goal_velosity,
+                this->obstacle_position,
+                this->obstacle_velosity,
+                cpoint_node_s[k],
+                nm_s[k]
+            );
+            thrs.push_back(
+                std::thread(
+                    sol, &cpoint_node_s[k],
+                    &q, &q_dot, &fs[k], &Ms[k]
+                )
+            );
+
+            ++k;
+        }
+    }
+
+    for (auto& thr : thrs){
+        thr.join();
+    }
+
+    // ジョイント制限は毎回作成
+    auto jl_param = rmp_param.at("joint_limit_avoidance");
+    mapping_base::Identity id;
+    rmp2::Joint_Limit_Avoidance jl(
+        this->c_dim, root.self_dim, "jl-avoidance", &id,
+        jl_param["gamma_p"],
+        jl_param["gamma_d"],
+        jl_param["lam"],
+        jl_param["sigma"],
+        this->q_max, this->q_min, this->q_neutral
+    );
+    jl.set_state(X.head(this->c_dim), X.tail(this->c_dim));
+    jl.calc_natural_form();
+
+
+
+    VectorXd summed_f = Eigen::VectorXd::Zero(this->c_dim);
+    MatrixXd summed_M = Eigen::MatrixXd::Zero(this->c_dim, this->c_dim);
+
+    for (int i=0; i<this->cpoint_num; ++i){
+        summed_f += fs[i];
+        summed_M += Ms[i];
+    }
+
+    summed_f += jl.f;
+    summed_M += jl.M;
+
+    out_X_dot.head(this->c_dim) = X.tail(this->c_dim);
+    out_X_dot.tail(this->c_dim) = summed_M.completeOrthogonalDecomposition().pseudoInverse() * summed_f;
 }
 
+
+
+void simulator::sol(
+    rmp_flow::Node* node,
+    const VectorXd* q, const VectorXd* q_dot,
+    VectorXd* f, MatrixXd* M
+)
+{
+    node->solve(q, q_dot, f, M);
+}
 
 void simulator::RMP_Simulator::run(string json_path, string method)
 {
 
+    const static Eigen::IOFormat CSVFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");
+
     this->set_initial_value(json_path);
+    // ツリー構築
+    rmp_flow::rmp_tree_constructor(
+        this->robot_name,
+        this->rmp_param,
+        this->goal_position,
+        this->goal_velosity,
+        this->obstacle_position,
+        this->obstacle_velosity,
+        this->c_dim, this->t_dim,
+        this->q_neutral, this->q_max, this->q_min,
+        this->model_struct,
+        this->ee_index,
+        this->root,
+        this->nms
+    );
+
+
+    this->set_debug(false);
 
     auto dir_ = gen_save_dir_name();
     std::filesystem::path save_dir_path = "../../../rmp-cpp_result/" + dir_;
@@ -184,6 +281,7 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     std::filesystem::create_directory(save_dir_path);
     std::filesystem::create_directory(save_dir_path.string() + "/task");
     std::filesystem::create_directory(save_dir_path.string() + "/control_points");
+    std::filesystem::create_directory(save_dir_path.string() + "/environment");
 
 
     // 設定jsonをコピー
@@ -198,39 +296,6 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     auto dim = this->root.self_dim;
     this->root.pushforward();  //初期値で全ノードデータを更新
     
-    // std::ofstream file_Q(save_dir_path.string() + "/configration.csv");  //配置時刻歴
-    // std::ofstream file_X(save_dir_path.string() + "/task.csv");  //タスク時刻歴
-    // std::ofstream file_E(save_dir_path.string() + "/ee_error.csv");  //eeの目標値との誤差時刻歴
-    // std::ofstream file_O(save_dir_path.string() + "/obs_dis.csv");  //障害物との最近接距離の時刻歴
-
-    //csvのヘッダー作成
-    // file_Q << "t";
-    // for (int i=0; i<dim; ++i){
-    //     file_Q <<  ",x" + std::to_string(i);
-    // }
-    // for (int i=0; i<dim; ++i){
-    //     file_Q <<  ",dx" + std::to_string(i);
-    // }
-    // file_Q << std::endl;
-
-    // file_X << "t";
-    // for (int i=0; i<dim; ++i){
-    //     file_X <<  ",x" + std::to_string(i);
-    // }
-    // for (int i=0; i<dim; ++i){
-    //     file_X <<  ",dx" + std::to_string(i);
-    // }
-    // file_X << std::endl;
-
-    // file_E << "t,e" << std::endl;
-    // file_O << "t,o" << std::endl;
-    
-    // this->one_step_csv(file_Q, file_X, file_E, file_O);  //初期値を書き込む
-
-    // root.add_out_file(save_dir_path.string() + "/configration.csv");
-    // root.children.back()->children.front()->add_out_file(save_dir_path.string() + "/error.csv");
-    
-
     root.add_out_file_all(save_dir_path);
 
 
@@ -259,9 +324,7 @@ void simulator::RMP_Simulator::run(string json_path, string method)
                 std::cout << "\n発散" << std::endl;
                 break;
             }
-            
-            //this->one_step_csv(file_Q, file_X, file_E, file_O);
-            root.save_state(this->t);
+            root.save_state(this->t, CSVFormat);
         }
     }
     else if (method == "rk"){
@@ -282,10 +345,7 @@ void simulator::RMP_Simulator::run(string json_path, string method)
                 std::cout << "\n発散" << std::endl;
                 break;
             }
-            
-            //this->one_step_csv(file_Q, file_X, file_E, file_O);
-            //std::cout << "t = " << t << std::endl;
-            root.save_state(this->t);
+            root.save_state(this->t, CSVFormat);
         }
     }
     else{
@@ -296,7 +356,175 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     end_time = std::chrono::system_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time-start_time).count(); //処理に要した時間をミリ秒に変換
     std::cout << "time = " << elapsed/1000.0 << "[sec]" << std::endl;
+
+
+
+
+    // 環境情報保存
+    std::ofstream file_goal(save_dir_path.string() + "/environment/goal.csv");
+    std::ofstream file_obs(save_dir_path.string() + "/environment/obstacle.csv"); 
+
+    int t_dim = goal_position.back().rows();
+    
+    if (t_dim == 2){
+        file_goal << "x,y" << std::endl;
+        file_obs <<  "x,y" << std::endl;
+    }
+    else if (t_dim == 3){
+        file_goal << "x,y,z" << std::endl;
+        file_obs <<  "x,y,z" << std::endl;
+    }
+    else {
+        // pass
+    }
+    
+    
+    for (auto goal: goal_position){
+        file_goal << goal.transpose().format(CSVFormat) << std::endl;;
+    }
+
+    for (auto obs: obstacle_position){
+        file_obs << obs.transpose().format(CSVFormat) << std::endl;;
+    }
+
+
+
 }
+
+
+
+
+
+
+void simulator::RMP_Simulator::run_multi(string json_path, string method)
+{
+
+    const static Eigen::IOFormat CSVFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");
+
+    this->set_initial_value(json_path);
+
+    auto dir_ = gen_save_dir_name();
+    std::filesystem::path save_dir_path = "../../../rmp-cpp_result/" + dir_;
+
+    //データ保存先のフォルダ作成
+    std::filesystem::create_directory(save_dir_path);
+    std::filesystem::create_directory(save_dir_path.string() + "/task");
+    std::filesystem::create_directory(save_dir_path.string() + "/control_points");
+    std::filesystem::create_directory(save_dir_path.string() + "/environment");
+
+
+    // 設定jsonをコピー
+    std::filesystem::path json_ = json_path;
+    auto json_file_name = json_.filename();
+    std::cout << "param-json name =" << json_file_name.string() << std::endl;
+    auto cm = "cp " + json_path + " " + save_dir_path.string() + "/" + json_file_name.string();;
+    std::system(cm.c_str());
+
+    const int total_step = this->time_span / this->time_interval;
+    this->t = 0.0;  //時刻
+    auto dim = this->root.self_dim;
+
+
+
+    VectorXd X(dim*2);  //状態ベクトル
+    VectorXd K1(dim*2), K2(dim*2), K3(dim*2), K4(dim*2);
+
+    auto dt = this->time_interval;
+
+    std::chrono::system_clock::time_point  start_time, end_time;
+    start_time = std::chrono::system_clock::now();
+
+    // メインループ
+    if (method == "euler"){
+        for (int i=0; i<total_step; ++i){
+            this->t += this->time_interval;
+            if (is_debug){std::cout << "\ni = " << i << std::endl;}
+            
+            X.head(dim) = this->root.x;
+            X.tail(dim) = this->root.x_dot;
+            this->solve_multi(X, K1, this->rmp_param);
+            X += dt * K1;
+            this->root.set_state(X.head(dim), X.tail(dim));
+            
+            if (std::isnan(X(dim+1))){
+                std::cout << "\n発散" << std::endl;
+                break;
+            }
+            root.save_state(this->t, CSVFormat);
+        }
+    }
+    else if (method == "rk"){
+        for (int i=0; i<total_step; ++i){
+            this->t += this->time_interval;
+            if (is_debug){std::cout << "\ni = " << i << std::endl;}
+            
+            X.head(dim) = this->root.x;
+            X.tail(dim) = this->root.x_dot;
+            this->root.solve(X, K1);
+            this->root.solve(X + 0.5*dt*K1, K2);
+            this->root.solve(X + 0.5*dt*K2, K3);
+            this->root.solve(X + dt*K3, K4);
+            X += dt/6.0 *(K1 + 2.0*K2 + 2.0*K3 + K4);
+            this->root.set_state(X.head(dim), X.tail(dim));
+            
+            if (std::isnan(X(dim+1))){
+                std::cout << "\n発散" << std::endl;
+                break;
+            }
+            root.save_state(this->t, CSVFormat);
+        }
+    }
+    else{
+        return;
+    }
+
+
+    end_time = std::chrono::system_clock::now();
+    double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time-start_time).count(); //処理に要した時間をミリ秒に変換
+    std::cout << "time = " << elapsed/1000.0 << "[sec]" << std::endl;
+
+
+
+
+    // 環境情報保存
+    std::ofstream file_goal(save_dir_path.string() + "/environment/goal.csv");
+    std::ofstream file_obs(save_dir_path.string() + "/environment/obstacle.csv"); 
+
+    int t_dim = goal_position.back().rows();
+    
+    if (t_dim == 2){
+        file_goal << "x,y" << std::endl;
+        file_obs <<  "x,y" << std::endl;
+    }
+    else if (t_dim == 3){
+        file_goal << "x,y,z" << std::endl;
+        file_obs <<  "x,y,z" << std::endl;
+    }
+    else {
+        // pass
+    }
+    
+    
+    for (auto goal: goal_position){
+        file_goal << goal.transpose().format(CSVFormat) << std::endl;;
+    }
+
+    for (auto obs: obstacle_position){
+        file_obs << obs.transpose().format(CSVFormat) << std::endl;;
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+
 
 
 

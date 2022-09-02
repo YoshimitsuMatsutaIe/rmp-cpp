@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <thread>
 
 #include "./mappings.hpp"
 
@@ -27,6 +28,7 @@ namespace rmp_flow
      */
     class Node
     {
+
     public:
         bool is_debug = true;  //falseのときコメント切る
 
@@ -36,7 +38,7 @@ namespace rmp_flow
         bool is_cpoint;
         std::string name;
 
-        Node* parent;
+        Node* parent = nullptr;
         vector<Node*> children;
 
         VectorXd x;
@@ -63,7 +65,7 @@ namespace rmp_flow
         bool is_save = false;
         virtual void add_out_file_all(std::string dir_path);
         virtual void add_out_file(std::string path);
-        virtual void save_state(double t);
+        virtual void save_state(double t, const Eigen::IOFormat& format);
 
         void initialize_rmp_natural_form(void);
         const void print_self_state(void);
@@ -73,6 +75,13 @@ namespace rmp_flow
         virtual void add_child(Node *child);
         virtual void pushforward(void);
         virtual void pullback(void);
+        //マルチスレッド用
+        void solve(
+            const VectorXd* parent_x, const VectorXd* parent_x_dot,
+            VectorXd* out_f, MatrixXd* out_M
+        );
+    
+
         
         virtual void set_debug(bool is_debug);
     };
@@ -105,6 +114,7 @@ namespace rmp_flow
 
         void solve(const VectorXd& X, VectorXd& X_dot);
     };
+
 
 
     /**

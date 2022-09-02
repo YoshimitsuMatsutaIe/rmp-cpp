@@ -54,19 +54,13 @@ void rmp2::Goal_Attractor::add_out_file(std::string path)
 }
 
 
-void rmp2::Goal_Attractor::save_state(double t)
+void rmp2::Goal_Attractor::save_state(double t, const Eigen::IOFormat& format)
 {
     if (is_save){
-        this->out_file << std::to_string(t);
-        for (int i=0; i<this->self_dim; ++i){
-            this->out_file << "," << this->x[i];
-        }
-        for (int i=0; i<this->self_dim; ++i){
-            this->out_file << "," << this->x_dot[i];
-        }
-        
+        this->out_file << std::to_string(t) << ",";
+        this->out_file << this->x.transpose().format(format) << ",";
+        this->out_file << this->x_dot.transpose().format(format);
         this->out_file << "," << this->x.norm();
-        
         this->out_file << std::endl;
     }
 }
@@ -270,9 +264,9 @@ rmp2::Joint_Limit_Avoidance::Joint_Limit_Avoidance(
     double gamma_d,
     double lambda,
     double sigma,
-    VectorXd& q_max,
-    VectorXd& q_min,
-    VectorXd& q_neutral
+    const VectorXd& q_max,
+    const VectorXd& q_min,
+    const VectorXd& q_neutral
 ) : Leaf_Base(self_dim, parent_dim, name, mappings)
 {
     this->gamma_p = gamma_p;
@@ -391,3 +385,10 @@ void rmp2::Joint_Limit_Avoidance::calc_natural_form(void)
 }
 
 
+void rmp2::Joint_Limit_Avoidance::set_state(
+    const VectorXd &q, const VectorXd &q_dot
+)
+{
+    this->x = q;
+    this->x_dot = q_dot;
+}

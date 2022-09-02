@@ -57,22 +57,18 @@ void rmp_flow::Node::add_out_file_all(std::string dir_path)
 }
 
 
-void rmp_flow::Node::save_state(double t)
+void rmp_flow::Node::save_state(double t, const Eigen::IOFormat& format)
 {
     if (is_save){
-        this->out_file << std::to_string(t);
-        for (int i=0; i<this->self_dim; ++i){
-            this->out_file << "," << this->x[i];
-        }
-        for (int i=0; i<this->self_dim; ++i){
-            this->out_file << "," << this->x_dot[i];
-        }
+        this->out_file << std::to_string(t) << ",";
+        this->out_file << this->x.transpose().format(format) << ",";
+        this->out_file << this->x_dot.transpose().format(format);
         this->out_file << std::endl;
     }
 
     if (this->node_type != 1){
         for (auto node: this->children){
-            node->save_state(t);
+            node->save_state(t, format);
         }
     }
 }
@@ -204,16 +200,36 @@ void rmp_flow::Node::pullback(void)
     //cout << typeid(this).name() << endl;
     for (auto child : this->children){
         child->pullback();
+    }
+    if (this->parent != nullptr){
         this->parent->f += this->J.transpose() * (this->f - (this->M * this->J_dot * this->parent->x_dot));
         this->parent->M += this->J.transpose() * this->M * this->J;
     }
 }
 
 
+void rmp_flow::Node::solve(
+    const VectorXd* parent_x, const VectorXd* parent_x_dot,
+    VectorXd* out_f, MatrixXd* out_M
+)
+{
+    this->mappings->phi(*parent_x, this->x);
+    this->mappings->jacobian(*parent_x, this->J);
+    this->mappings->velovity(*parent_x_dot, this->J, this->x_dot);
+    this->mappings->jacobian_dot(*parent_x, *parent_x_dot, this->J_dot);
+
+    this->pushforward();
+    this->pullback();
+
+    *out_f = this->J.transpose() * (this->f - (this->M * this->J_dot * *parent_x_dot));
+    *out_M = this->J.transpose() * this->M * this->J;
+}
+
+
 void rmp_flow::Node::set_debug(bool is_debug)
 {
     this->is_debug = is_debug;
-    for (Node* child : this->children){
+    for (auto child : this->children){
         child->is_debug = is_debug;
         child->set_debug(is_debug);
     }
@@ -233,6 +249,7 @@ rmp_flow::Root::Root(
     this->node_type = 0;
     this->parent = nullptr;
     this->q_ddot = VectorXd::Zero(this->self_dim);
+
 }
 
 
@@ -283,8 +300,7 @@ void rmp_flow::Root::pullback(void)
 {
     //cout << "pullback (root) running..." << endl;
     //cout << typeid(this).name() << endl;
-    for (auto child : this->children)
-    {
+    for (auto child : this->children){
         //cout << typeid(child).name() << endl;
         child->pullback();
     }
@@ -323,7 +339,11 @@ void rmp_flow::Root::solve(const VectorXd& X, VectorXd& X_dot)
 }
 
 
-rmp_flow::Leaf_Base::Leaf_Base(void){/*pass*/}
+rmp_flow::Leaf_Base::Leaf_Base(void)
+{
+    /*pass*/
+}
+
 rmp_flow::Leaf_Base::Leaf_Base(
     int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings
 ) : Node(self_dim, parent_dim, name, mappings)
@@ -338,8 +358,7 @@ rmp_flow::Leaf_Base::Leaf_Base(
 
 void rmp_flow::Leaf_Base::calc_natural_form(void)
 {
-    // pass
-    //cout << "this node have not rmp-func" << endl;
+    cout << "this node have not rmp-func" << endl;
 }
 
 

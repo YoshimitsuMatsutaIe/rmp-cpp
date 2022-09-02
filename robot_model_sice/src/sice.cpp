@@ -1,5 +1,4 @@
 #include "../include/sice.hpp"
-#include <cmath>
 
 const double sice::Kinematics::l1 = 1.0;
 const double sice::Kinematics::l2 = 1.0;

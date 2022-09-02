@@ -1,5 +1,5 @@
-#ifndef FRANAK_EMIKA__HPP
-#define FRANKA_RMIKA__HPP
+#ifndef FRANAK_EMIKA__HPP_1232432325325632
+#define FRANKA_RMIKA__HPP_1232432325325632
 
 #include <eigen3/Eigen/Core>
 #include <vector>
@@ -8,6 +8,10 @@
 
 #include "../../include/mappings.hpp"
 
+/**
+ * @brief 
+ * 
+ */
 namespace franka_emika
 {
     using Eigen::VectorXd;
@@ -207,17 +211,8 @@ namespace franka_emika
         void jacobian(const VectorXd &q, MatrixXd &out) override;
         void velovity(const VectorXd &x_dot, const MatrixXd& J, VectorXd &out) override;
         void jacobian_dot(const VectorXd &q, const VectorXd &q_dot, MatrixXd &out) override;
-
-        // static void set_q_neutral(VectorXd& out);
-        // static void set_q_max(VectorXd& out);
-        // static void set_q_min(VectorXd& out);
-
         const void print_state(void);
-
-
         static const vector<std::size_t> calc_points_mapping(void);
-
-    
     };
 
 
