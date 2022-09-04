@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <array>
 #include <thread>
+#include <functional>
 
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/QR>
@@ -94,9 +95,19 @@ namespace simulator
 
     void sol(
         rmp_flow::Node* node,
-        const VectorXd* q, const VectorXd* q_dot,
+        VectorXd* q, VectorXd* q_dot,
         VectorXd* f, MatrixXd* M
     );
+
+    // void sol2(
+    //     VectorXd* q, VectorXd* q_dot,
+    //     VectorXd* f, MatrixXd* M
+    // );
+
+    // void sol3(int a);
+
+    // void sol4(VectorXd* v);
+
 };
 
 

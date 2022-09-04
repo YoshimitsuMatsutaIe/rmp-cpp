@@ -77,7 +77,7 @@ namespace rmp_flow
         virtual void pullback(void);
         //マルチスレッド用
         void solve(
-            const VectorXd* parent_x, const VectorXd* parent_x_dot,
+            VectorXd* parent_x, VectorXd* parent_x_dot,
             VectorXd* out_f, MatrixXd* out_M
         );
     

@@ -169,17 +169,23 @@ void simulator::RMP_Simulator::solve_multi(
     std::vector<rmp_flow::Node> cpoint_node_s(this->cpoint_num);
     std::vector<rmp_flow::Nodes_and_Maps> nm_s(this->cpoint_num);
     
-
     std::vector<VectorXd> fs(this->cpoint_num);
-    std::vector<VectorXd> Ms(this->cpoint_num);
+    std::vector<MatrixXd> Ms(this->cpoint_num);
 
+    for (int i=0; i<this->cpoint_num; ++i){
+        fs[i] = VectorXd::Zero(this->c_dim);
+        Ms[i] = MatrixXd::Zero(this->c_dim, this->c_dim);
+    }
 
-    vector<std::thread> thrs;
+    vector<std::thread> thrs(this->cpoint_num);
 
     auto dim = this->c_dim;
     VectorXd q = X.head(dim);
     VectorXd q_dot = X.tail(dim);
 
+    VectorXd a, b, c;
+    MatrixXd d;
+    
     int k = 0;  // カウンター
     for (int i=0; i<this->model_struct.size(); ++i){
         for (int j=0; j<model_struct[i]; ++j){
@@ -192,12 +198,37 @@ void simulator::RMP_Simulator::solve_multi(
                 cpoint_node_s[k],
                 nm_s[k]
             );
+
             thrs.push_back(
                 std::thread(
                     sol, &cpoint_node_s[k],
                     &q, &q_dot, &fs[k], &Ms[k]
                 )
             );
+
+            // thrs[k] = std::thread(
+            //         sol, &cpoint_node_s[k],
+            //         &q, &q_dot, &fs[k], &Ms[k]
+            //     );
+
+
+
+            // thrs[k] = std::thread(
+            //         sol2,
+            //         &q, &q_dot, &fs[k], &Ms[k]
+            //     );
+
+            // int www = 0;
+            // thrs[k] = std::thread(
+            //         sol3,
+            //         www
+            //     );
+
+
+            // thrs[k] = std::thread(
+            //         sol4,
+            //         &a
+            //     );
 
             ++k;
         }
@@ -242,12 +273,33 @@ void simulator::RMP_Simulator::solve_multi(
 
 void simulator::sol(
     rmp_flow::Node* node,
-    const VectorXd* q, const VectorXd* q_dot,
-    VectorXd* f, MatrixXd* M
+    VectorXd* q, VectorXd* q_dot,
+    VectorXd* out_f, MatrixXd* out_M
 )
 {
-    node->solve(q, q_dot, f, M);
+    node->solve(q, q_dot, out_f, out_M);
 }
+
+
+void simulator::sol2(
+    VectorXd* q, VectorXd* q_dot,
+    VectorXd* f, MatrixXd* M
+){
+    // pass
+}
+
+void simulator::sol3(
+    int a
+)
+{
+    //
+}
+
+void simulator::sol4(VectorXd* v)
+{
+    // pass
+}
+
 
 void simulator::RMP_Simulator::run(string json_path, string method)
 {

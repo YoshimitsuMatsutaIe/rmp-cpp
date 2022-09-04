@@ -209,7 +209,7 @@ void rmp_flow::Node::pullback(void)
 
 
 void rmp_flow::Node::solve(
-    const VectorXd* parent_x, const VectorXd* parent_x_dot,
+    VectorXd* parent_x, VectorXd* parent_x_dot,
     VectorXd* out_f, MatrixXd* out_M
 )
 {
