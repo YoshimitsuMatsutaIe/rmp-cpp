@@ -1,10 +1,11 @@
+#include "../include/rmp_leaf.hpp"
+
+
 #include <iostream>
 //#include <cmath>
 
 
-#include "../include/rmp_leaf.hpp"
-#include "../include/rmp2_attractor_xi_2d.hpp"
-#include "../include/rmp2_attractor_xi_3d.hpp"
+
 
 
 rmp2::Goal_Attractor::Goal_Attractor(
@@ -110,16 +111,16 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
 
     VectorXd xi(self_dim);
     if (this->self_dim == 2){
-        xi_2d(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
+        this->xi_2d(xi);
     }
     else if (this->self_dim == 3){
-        xi_3d(alpha, epsilon, sigma_alpha, sigma_gamma, wl, wu, z, z_dot, xi);
+        this->xi_3d(xi);
     }
 
     //std::cout << "xi = \n" << xi << std::endl;
     //std::cout << "grad = \n" << grad << std::endl;
 
-    out = this->M * (-gain * grad - damp * z_dot) - xi;
+    out = this->M * (-this->gain * grad - this->damp * z_dot) - xi;
 }
 
 

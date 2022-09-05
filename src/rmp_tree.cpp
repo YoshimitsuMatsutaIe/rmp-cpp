@@ -172,18 +172,19 @@ void rmp_flow::rmp_tree_constructor(
     }
     
     if (robot_name=="sice"){
-        nms.map_sice_cp_s.push_back(sice::Control_Point(index_num, frame_num));
+        cout << "sice map buiding..." << endl;
+        nms.map_sice_cp_s.push_back(sice::Control_Point(frame_num, index_num));
+        cout << "done!" << endl;
         cpoint_node = Node(t_dim, c_dim, name, &nms.map_sice_cp_s.back());
         
     }
     else if(robot_name=="franka_emika"){
-        nms.map_fe_cp_s.push_back(franka_emika::Control_Point(index_num, frame_num));
+        nms.map_fe_cp_s.push_back(franka_emika::Control_Point(frame_num, index_num));
         cpoint_node = Node(t_dim, c_dim, name, &nms.map_fe_cp_s.back());
         
     }
 
-    //cout << "root make" << endl;
-    //cout << param << endl;
+
 
 
     auto at_param = rmp_param.at("goal_attractor");

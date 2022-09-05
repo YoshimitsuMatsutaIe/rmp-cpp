@@ -107,13 +107,14 @@ sice::Control_Point::Control_Point(int frame, int index)
 {
     int c_dim = Kinematics::c_dim;
     int t_dim = Kinematics::t_dim;
+    std::cout << "hoge0" << std::endl;
 
     this->name = "sice control point at frame=" + std::to_string(frame) + ", index=" + std::to_string(index);
     this->r_bar = VectorXd::Zero(t_dim+1);
     this->r_bar << Kinematics::R_BARS_ALL[frame][index][0],
     Kinematics::R_BARS_ALL[frame][index][1],
     1.0;
-    
+    std::cout << "hoge" << std::endl;
     this->calc_htm = Kinematics::HTMs[frame];
     this->calc_jo = Kinematics::JOs[frame];
     this->calc_jrx = Kinematics::JRXs[frame];

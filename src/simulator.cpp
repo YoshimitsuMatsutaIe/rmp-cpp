@@ -186,23 +186,24 @@ void simulator::RMP_Simulator::solve_multi(
     VectorXd a, b, c;
     MatrixXd d;
     
-    int k = 0;  // カウンター
+    int s = 0;  // カウンター
     for (int i=0; i<this->model_struct.size(); ++i){
         for (int j=0; j<model_struct[i]; ++j){
+            cout << "i, j = "  << i << ", " << j << endl;
             rmp_flow::rmp_tree_constructor(
                 i, j, this->robot_name, rmp_param,
                 this->goal_position,
                 this->goal_velosity,
                 this->obstacle_position,
                 this->obstacle_velosity,
-                cpoint_node_s[k],
-                nm_s[k]
+                cpoint_node_s[s],
+                nm_s[s]
             );
 
             thrs.push_back(
                 std::thread(
-                    sol, &cpoint_node_s[k],
-                    &q, &q_dot, &fs[k], &Ms[k]
+                    sol, &cpoint_node_s[s],
+                    &q, &q_dot, &fs[s], &Ms[s]
                 )
             );
 
@@ -230,12 +231,16 @@ void simulator::RMP_Simulator::solve_multi(
             //         &a
             //     );
 
-            ++k;
+            ++s;
         }
     }
 
+    cout << "おわい" << endl;
+    s = 0;
     for (auto& thr : thrs){
+        cout << "join s = " << s << endl;
         thr.join();
+        ++s;
     }
 
     // ジョイント制限は毎回作成
@@ -281,24 +286,24 @@ void simulator::sol(
 }
 
 
-void simulator::sol2(
-    VectorXd* q, VectorXd* q_dot,
-    VectorXd* f, MatrixXd* M
-){
-    // pass
-}
+// void simulator::sol2(
+//     VectorXd* q, VectorXd* q_dot,
+//     VectorXd* f, MatrixXd* M
+// ){
+//     // pass
+// }
 
-void simulator::sol3(
-    int a
-)
-{
-    //
-}
+// void simulator::sol3(
+//     int a
+// )
+// {
+//     //
+// }
 
-void simulator::sol4(VectorXd* v)
-{
-    // pass
-}
+// void simulator::sol4(VectorXd* v)
+// {
+//     // pass
+// }
 
 
 void simulator::RMP_Simulator::run(string json_path, string method)
@@ -454,6 +459,20 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
     const static Eigen::IOFormat CSVFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");
 
     this->set_initial_value(json_path);
+    rmp_flow::rmp_tree_constructor(
+        this->robot_name,
+        this->rmp_param,
+        this->goal_position,
+        this->goal_velosity,
+        this->obstacle_position,
+        this->obstacle_velosity,
+        this->c_dim, this->t_dim,
+        this->q_neutral, this->q_max, this->q_min,
+        this->model_struct,
+        this->ee_index,
+        this->root,
+        this->nms
+    );
 
     auto dir_ = gen_save_dir_name();
     std::filesystem::path save_dir_path = "../../../rmp-cpp_result/" + dir_;
@@ -490,18 +509,23 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
     if (method == "euler"){
         for (int i=0; i<total_step; ++i){
             this->t += this->time_interval;
+
+
+            
             if (is_debug){std::cout << "\ni = " << i << std::endl;}
             
             X.head(dim) = this->root.x;
             X.tail(dim) = this->root.x_dot;
             this->solve_multi(X, K1, this->rmp_param);
             X += dt * K1;
-            this->root.set_state(X.head(dim), X.tail(dim));
+            //this->root.set_state(X.head(dim), X.tail(dim));
             
             if (std::isnan(X(dim+1))){
                 std::cout << "\n発散" << std::endl;
                 break;
             }
+
+            root.pushforward();
             root.save_state(this->t, CSVFormat);
         }
     }
@@ -512,10 +536,10 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
             
             X.head(dim) = this->root.x;
             X.tail(dim) = this->root.x_dot;
-            this->root.solve(X, K1);
-            this->root.solve(X + 0.5*dt*K1, K2);
-            this->root.solve(X + 0.5*dt*K2, K3);
-            this->root.solve(X + dt*K3, K4);
+            this->solve_multi(X, K1, this->rmp_param);
+            this->solve_multi(X + 0.5*dt*K1, K2, this->rmp_param);
+            this->solve_multi(X + 0.5*dt*K2, K3, this->rmp_param);
+            this->solve_multi(X + dt*K3, K4, this->rmp_param);
             X += dt/6.0 *(K1 + 2.0*K2 + 2.0*K3 + K4);
             this->root.set_state(X.head(dim), X.tail(dim));
             
@@ -523,6 +547,8 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
                 std::cout << "\n発散" << std::endl;
                 break;
             }
+
+            root.pushforward();
             root.save_state(this->t, CSVFormat);
         }
     }

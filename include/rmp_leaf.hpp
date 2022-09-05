@@ -33,12 +33,15 @@ namespace rmp2
         double alpha;
         double epsilon;
 
-        // VectorXd x0;  //goal point's position
-        // VectorXd x0_dot;  //goal point's velo
+        void xi_2d(Eigen::VectorXd &out);
+        void xi_3d(Eigen::VectorXd &out);
+
 
         void calc_grad_potential2(const VectorXd& z, VectorXd& out);
         void calc_inertia_matrix(const VectorXd& z, const VectorXd& z_dot, MatrixXd& out);
         void calc_force(const VectorXd& z, const VectorXd& z_dot, VectorXd& out);
+
+
 
 
     public:
