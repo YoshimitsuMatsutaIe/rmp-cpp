@@ -1,6 +1,6 @@
 #include "../include/simulator.hpp"
 
-
+#include <chrono>
 
 std::string simulator::gen_save_dir_name(void)
 {
@@ -177,7 +177,7 @@ void simulator::RMP_Simulator::solve_multi(
         Ms[i] = MatrixXd::Zero(this->c_dim, this->c_dim);
     }
 
-    vector<std::thread> thrs(this->cpoint_num);
+    vector<std::thread> thrs(this->cpoint_num);  //スレッドたち
 
     auto dim = this->c_dim;
     VectorXd q = X.head(dim);
@@ -189,7 +189,7 @@ void simulator::RMP_Simulator::solve_multi(
     int s = 0;  // カウンター
     for (int i=0; i<this->model_struct.size(); ++i){
         for (int j=0; j<model_struct[i]; ++j){
-            cout << "i, j = "  << i << ", " << j << endl;
+            //cout << "i, j = "  << i << ", " << j << endl;
             rmp_flow::rmp_tree_constructor(
                 i, j, this->robot_name, rmp_param,
                 this->goal_position,
@@ -206,42 +206,39 @@ void simulator::RMP_Simulator::solve_multi(
                     &q, &q_dot, &fs[s], &Ms[s]
                 )
             );
+            
+            //cout << "s = " << s <<thrs.back().joinable() << endl;
 
-            // thrs[k] = std::thread(
-            //         sol, &cpoint_node_s[k],
-            //         &q, &q_dot, &fs[k], &Ms[k]
-            //     );
-
-
-
-            // thrs[k] = std::thread(
-            //         sol2,
-            //         &q, &q_dot, &fs[k], &Ms[k]
-            //     );
-
-            // int www = 0;
-            // thrs[k] = std::thread(
-            //         sol3,
-            //         www
-            //     );
-
-
-            // thrs[k] = std::thread(
-            //         sol4,
-            //         &a
-            //     );
+            thrs.back().join();
 
             ++s;
         }
     }
 
-    cout << "おわい" << endl;
-    s = 0;
-    for (auto& thr : thrs){
-        cout << "join s = " << s << endl;
-        thr.join();
-        ++s;
-    }
+    //cout << "before join" << endl;
+
+    // std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    // for (auto f: fs){
+    //     cout << f << "," << endl;
+    // }
+
+    // std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    // s = 0;
+    // for (auto& thr : thrs){
+    //     cout << "join s = " << s << endl;
+    //     assert(thr.joinable());
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    //     thr.join();
+    //     ++s;
+    // }
+
+    // s = 0;
+    // for (int i=0; i<this->cpoint_num; ++i){
+    //     cout << "join s = " << i << endl;
+    //     thrs[i].join();
+    // }
+
+    //cout << "after join" << endl;
 
     // ジョイント制限は毎回作成
     auto jl_param = rmp_param.at("joint_limit_avoidance");
@@ -282,7 +279,9 @@ void simulator::sol(
     VectorXd* out_f, MatrixXd* out_M
 )
 {
+    //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     node->solve(q, q_dot, out_f, out_M);
+    //cout << "node "<< node->name <<" ------- done!!!" << endl;
 }
 
 
@@ -369,7 +368,7 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     if (method == "euler"){
         for (int i=0; i<total_step; ++i){
             this->t += this->time_interval;
-            if (is_debug){std::cout << "\ni = " << i << std::endl;}
+            //if (is_debug){std::cout << "\ni = " << i << std::endl;}
             
             X.head(dim) = this->root.x;
             X.tail(dim) = this->root.x_dot;
@@ -387,7 +386,7 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     else if (method == "rk"){
         for (int i=0; i<total_step; ++i){
             this->t += this->time_interval;
-            if (is_debug){std::cout << "\ni = " << i << std::endl;}
+            //if (is_debug){std::cout << "\ni = " << i << std::endl;}
             
             X.head(dim) = this->root.x;
             X.tail(dim) = this->root.x_dot;
@@ -512,7 +511,7 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
 
 
             
-            if (is_debug){std::cout << "\ni = " << i << std::endl;}
+            //if (is_debug){std::cout << "\ni = " << i << std::endl;}
             
             X.head(dim) = this->root.x;
             X.tail(dim) = this->root.x_dot;
@@ -532,7 +531,7 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
     else if (method == "rk"){
         for (int i=0; i<total_step; ++i){
             this->t += this->time_interval;
-            if (is_debug){std::cout << "\ni = " << i << std::endl;}
+            //if (is_debug){std::cout << "\ni = " << i << std::endl;}
             
             X.head(dim) = this->root.x;
             X.tail(dim) = this->root.x_dot;

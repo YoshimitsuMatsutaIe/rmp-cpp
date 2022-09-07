@@ -107,14 +107,14 @@ sice::Control_Point::Control_Point(int frame, int index)
 {
     int c_dim = Kinematics::c_dim;
     int t_dim = Kinematics::t_dim;
-    std::cout << "hoge0" << std::endl;
+    //std::cout << "hoge0" << std::endl;
 
     this->name = "sice control point at frame=" + std::to_string(frame) + ", index=" + std::to_string(index);
     this->r_bar = VectorXd::Zero(t_dim+1);
     this->r_bar << Kinematics::R_BARS_ALL[frame][index][0],
     Kinematics::R_BARS_ALL[frame][index][1],
     1.0;
-    std::cout << "hoge" << std::endl;
+    //std::cout << "hoge" << std::endl;
     this->calc_htm = Kinematics::HTMs[frame];
     this->calc_jo = Kinematics::JOs[frame];
     this->calc_jrx = Kinematics::JRXs[frame];
@@ -134,7 +134,7 @@ sice::Control_Point::Control_Point(int frame, int index)
     this->jrx_dot = MatrixXd::Zero(t_dim, c_dim);
     this->jry_dot = MatrixXd::Zero(t_dim, c_dim);
 
-    std::cout << "map (name = " << this->name << ") is created!!!!!" << std::endl;
+    //std::cout << "map (name = " << this->name << ") is created!!!!!" << std::endl;
 }
 
 
@@ -193,7 +193,7 @@ const void sice::Control_Point::print_state(void)
 
 const std::vector<std::size_t> sice::Control_Point::calc_points_mapping(void)
 {
-    std::cout << "calc_points_mapping start." << std::endl;
+    //std::cout << "calc_points_mapping start." << std::endl;
     std::size_t frame_num = sice::Kinematics::R_BARS_ALL.size();
     vector<std::size_t> s;
     for (int i=0; i<frame_num; ++i){
@@ -201,6 +201,6 @@ const std::vector<std::size_t> sice::Control_Point::calc_points_mapping(void)
         //std::cout << "    num = " << baxter::Control_Point::R_BARS_ALL[i].size() << std::endl;
         s.push_back(sice::Kinematics::R_BARS_ALL[i].size());
     }
-    std::cout << "done!" << std::endl;
+    //std::cout << "done!" << std::endl;
     return s;
 }

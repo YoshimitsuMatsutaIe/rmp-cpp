@@ -135,7 +135,7 @@ void rmp_flow::rmp_tree_constructor(
     Nodes_and_Maps& nms
 )
 {
-    cout << "construct cp node" << endl;
+    //cout << "construct cp node" << endl;
 
     int c_dim, t_dim;
     std::vector<size_t> model_struct;
@@ -172,9 +172,9 @@ void rmp_flow::rmp_tree_constructor(
     }
     
     if (robot_name=="sice"){
-        cout << "sice map buiding..." << endl;
+        //cout << "sice map buiding..." << endl;
         nms.map_sice_cp_s.push_back(sice::Control_Point(frame_num, index_num));
-        cout << "done!" << endl;
+        //cout << "done!" << endl;
         cpoint_node = Node(t_dim, c_dim, name, &nms.map_sice_cp_s.back());
         
     }
@@ -226,7 +226,7 @@ void rmp_flow::rmp_tree_constructor(
 
     //root.print_state_all_node();
 
-    cout << "tree construction done\n" << endl;
+    //cout << "tree construction done\n" << endl;
 }
 
 

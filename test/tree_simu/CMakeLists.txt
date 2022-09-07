@@ -20,5 +20,5 @@ add_executable(
     ${FRANKA_EMIKA}
     ${SICE}
 )
-target_compile_options(main PUBLIC -O2 -Wall "-pthread")
+target_compile_options(main PUBLIC -O2 -Wall "-pthread" "-lpthread")
 target_link_libraries(main Threads::Threads)

@@ -220,9 +220,10 @@ void rmp_flow::Node::solve(
 
     this->pushforward();
     this->pullback();
-
+    //cout << this->name << ", pushpul done!!!!" << endl;
     *out_f = this->J.transpose() * (this->f - (this->M * this->J_dot * *parent_x_dot));
     *out_M = this->J.transpose() * this->M * this->J;
+    //cout << this->name << ", pushpul + *** done!!!!" << endl;
 }
 
 
