@@ -160,7 +160,7 @@ void rmp_flow::rmp_tree_constructor(
         ee_num = b;
     }
     else {
-        cout << "not exit" << endl;
+        assert(false);
     }
 
     std::string name;

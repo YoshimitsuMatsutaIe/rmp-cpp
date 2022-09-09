@@ -22,7 +22,7 @@
 #include "rmp_node.hpp"
 #include "environment.hpp"
 #include "rmp_tree.hpp"
-
+#include "rmp_multi.hpp"
 
 
 namespace simulator
