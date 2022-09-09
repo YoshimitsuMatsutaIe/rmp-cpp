@@ -2,7 +2,7 @@
 #include "/usr/include/eigen3/Eigen/Core"
 #include "../include/rmp_leaf.hpp"
 
-void rmp2::Goal_Attractor::xi_2d(Eigen::VectorXd &out)
+void  rmp2::goal_attractor_xi_2d::operator()(const VectorXd& x, const VectorXd& x_dot, VectorXd& out)
 {
     double x0_2 = x[0] * x[0];
     double x1_2 = x[1] * x[1];

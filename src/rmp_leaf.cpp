@@ -1,10 +1,250 @@
 #include "../include/rmp_leaf.hpp"
 
 
-#include <iostream>
-//#include <cmath>
+rmp2::obs_avoidance_natural_form::obs_avoidance_natural_form(
+    double scale_rep,
+    double scale_damp,
+    double gain,
+    double sigma,
+    double rw
+)
+{
+    this->scale_rep = scale_rep;
+    this->scale_damp = scale_damp;
+    this->gain = gain;
+    this->sigma = sigma;
+    this->rw = rw;
+}
 
 
+void rmp2::obs_avoidance_natural_form::operator()(
+    const VectorXd& x, const VectorXd& x_dot,
+    const VectorXd& o, const VectorXd& o_dot,
+    VectorXd& out_f, MatrixXd& out_M
+)
+{
+    double s = (x - o).norm();
+    VectorXd J(x.cols());
+    J = -(x-o).transpose() / s;
+    double s_dot = (J *(x_dot - o_dot))(0, 0);
+    VectorXd J_dot(x.cols());
+    J_dot = -((x_dot-o_dot).transpose() - (x-o).transpose()*(1/s*(x-o).dot(x_dot-o_dot))) / (s*s);
+
+
+    double w2, w2_dot;
+    if (this->rw - s > 0.0){
+        w2 = pow(rw - s, 2) / s;
+        w2_dot =  (-2.0*(this->rw-s)*s + (this->rw-s)) / s*s;
+    }
+    else{
+        w2 = 0.0;
+        w2_dot = 0.0;
+    }
+
+
+    double u2, u2_dot;
+    if (s_dot < 0.0){
+        u2 = 1.0 - exp(s_dot*s_dot / (2.0*this->sigma*this->sigma));
+        u2_dot = -exp(-s_dot*s_dot / (2.0*pow(this->sigma, 2))) * (-s_dot / pow(this->sigma, 3));
+    }
+    else{
+        u2 = 0.0;
+        u2_dot = 0.0;
+    }
+
+    double delta = u2 + (0.5 * s_dot * u2_dot);
+    double xi = 0.5 * u2 * w2_dot * s_dot*s_dot;
+    double grad_phi = this->gain * w2 * w2_dot;
+
+
+    double m = w2 + delta;
+    double f = -grad_phi - xi;
+
+
+    out_f = J.transpose() * (f - (m * J_dot * x_dot)(0,0));
+    out_M = J.transpose() * m * J;
+}
+
+
+void rmp2::obs_avoidance_natural_form::operator()(
+    const VectorXd& x, const VectorXd& x_dot,
+    const VectorXd& o,
+    VectorXd& out_f, MatrixXd& out_M
+)
+{
+    VectorXd o_dot_zero = VectorXd::Zero(o.cols());
+    this->operator()(x, x_dot, o, o_dot_zero, out_f, out_M);
+}
+
+
+rmp2::goal_attractor_param::goal_attractor_param(
+    double max_speed,
+    double gain,
+    double sigma_alpha,
+    double sigma_gamma,
+    double wu,
+    double wl,
+    double alpha,
+    double epsilon
+)
+{
+    this->damp = gain / max_speed;
+    this->gain = gain;
+    this->sigma_alpha = sigma_alpha;
+    this->sigma_gamma = sigma_gamma;
+    this->wu = wu;
+    this->wl = wl;
+    this->alpha =alpha;
+    this->epsilon = epsilon;
+}
+
+
+
+rmp2::goal_attractor_xi_2d::goal_attractor_xi_2d(
+    double max_speed,
+    double gain,
+    double sigma_alpha,
+    double sigma_gamma,
+    double wu,
+    double wl,
+    double alpha,
+    double epsilon
+) : goal_attractor_param(max_speed, gain, sigma_alpha, sigma_gamma, wu, wl, alpha, epsilon)
+{
+    // pass
+}
+
+
+rmp2::goal_attractor_xi_3d::goal_attractor_xi_3d(
+    double max_speed,
+    double gain,
+    double sigma_alpha,
+    double sigma_gamma,
+    double wu,
+    double wl,
+    double alpha,
+    double epsilon
+) : goal_attractor_param(max_speed, gain, sigma_alpha, sigma_gamma, wu, wl, alpha, epsilon)
+{
+    // pass
+}
+
+
+rmp2::goal_attractor_natural_form::goal_attractor_natural_form(
+    int dim,
+    double max_speed,
+    double gain,
+    double sigma_alpha,
+    double sigma_gamma,
+    double wu,
+    double wl,
+    double alpha,
+    double epsilon
+) : goal_attractor_param(max_speed, gain, sigma_alpha, sigma_gamma, wu, wl, alpha, epsilon)
+{
+    this->dim = dim;
+    if (this->dim == 2){
+        this->xi_2d = goal_attractor_xi_2d(max_speed, gain, sigma_alpha, sigma_gamma, wu, wl, alpha, epsilon);
+    }
+    else if (this->dim == 3){
+        this->xi_3d = goal_attractor_xi_3d(max_speed, gain, sigma_alpha, sigma_gamma, wu, wl, alpha, epsilon);
+    }
+    else{
+        assert(false);
+    }
+}
+
+void rmp2::goal_attractor_natural_form::operator()(
+    const VectorXd& x, const VectorXd& x_dot,
+    const VectorXd& g, const VectorXd& g_dot,
+    VectorXd& out_f, MatrixXd& out_M
+)
+{
+    VectorXd z = x - g;
+    VectorXd z_dot = x_dot - g_dot;
+
+    double z_norm = z.norm();
+    VectorXd grad_pot2 = (1.0 - exp(-2.0 * alpha * z_norm)) / (1.0 + exp(-2.0 * alpha * z_norm)) * z / z_norm;
+
+    double alpha_x, gamma_x, wx;
+    alpha_x = exp(-pow((z.norm()/sigma_alpha), 2.0) * 0.5);
+    gamma_x = exp(-pow((z.norm()/sigma_gamma), 2.0) * 0.5);
+    wx = gamma_x * this->wu + (1.0 - gamma_x) * this->wl;
+
+
+    out_M = wx * ((1.0 - alpha_x) * grad_pot2 * grad_pot2.transpose() + (alpha_x + epsilon) * MatrixXd::Identity(dim, dim));
+    
+    VectorXd xi(dim);
+    if (this->dim == 2){
+        this->xi_2d(z, z_dot, xi);
+    }
+    else if (this->dim == 3){
+        this->xi_3d(z, z_dot, xi);
+    }
+
+    out_f = out_M * (-this->gain * grad_pot2 - this->damp * z_dot) - xi;
+}
+
+
+void rmp2::goal_attractor_natural_form::operator()(
+    const VectorXd& x, const VectorXd& x_dot,
+    const VectorXd& g,
+    VectorXd& out_f, MatrixXd& out_M
+)
+{
+    VectorXd g_dot_zero = VectorXd::Zero(g.cols());
+    this->operator()(x, x_dot, g, g_dot_zero, out_f, out_M);
+}
+
+
+rmp2::jl_avoidance_natural_form::jl_avoidance_natural_form(
+    double gamma_p,
+    double gamma_d,
+    double lambda,
+    double sigma,
+    VectorXd q_max,
+    VectorXd q_min,
+    VectorXd q_neutral
+)
+{
+    this->gamma_p = gamma_p;
+    this->gamma_d = gamma_d;
+    this->lambda = lambda;
+    this->sigma = sigma;
+    this->q_max = q_max;
+    this->q_min = q_min;
+    this->q_neutral = q_neutral;
+}
+
+
+void rmp2::jl_avoidance_natural_form::operator()(
+    const VectorXd& q, const VectorXd& q_dot,
+    VectorXd& out_f, MatrixXd& out_M
+)
+{
+    double alpha_upper, alpha_lower, s, s_dot, d, d_dot, b, b_dot, a, a_dot;
+    
+    out_M = MatrixXd::Zero(q.cols(), q.cols());
+    VectorXd xi(q.cols());
+    
+    for (int i=0; i<q.cols(); ++i){
+        alpha_upper = 1.0 - exp(-pow(std::max(q_dot(i), 0.0), 2.0) / (2.0*sigma*sigma));
+        alpha_lower = 1.0 - exp(-pow(std::min(q_dot(i), 0.0), 2.0) / (2.0*sigma*sigma));
+        s = (q(i) - q_min(i)) / (q_max(i) - q_min(i));
+        s_dot = 1.0 / (q_max(i) - q_min(i));
+        d =  4.0 * s * (1.0 - s);
+        d_dot = (4.0 - 8.0*s) * s_dot;
+        b = s*(alpha_upper * d + (1.0-alpha_upper)) + (1.0-s)*(alpha_lower * d + (1.0-alpha_lower));
+        b_dot = (s_dot*(alpha_upper*d + (1.0-alpha_upper)) + s*d_dot) + -s_dot*(alpha_lower * d + (1.0-alpha_lower)) + (1.0-s) * d_dot;
+        a = 1.0 / (b * b);
+        a_dot = -2.0 * b_dot / (b * b * b);
+
+        out_M(i, i) = this->lambda * a;
+        xi(i) =0.5 * a_dot * q_dot(i) * q_dot(i);
+    }
+
+    out_f = out_M * (this->gamma_p*(this->q_neutral - q) - this->gamma_d*q_dot) - xi;
+}
 
 
 
@@ -32,7 +272,18 @@ rmp2::Goal_Attractor::Goal_Attractor(
     this->J = MatrixXd::Identity(self_dim, parent_dim);
     this->J_dot = MatrixXd::Zero(self_dim, parent_dim);
 
+    if (self_dim == 2){
+        this->xi_2d = goal_attractor_xi_2d(max_speed, gain, sigma_alpha, sigma_gamma, wu, wl, alpha, epsilon);
+    }
+    else if (self_dim == 3){
+        this->xi_3d = goal_attractor_xi_3d(max_speed, gain, sigma_alpha, sigma_gamma, wu, wl, alpha, epsilon);
+    }
+    else{
+        assert(false);
+    }
+
 }
+
 
 void rmp2::Goal_Attractor::add_out_file_all(std::string dir_path)
 {
@@ -110,10 +361,10 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
 
     VectorXd xi(self_dim);
     if (this->self_dim == 2){
-        this->xi_2d(xi);
+        this->xi_2d(z, z_dot, xi);
     }
     else if (this->self_dim == 3){
-        this->xi_3d(xi);
+        this->xi_3d(z, z_dot, xi);
     }
 
     //std::cout << "xi = \n" << xi << std::endl;
@@ -126,7 +377,7 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
 void rmp2::Goal_Attractor::calc_natural_form(void)
 {
     //this->initialize_rmp_natural_form();
-    //cout << "calc goal-rmp" << endl;
+    cout << "calc goal-rmp" << endl;
     calc_inertia_matrix(x, x_dot, this->M);
     calc_force(x, x_dot, this->f);
 }
@@ -249,7 +500,7 @@ double rmp2::Obstacle_Avoidance::calc_force(double s, double s_dot)
 
 void rmp2::Obstacle_Avoidance::calc_natural_form(void)
 {
-    //std::cout << "obs rmp cal" << std::endl;
+    std::cout << "obs rmp cal" << std::endl;
     //this->initialize_rmp_natural_form();
     f(0) = calc_force(x(0), x_dot(0));
     M(0, 0) = calc_inertia_matrix(x(0), x_dot(0));
