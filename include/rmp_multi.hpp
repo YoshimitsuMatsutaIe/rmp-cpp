@@ -7,12 +7,14 @@
 #include <tuple>
 #include <string>
 #include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/QR>
+#include <eigen3/Eigen/LU>
+#include <eigen3/Eigen/Dense>
 
 #include "rmp_node.hpp"
 #include "rmp_leaf.hpp"
+#include "rmp_tree.hpp"
 #include "mappings.hpp"
-#include "../robot_model_sice/include/sice.hpp"
-#include "../robot_model_franka_emika/include/franka_emika.hpp"
 
 
 namespace rmp_multi
@@ -26,7 +28,6 @@ namespace rmp_multi
 
     void solve(
         const VectorXd& state,
-        const std::string robot_name,
         const vector<mapping_base::Identity*> mappings,
         rmp2::goal_attractor_natural_form& attractor,
         rmp2::obs_avoidance_natural_form& obs_avoidance,
@@ -37,8 +38,7 @@ namespace rmp_multi
         VectorXd& state_dot
     );
 
-    std::tuple<std::vector<sice::Control_Point>, int, int> make_sice_cpoint_map(void);
-    std::tuple<std::vector<franka_emika::Control_Point>, int, int> make_franka_emika_cpoint_map(void);
+
     
     std::tuple<rmp2::goal_attractor_natural_form, rmp2::obs_avoidance_natural_form, rmp2::jl_avoidance_natural_form>
     make_rmp_natural_form(

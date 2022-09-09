@@ -215,6 +215,7 @@ namespace franka_emika
         static const vector<std::size_t> calc_points_mapping(void);
     };
 
+    std::tuple<std::vector<franka_emika::Control_Point>, int, int> make_cpoint_map(void);
 
 };
 #endif

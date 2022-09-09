@@ -3,7 +3,6 @@
 
 void rmp_multi::solve(
     const VectorXd& state,
-    const std::string robot_name,
     const vector<mapping_base::Identity*> mappings,
     rmp2::goal_attractor_natural_form& attractor,
     rmp2::obs_avoidance_natural_form& obs_avoidance,
@@ -23,12 +22,11 @@ void rmp_multi::solve(
 
     jl_avoidance(q, q_dot, root_f, root_M);
 
+    #pragma omp declare reduction(+ : Eigen::MatrixXd : omp_out=omp_out+omp_in) initializer(omp_priv = omp_orig)
+    #pragma omp declare reduction(+ : Eigen::VectorXd : omp_out=omp_out+omp_in) initializer(omp_priv = omp_orig)
     #pragma omp parallel
     {
-        #pragma omp parallel for reduction(+: root_f)
-        {
-        #pragma omp parallel for reduction(+: root_M)
-        {
+        #pragma omp parallel for reduction(+: root_f) reduction(+: root_M)
         for (int i=0; i<cpoint_num; ++i){
             VectorXd x(t_dim), x_dot(t_dim), f(t_dim), temp_f(t_dim);
             MatrixXd J(t_dim, c_dim), J_dot(t_dim, c_dim), M(t_dim, t_dim), temp_M(t_dim, t_dim);;
@@ -37,10 +35,7 @@ void rmp_multi::solve(
             mappings[i]->jacobian_dot(q, q_dot, J_dot);
             mappings[i]->velovity(q_dot, J, x_dot);
             
-            #pragma omp parallel for reduction(+: f)
-            {
-            #pragma omp parallel for reduction(+: M)
-            {
+            #pragma omp parallel for reduction(+: f) reduction(+: M)
             for (int j=0; j<o_s.size(); ++j){
                 f = VectorXd::Zero(t_dim);
                 M = MatrixXd::Zero(t_dim, t_dim);
@@ -53,72 +48,17 @@ void rmp_multi::solve(
                     M += temp_M;
                 }
             }
-            }
-            }
             root_f += J.transpose() * (f - (M * J_dot * x_dot));
             root_M += J.transpose() * M * J;
-        }
-        }
         }
     }
 
     state_dot.head(c_dim) = q_dot;
-    state_dot.tail(c_dim) = rmp_flow::pseudoInverse(root_M) * root_f;
+    //state_dot.tail(c_dim) = rmp_flow::pseudoInverse(root_M) * root_f;
+    state_dot.tail(c_dim) = root_M.completeOrthogonalDecomposition().pseudoInverse() * root_f;
 }
 
 
-std::tuple<std::vector<sice::Control_Point>, int, int> rmp_multi::make_sice_cpoint_map(void)
-{
-    namespace rm = sice;
-    
-    std::vector<rm::Control_Point> maps;
-    auto model_struct = rm::Control_Point::calc_points_mapping();
-    auto [a, b] = rm::Kinematics::get_ee_id();
-    int ee_num;
-
-    int cpoint_num = 0;
-    for (int i=0; i<model_struct.size(); ++i){
-        if (i == a){
-            ee_num = cpoint_num + b;
-        }
-        cpoint_num += model_struct[i];
-    }
-
-    for (int i=0; i<model_struct.size(); ++i){
-        for(int j=0; j<model_struct[i]; ++j){
-            maps.push_back(rm::Control_Point(i, j));
-        }
-    }
-
-    return {maps, cpoint_num, ee_num};
-}
-
-
-std::tuple<std::vector<franka_emika::Control_Point>, int, int> rmp_multi::make_franka_emika_cpoint_map(void)
-{
-    namespace rm = franka_emika;
-    
-    std::vector<rm::Control_Point> maps;
-    auto model_struct = rm::Control_Point::calc_points_mapping();
-    auto [a, b] = rm::Kinematics::get_ee_id();
-    int ee_num;
-
-    int cpoint_num = 0;
-    for (int i=0; i<model_struct.size(); ++i){
-        if (i == a){
-            ee_num = cpoint_num + b;
-        }
-        cpoint_num += model_struct[i];
-    }
-
-    for (int i=0; i<model_struct.size(); ++i){
-        for(int j=0; j<model_struct[i]; ++j){
-            maps.push_back(rm::Control_Point(i, j));
-        }
-    }
-
-    return {maps, cpoint_num, ee_num};
-}
 
 
 std::tuple<rmp2::goal_attractor_natural_form, rmp2::obs_avoidance_natural_form, rmp2::jl_avoidance_natural_form>
@@ -128,26 +68,26 @@ rmp_multi::make_rmp_natural_form(
 )
 {
 
-    auto p = rmp_param.at("goal_attractor");
+    auto ap = rmp_param.at("goal_attractor");
     rmp2::goal_attractor_natural_form at(
         t_dim,
-        p["max_speed"],
-        p["gain"],
-        p["sigma_alpha"],
-        p["sigma_gamma"],
-        p["wu"],
-        p["wl"],
-        p["alpha"],
-        p["epsilon"]
+        ap["max_speed"],
+        ap["gain"],
+        ap["sigma_alpha"],
+        ap["sigma_gamma"],
+        ap["wu"],
+        ap["wl"],
+        ap["alpha"],
+        ap["epsilon"]
     );
 
-    auto p = rmp_param.at("obstacle_avoidnce");
+    auto op = rmp_param.at("obstacle_avoidnce");
     rmp2::obs_avoidance_natural_form obs(
-        p["scale_rep"],
-        p["scale_damp"],
-        p["gain"],
-        p["sigma"],
-        p["rw"]
+        op["scale_rep"],
+        op["scale_damp"],
+        op["gain"],
+        op["sigma"],
+        op["rw"]
     );
 
     VectorXd q_neutoral, q_max, q_min;
@@ -164,12 +104,12 @@ rmp_multi::make_rmp_natural_form(
         rm::Kinematics::set_q_min(q_min);
     }
 
-    auto p = rmp_param.at("joint_limit_avoidance");
+    auto jp = rmp_param.at("joint_limit_avoidance");
     rmp2::jl_avoidance_natural_form jl(
-        p["gamma_p"],
-        p["gamma_d"],
-        p["lam"],
-        p["sigma"],
+        jp["gamma_p"],
+        jp["gamma_d"],
+        jp["lam"],
+        jp["sigma"],
         q_max, q_min, q_neutoral
     );
 

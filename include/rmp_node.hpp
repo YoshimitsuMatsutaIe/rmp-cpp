@@ -10,6 +10,10 @@
 
 #include "./mappings.hpp"
 
+#include <eigen3/Eigen/QR>
+#include <eigen3/Eigen/LU>
+#include <eigen3/Eigen/Dense>
+
 
 
 namespace rmp_flow

@@ -159,6 +159,9 @@ namespace sice
         const void print_state(void);
         static const vector<std::size_t> calc_points_mapping(void);
     };
+
+
+    std::tuple<std::vector<sice::Control_Point>, int, int> make_cpoint_map(void);
 };
 
 

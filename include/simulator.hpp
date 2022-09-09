@@ -78,8 +78,14 @@ namespace simulator
 
         //void one_step(void);
         
+        // simgle thread
         void run(string json_path, string method="rk");
+        
+        // multi (std::thrad)
         void run_multi(string json_path, string method="rk");
+        
+        // multi (openMp)
+        void run_multi2(string json_path, string method="rk");
 
         void set_debug(bool is_debug);
 
@@ -98,15 +104,6 @@ namespace simulator
         VectorXd* q, VectorXd* q_dot,
         VectorXd* f, MatrixXd* M
     );
-
-    // void sol2(
-    //     VectorXd* q, VectorXd* q_dot,
-    //     VectorXd* f, MatrixXd* M
-    // );
-
-    // void sol3(int a);
-
-    // void sol4(VectorXd* v);
 
 };
 

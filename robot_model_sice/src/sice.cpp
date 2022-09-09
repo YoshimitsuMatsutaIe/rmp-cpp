@@ -204,3 +204,29 @@ const std::vector<std::size_t> sice::Control_Point::calc_points_mapping(void)
     //std::cout << "done!" << std::endl;
     return s;
 }
+
+std::tuple<std::vector<sice::Control_Point>, int, int> sice::make_cpoint_map(void)
+{
+    namespace rm = sice;
+    
+    std::vector<rm::Control_Point> maps;
+    auto model_struct = rm::Control_Point::calc_points_mapping();
+    auto [a, b] = rm::Kinematics::get_ee_id();
+    int ee_num;
+
+    int cpoint_num = 0;
+    for (int i=0; i<model_struct.size(); ++i){
+        if (i == a){
+            ee_num = cpoint_num + b;
+        }
+        cpoint_num += model_struct[i];
+    }
+
+    for (int i=0; i<model_struct.size(); ++i){
+        for(int j=0; j<model_struct[i]; ++j){
+            maps.push_back(rm::Control_Point(i, j));
+        }
+    }
+
+    return {maps, cpoint_num, ee_num};
+}
