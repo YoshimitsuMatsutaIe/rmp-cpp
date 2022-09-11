@@ -23,12 +23,14 @@ void rmp2::obs_avoidance_natural_form::operator()(
     VectorXd& out_f, MatrixXd& out_M
 )
 {
+    //cout << "x = " << x.transpose() << endl;
+    //cout << "o = " << o.transpose() << endl;
     double s = (x - o).norm();
-    VectorXd J(x.cols());
-    J = -(x-o).transpose() / s;
-    double s_dot = (J *(x_dot - o_dot))(0, 0);
-    VectorXd J_dot(x.cols());
-    J_dot = -((x_dot-o_dot).transpose() - (x-o).transpose()*(1/s*(x-o).dot(x_dot-o_dot))) / (s*s);
+    MatrixXd J = -(x-o).transpose() / s;
+    //cout << "obs 0.1" << endl;
+    double s_dot = (J * (x_dot - o_dot))(0, 0);
+    MatrixXd J_dot = -((x_dot-o_dot).transpose() - (x-o).transpose()*(1.0/s*(x-o).dot(x_dot-o_dot))) / (s*s);
+    //cout << "obs 1" << endl;
 
 
     double w2, w2_dot;
@@ -72,7 +74,7 @@ void rmp2::obs_avoidance_natural_form::operator()(
     VectorXd& out_f, MatrixXd& out_M
 )
 {
-    VectorXd o_dot_zero = VectorXd::Zero(o.cols());
+    VectorXd o_dot_zero = VectorXd::Zero(o.rows());
     this->operator()(x, x_dot, o, o_dot_zero, out_f, out_M);
 }
 
@@ -181,6 +183,9 @@ void rmp2::goal_attractor_natural_form::operator()(
     else if (this->dim == 3){
         this->xi_3d(z, z_dot, xi);
     }
+    else {
+        assert(false);
+    }
 
     out_f = out_M * (-this->gain * grad_pot2 - this->damp * z_dot) - xi;
 }
@@ -192,7 +197,7 @@ void rmp2::goal_attractor_natural_form::operator()(
     VectorXd& out_f, MatrixXd& out_M
 )
 {
-    VectorXd g_dot_zero = VectorXd::Zero(g.cols());
+    VectorXd g_dot_zero = VectorXd::Zero(g.rows());
     this->operator()(x, x_dot, g, g_dot_zero, out_f, out_M);
 }
 
@@ -222,12 +227,12 @@ void rmp2::jl_avoidance_natural_form::operator()(
     VectorXd& out_f, MatrixXd& out_M
 )
 {
+    int dim = q.rows();
     double alpha_upper, alpha_lower, s, s_dot, d, d_dot, b, b_dot, a, a_dot;
+    out_M = MatrixXd::Zero(dim, dim);
+    VectorXd xi(dim);
     
-    out_M = MatrixXd::Zero(q.cols(), q.cols());
-    VectorXd xi(q.cols());
-    
-    for (int i=0; i<q.cols(); ++i){
+    for (int i=0; i<dim; ++i){
         alpha_upper = 1.0 - exp(-pow(std::max(q_dot(i), 0.0), 2.0) / (2.0*sigma*sigma));
         alpha_lower = 1.0 - exp(-pow(std::min(q_dot(i), 0.0), 2.0) / (2.0*sigma*sigma));
         s = (q(i) - q_min(i)) / (q_max(i) - q_min(i));
@@ -242,7 +247,6 @@ void rmp2::jl_avoidance_natural_form::operator()(
         out_M(i, i) = this->lambda * a;
         xi(i) =0.5 * a_dot * q_dot(i) * q_dot(i);
     }
-
     out_f = out_M * (this->gamma_p*(this->q_neutral - q) - this->gamma_d*q_dot) - xi;
 }
 
@@ -377,7 +381,7 @@ void rmp2::Goal_Attractor::calc_force(const VectorXd& z, const VectorXd& z_dot, 
 void rmp2::Goal_Attractor::calc_natural_form(void)
 {
     //this->initialize_rmp_natural_form();
-    cout << "calc goal-rmp" << endl;
+    //cout << "calc goal-rmp" << endl;
     calc_inertia_matrix(x, x_dot, this->M);
     calc_force(x, x_dot, this->f);
 }
@@ -500,7 +504,7 @@ double rmp2::Obstacle_Avoidance::calc_force(double s, double s_dot)
 
 void rmp2::Obstacle_Avoidance::calc_natural_form(void)
 {
-    std::cout << "obs rmp cal" << std::endl;
+    //std::cout << "obs rmp cal" << std::endl;
     //this->initialize_rmp_natural_form();
     f(0) = calc_force(x(0), x_dot(0));
     M(0, 0) = calc_inertia_matrix(x(0), x_dot(0));

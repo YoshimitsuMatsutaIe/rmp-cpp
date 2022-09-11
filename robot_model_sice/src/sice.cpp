@@ -10,7 +10,6 @@ const int sice::Kinematics::t_dim = 2;
 void sice::Kinematics::set_q_neutral(VectorXd& out)
 {
     out = VectorXd::Zero(c_dim);
-    std::cout << "q_n" << std::endl;
 }
 
 void sice::Kinematics::set_q_min(VectorXd& out)
@@ -18,7 +17,6 @@ void sice::Kinematics::set_q_min(VectorXd& out)
     out = VectorXd::Zero(c_dim);
     out << -180.0, -180.0, -180.0, -180.0;
     out *= M_PI/180.0;
-    std::cout << "q_min" << std::endl;
 }
 
 void sice::Kinematics::set_q_max(VectorXd& out)
@@ -26,8 +24,42 @@ void sice::Kinematics::set_q_max(VectorXd& out)
     out = VectorXd::Zero(c_dim);
     out << 180.0, 180.0, 180.0, 180.0;
     out *= M_PI/180.0;
-    std::cout << "q_max" << std::endl;
 }
+
+Eigen::VectorXd sice::Kinematics::q_neutral(void)
+{
+    VectorXd out = VectorXd::Zero(c_dim);
+    return out;
+}
+
+
+Eigen::VectorXd sice::Kinematics::q_max(void)
+{
+    VectorXd out(c_dim);
+    out << 180.0, 180.0, 180.0, 180.0;
+    out *= M_PI/180.0;
+    return out;
+}
+
+
+Eigen::VectorXd sice::Kinematics::q_min(void)
+{
+    VectorXd out(c_dim);
+    out << -180.0, -180.0, -180.0, -180.0;
+    out *= M_PI/180.0;
+    return out;
+}
+
+
+
+std::tuple<Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd>
+sice::Kinematics::get_q_neutoral_max_min(void)
+{
+
+    return {q_neutral(), q_max(), q_min()};
+}
+
+
 
 const std::vector<std::vector<double>> sice::Kinematics::r_bars_0{
     {0, 0, 1}
@@ -194,9 +226,9 @@ const void sice::Control_Point::print_state(void)
 const std::vector<std::size_t> sice::Control_Point::calc_points_mapping(void)
 {
     //std::cout << "calc_points_mapping start." << std::endl;
-    std::size_t frame_num = sice::Kinematics::R_BARS_ALL.size();
+    size_t frame_num = sice::Kinematics::R_BARS_ALL.size();
     vector<std::size_t> s;
-    for (int i=0; i<frame_num; ++i){
+    for (size_t i=0; i<frame_num; ++i){
         //std::cout << "i = " << i << std::endl;
         //std::cout << "    num = " << baxter::Control_Point::R_BARS_ALL[i].size() << std::endl;
         s.push_back(sice::Kinematics::R_BARS_ALL[i].size());
@@ -215,14 +247,14 @@ std::tuple<std::vector<sice::Control_Point>, int, int> sice::make_cpoint_map(voi
     int ee_num;
 
     int cpoint_num = 0;
-    for (int i=0; i<model_struct.size(); ++i){
+    for (size_t i=0; i<model_struct.size(); ++i){
         if (i == a){
             ee_num = cpoint_num + b;
         }
         cpoint_num += model_struct[i];
     }
 
-    for (int i=0; i<model_struct.size(); ++i){
+    for (size_t i=0; i<model_struct.size(); ++i){
         for(int j=0; j<model_struct[i]; ++j){
             maps.push_back(rm::Control_Point(i, j));
         }

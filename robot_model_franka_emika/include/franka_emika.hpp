@@ -146,6 +146,10 @@ namespace franka_emika
         static void set_q_max(VectorXd& out);
         static void set_q_min(VectorXd& out);
         static void set_q_neutral(VectorXd& out);
+        static VectorXd q_neutral(void);
+        static VectorXd q_max(void);
+        static VectorXd q_min(void);
+        static std::tuple<VectorXd, VectorXd, VectorXd> get_q_neutoral_max_min(void);
         static const vector<vector<double>> r_bars_0;
         static const vector<vector<double>> r_bars_1;
         static const vector<vector<double>> r_bars_2;

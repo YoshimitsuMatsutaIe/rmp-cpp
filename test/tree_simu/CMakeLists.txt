@@ -23,5 +23,5 @@ add_executable(
     ${FRANKA_EMIKA}
     ${SICE}
 )
-target_compile_options(main PUBLIC -O2 -Wall "-pthread" "-lpthread" "-fopenmp")
+target_compile_options(main PUBLIC -O2 -Wall "-pthread" "-lpthread")# "-fopenmp")
 target_link_libraries(main Threads::Threads)

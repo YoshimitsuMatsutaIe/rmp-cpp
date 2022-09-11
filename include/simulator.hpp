@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <array>
 #include <thread>
+#include <chrono>
 #include <functional>
 
 #include <eigen3/Eigen/Core>
@@ -15,6 +16,7 @@
 #include <eigen3/Eigen/LU>
 #include <eigen3/Eigen/Dense>
 
+#include <boost/progress.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <nlohmann/json.hpp>
 
@@ -43,7 +45,7 @@ namespace simulator
     private:
         double time_span;
         double time_interval;
-        double t;
+
         std::array<int, 2> ee_id;
         bool is_debug=true;
         void update_environment(void);
@@ -55,13 +57,12 @@ namespace simulator
 
         vector<size_t> model_struct;
 
-
+        std::string save_dir_path_str;
 
 
     public:
         RMP_Simulator(void){};
-        rmp_flow::Root root;  //ルートノード
-        rmp_flow::Nodes_and_Maps nms;
+
         string tree_name = "nameless";
         string robot_name;
         unordered_map<string, unordered_map<string, double>> rmp_param;
@@ -74,6 +75,8 @@ namespace simulator
         VectorXd q_neutral, q_max, q_min;
 
         std::tuple<int, int> ee_index;
+
+        //パラメータjsonの展開など
         void set_initial_value(string json_path);
 
         //void one_step(void);
@@ -87,7 +90,7 @@ namespace simulator
         // multi (openMp)
         void run_multi2(string json_path, string method="rk");
 
-        void set_debug(bool is_debug);
+        //void set_debug(bool is_debug);
 
 
         // マルチスレッドでsolve
@@ -95,6 +98,11 @@ namespace simulator
             const VectorXd& X, VectorXd& X_dot,
             const std::unordered_map<std::string, std::unordered_map<std::string, double>> rmp_param
         );
+
+        // goalとobsをcsvに保存
+        const void save_environment(Eigen::IOFormat CSVFormat);
+
+        const void make_data_dir(string json_path);
 
 
     };
