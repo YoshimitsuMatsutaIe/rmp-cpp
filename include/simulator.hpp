@@ -102,7 +102,14 @@ namespace simulator
         // goalとobsをcsvに保存
         const void save_environment(Eigen::IOFormat CSVFormat);
 
+        //データ保存先ディレクトリを作る等
         const void make_data_dir(string json_path);
+
+        //シミュレーションの結果を保存
+        const void save_message(
+            string solver_name, string method, string result, double time
+        );
+
 
 
     };

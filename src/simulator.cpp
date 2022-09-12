@@ -159,7 +159,7 @@ void simulator::RMP_Simulator::set_initial_value(string json_path)
 const void simulator::RMP_Simulator::make_data_dir(string json_path)
 {
     auto dir_ = gen_save_dir_name();
-    std::filesystem::path save_dir_path = "../../../rmp-cpp_result/" + dir_;
+    std::filesystem::path save_dir_path = "../../../rmp_result/rmp-cpp_result/" + dir_;
     this->save_dir_path_str = save_dir_path.string();
 
     //データ保存先のフォルダ作成
@@ -175,6 +175,15 @@ const void simulator::RMP_Simulator::make_data_dir(string json_path)
     //std::cout << "param-json name =" << json_file_name.string() << std::endl;
     auto cm = "cp " + json_path + " " + this->save_dir_path_str + "/" + json_file_name.string();;
     int status = std::system(cm.c_str());
+    assert(status == 0);
+
+
+    // グラフ化のipynbをコピー
+    std::filesystem::path note_ = "../../notebook/basic_plot.ipynb";
+    auto note_file_name = note_.filename();
+    //std::cout << "param-json name =" << json_file_name.string() << std::endl;
+    cm = "cp " + note_.string() + " " + this->save_dir_path_str + "/" + note_file_name.string();;
+    status = std::system(cm.c_str());
     assert(status == 0);
 }
 
@@ -206,6 +215,20 @@ const void simulator::RMP_Simulator::save_environment(Eigen::IOFormat CSVFormat)
     for (auto obs: obstacle_position){
         file_obs << obs.transpose().format(CSVFormat) << std::endl;;
     }
+}
+
+
+const void simulator::RMP_Simulator::save_message(
+    string solver_name, string method, string result, double time
+)
+{
+    std::ofstream f;
+    f.open(this->save_dir_path_str + "/message.txt", std::ios::out);
+
+    f << "solver-name : " << solver_name << endl;
+    f << "method :      " << method << endl;
+    f << "result :      " << result << endl;
+    f << "time :        " << time << " [sec]" << endl;
 }
 
 
@@ -261,6 +284,8 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     double t = 0.0;  //時刻
 
 
+    string result = "is not divergent";
+
     // メインループ
     boost::progress_display show_progress(total_step);
     if (method == "euler"){
@@ -276,6 +301,7 @@ void simulator::RMP_Simulator::run(string json_path, string method)
             
             if (std::isnan(X(dim+1))){
                 std::cout << "\n発散" << std::endl;
+                result = "divergent";
                 break;
             }
             root.save_state(t, CSVFormat);
@@ -298,6 +324,7 @@ void simulator::RMP_Simulator::run(string json_path, string method)
             
             if (std::isnan(X(dim+1))){
                 std::cout << "\n発散" << std::endl;
+                result = "divergent";
                 break;
             }
             root.save_state(t, CSVFormat);
@@ -308,14 +335,15 @@ void simulator::RMP_Simulator::run(string json_path, string method)
         return;
     }
 
-
     // 環境情報保存
     this->save_environment(CSVFormat);
+    
 
 
     end_time = std::chrono::system_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time-start_time).count(); //処理に要した時間をミリ秒に変換
     std::cout << "time = " << elapsed/1000.0 << "[sec]" << std::endl;
+    this->save_message("single", method, result, elapsed/1000.0);
 }
 
 
@@ -487,6 +515,7 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
     auto dt = this->time_interval;
 
 
+    string result = "is not divergent";
 
     // メインループ
     if (method == "euler"){
@@ -501,6 +530,7 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
             
             if (std::isnan(X(dim+1))){
                 std::cout << "\n発散" << std::endl;
+                result = "divergent";
                 break;
             }
 
@@ -524,6 +554,7 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
             
             if (std::isnan(X(dim+1))){
                 std::cout << "\n発散" << std::endl;
+                result = "divergent";
                 break;
             }
 
@@ -543,6 +574,7 @@ void simulator::RMP_Simulator::run_multi(string json_path, string method)
     end_time = std::chrono::system_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time-start_time).count(); //処理に要した時間をミリ秒に変換
     std::cout << "time = " << elapsed/1000.0 << "[sec]" << std::endl;
+    this->save_message("multi (std::thread)", method, result, elapsed/1000.0);
 }
 
 
@@ -622,6 +654,7 @@ void simulator::RMP_Simulator::run_multi2(string json_path, string method)
         assert(false);
     }
 
+    string result = "is not divergent";
     cout << "main loop" << endl;
 
     // メインループ
@@ -644,6 +677,7 @@ void simulator::RMP_Simulator::run_multi2(string json_path, string method)
             
             if (std::isnan(X(dim+1))){
                 std::cout << "\n発散" << std::endl;
+                result = "divergent";
                 break;
             }
             root.set_state(X.head(dim), X.tail(dim));
@@ -694,6 +728,7 @@ void simulator::RMP_Simulator::run_multi2(string json_path, string method)
             
             if (std::isnan(X(dim+1))){
                 std::cout << "\n発散" << std::endl;
+                result = "divergent";
                 break;
             }
             root.set_state(X.head(dim), X.tail(dim));
@@ -712,9 +747,11 @@ void simulator::RMP_Simulator::run_multi2(string json_path, string method)
     this->save_environment(CSVFormat);
 
 
+
     end_time = std::chrono::system_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time-start_time).count(); //処理に要した時間をミリ秒に変換
     std::cout << "time = " << elapsed/1000.0 << "[sec]" << std::endl;
+    this->save_message("multi (openMP)", method, result, elapsed/1000.0);
 }
 
 
