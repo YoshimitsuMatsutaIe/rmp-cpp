@@ -272,13 +272,16 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     
     auto dim = root.self_dim;
     root.pushforward();  //初期値で全ノードデータを更新
-    
     root.add_out_file_all(this->save_dir_path_str);
 
 
 
     VectorXd X(dim*2);  //状態ベクトル
     VectorXd K1(dim*2), K2(dim*2), K3(dim*2), K4(dim*2);
+
+    // 初期値書き込み
+    X.head(this->c_dim) = this->q_neutral;
+    X.tail(this->c_dim) = VectorXd::Zero(this->c_dim);
 
     auto dt = this->time_interval;
     double t = 0.0;  //時刻
@@ -331,8 +334,21 @@ void simulator::RMP_Simulator::run(string json_path, string method)
             ++show_progress;
         }
     }
+    else if (method == "ode45"){
+
+        //ルンゲクッタ法
+        System_Single sys(&root);
+        CSV_Observer observer(&root);
+
+        auto stepper = odeint::make_controlled<odeint::runge_kutta_dopri5<VectorXd>>(0.0001,0.0001);
+        
+        odeint::integrate_const(
+            stepper, sys, X, 0.0, this->time_span, this->time_interval, std::ref(observer)
+        );
+
+    }
     else{
-        return;
+        assert(false);
     }
 
     // 環境情報保存
@@ -756,40 +772,28 @@ void simulator::RMP_Simulator::run_multi2(string json_path, string method)
 
 
 
-
-
-void simulator::RMP_Simulator::System_Single::operator()(const VectorXd& x, VectorXd& dx, double t)
+simulator::System_Single::System_Single(rmp_flow::Root* root)
 {
-    
+    this->root = root;
+}
+
+void simulator::System_Single::operator()(const VectorXd& x, VectorXd& dx, double t)
+{
+    dx.resize(x.size());
+    this->root->solve(x, dx);
 }
 
 
-struct csv_observer
+simulator::CSV_Observer::CSV_Observer(rmp_flow::Root* root)
 {
-    using state = System::state;
-    std::ofstream fout;
-    csv_observer(const std::string& FileName) :fout(FileName){};
-    void operator()(const state& x, double t)
-    {
-        fout << t << "," << x[0] << "," << x[1] << "," << x[2] << std::endl;
-    }
-};
-
-
-
-
-int main()
-{
-    std::cout << "running..." << std::endl;
-
-    //ルンゲクッタ法
-    System sys(10.0, 28.0, 8/3);
-    System::state State = {0.0, 4.0, 28.0};
-    boost::numeric::odeint::runge_kutta_cash_karp54<System::state> Stepper;
-    csv_observer Observer("rk.csv");
-    boost::numeric::odeint::integrate_const(
-        Stepper, sys, State, 0.0, 50.0, 0.01, std::ref(Observer)
-    );
-
-    std::cout << "done!" << std::endl;
+    this->root = root;
+    this->CSVFormat = Eigen::IOFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");
 }
+
+
+void simulator::CSV_Observer::operator()(const VectorXd& x, double t)
+{
+    this->root->save_state(t, this->CSVFormat);
+}
+
+

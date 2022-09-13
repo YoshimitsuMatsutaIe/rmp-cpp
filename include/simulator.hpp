@@ -36,7 +36,7 @@ namespace simulator
     using std::vector;
     using std::cout;
     using std::endl;
-
+    namespace odeint = boost::numeric::odeint;
     // 日付取得
     string gen_save_dir_name(void);
 
@@ -111,12 +111,8 @@ namespace simulator
         );
 
 
-        struct System_Single
-        {
-            System_Single(void){};
 
-            void operator()(const VectorXd& x, VectorXd& dx, double t);
-        };
+
 
     };
 
@@ -127,7 +123,21 @@ namespace simulator
     );
 
 
+    struct System_Single
+    {
+        rmp_flow::Root* root;
+        System_Single(rmp_flow::Root* root);
 
+        void operator()(const VectorXd& x, VectorXd& dx, double t);
+    };
+
+    struct CSV_Observer
+    {
+        rmp_flow::Root* root;
+        Eigen::IOFormat CSVFormat;
+        CSV_Observer(rmp_flow::Root* root);
+        void operator()(const VectorXd& x, double t);
+    };
 
 
 };
