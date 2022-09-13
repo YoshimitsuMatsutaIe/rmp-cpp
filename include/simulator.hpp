@@ -111,6 +111,12 @@ namespace simulator
         );
 
 
+        struct System_Single
+        {
+            System_Single(void){};
+
+            void operator()(const VectorXd& x, VectorXd& dx, double t);
+        };
 
     };
 
@@ -119,6 +125,10 @@ namespace simulator
         VectorXd* q, VectorXd* q_dot,
         VectorXd* f, MatrixXd* M
     );
+
+
+
+
 
 };
 

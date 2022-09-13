@@ -755,3 +755,41 @@ void simulator::RMP_Simulator::run_multi2(string json_path, string method)
 }
 
 
+
+
+
+void simulator::RMP_Simulator::System_Single::operator()(const VectorXd& x, VectorXd& dx, double t)
+{
+    
+}
+
+
+struct csv_observer
+{
+    using state = System::state;
+    std::ofstream fout;
+    csv_observer(const std::string& FileName) :fout(FileName){};
+    void operator()(const state& x, double t)
+    {
+        fout << t << "," << x[0] << "," << x[1] << "," << x[2] << std::endl;
+    }
+};
+
+
+
+
+int main()
+{
+    std::cout << "running..." << std::endl;
+
+    //ルンゲクッタ法
+    System sys(10.0, 28.0, 8/3);
+    System::state State = {0.0, 4.0, 28.0};
+    boost::numeric::odeint::runge_kutta_cash_karp54<System::state> Stepper;
+    csv_observer Observer("rk.csv");
+    boost::numeric::odeint::integrate_const(
+        Stepper, sys, State, 0.0, 50.0, 0.01, std::ref(Observer)
+    );
+
+    std::cout << "done!" << std::endl;
+}
