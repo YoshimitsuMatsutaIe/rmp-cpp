@@ -70,7 +70,8 @@ namespace simulator
         vector<VectorXd> goal_velosity;
         vector<VectorXd> obstacle_position;
         vector<VectorXd> obstacle_velosity;
-        int c_dim, t_dim;
+        int c_dim;
+        int t_dim;
         int cpoint_num;  //制御点の総数
         VectorXd q_neutral, q_max, q_min;
 
@@ -122,25 +123,56 @@ namespace simulator
         VectorXd* f, MatrixXd* M
     );
 
-
+    template <int N>
     struct System_Single
     {
+        using state = std::array<double, 2*N>;
+        
+        VectorXd vec_x;
+        VectorXd vec_x_dot;
         rmp_flow::Root* root;
-        System_Single(rmp_flow::Root* root);
+        System_Single(rmp_flow::Root* root)
+        {
+            this->root = root;
+            this->vec_x = VectorXd(2*N);
+            this->vec_x_dot = VectorXd(2*N);
+        }
 
-        void operator()(const VectorXd& x, VectorXd& dx, double t);
+        void operator()(const state& x, state& x_dot, double t)
+        {
+            //vec_x = Eigen::Map<VectorXd>(&x[0], 2*N);
+            for (int i=0; i<2*N; ++i){
+                vec_x(i) = x[i];
+            }
+            this->root->solve(vec_x, vec_x_dot);
+            
+            for (int i=0; i<2*N; ++i){
+                x_dot[i] = vec_x_dot(i);
+            }
+            //x_dot = state(vec_x_dot.data());
+        }
     };
 
+    template <int N>
     struct CSV_Observer
     {
+        using state = std::array<double, 2*N>;
         rmp_flow::Root* root;
         Eigen::IOFormat CSVFormat;
-        CSV_Observer(rmp_flow::Root* root);
-        void operator()(const VectorXd& x, double t);
+        CSV_Observer(rmp_flow::Root* root)
+        {
+            this->root = root;
+            this->CSVFormat = Eigen::IOFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");    
+        }
+
+        void operator()(const state& x, double t)
+        {
+            this->root->save_state(t, this->CSVFormat);
+        }
     };
 
 
-};
+}
 
 
 

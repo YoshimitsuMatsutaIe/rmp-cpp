@@ -160,7 +160,7 @@ namespace rmp_flow
         return svd.matrixV().leftCols(rank) * tmp;
     }
 
-};
+}
 
 
 

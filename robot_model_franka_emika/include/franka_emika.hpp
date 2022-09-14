@@ -221,5 +221,5 @@ namespace franka_emika
 
     std::tuple<std::vector<franka_emika::Control_Point>, int, int> make_cpoint_map(void);
 
-};
+}
 #endif

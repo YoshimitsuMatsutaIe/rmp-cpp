@@ -47,7 +47,7 @@ void rmp_flow::rmp_tree_constructor(
     root.add_child(&nms.rmp2_node_jl.back());
 
     //cout << "obs and goal" << endl;
-    auto frame_num = model_struct.size();
+    //auto frame_num = model_struct.size();
     //int cpoints_num = std::accumulate(model_struct.begin(), model_struct.end(), 0.0);
 
 

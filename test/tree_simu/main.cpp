@@ -29,7 +29,7 @@ int main()
     //sim.run_multi2("../../config/sice.json", "rk");
 
 
-    sim.run("../../config/sice.json", "ode45");
+    sim.run("../../config/sice.json", "rk");
 
     cout << "done!" << endl;
 }

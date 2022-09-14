@@ -166,7 +166,7 @@ namespace sice
 
 
     std::tuple<std::vector<sice::Control_Point>, int, int> make_cpoint_map(void);
-};
+}
 
 
 

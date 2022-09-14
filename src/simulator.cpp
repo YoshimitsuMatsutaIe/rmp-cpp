@@ -275,23 +275,22 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     root.add_out_file_all(this->save_dir_path_str);
 
 
-
-    VectorXd X(dim*2);  //状態ベクトル
-    VectorXd K1(dim*2), K2(dim*2), K3(dim*2), K4(dim*2);
-
-    // 初期値書き込み
-    X.head(this->c_dim) = this->q_neutral;
-    X.tail(this->c_dim) = VectorXd::Zero(this->c_dim);
-
-    auto dt = this->time_interval;
-    double t = 0.0;  //時刻
-
-
-    string result = "is not divergent";
+    string result;
 
     // メインループ
     boost::progress_display show_progress(total_step);
     if (method == "euler"){
+        VectorXd X(dim*2);  //状態ベクトル
+        VectorXd K1(dim*2), K2(dim*2), K3(dim*2), K4(dim*2);
+
+        // 初期値書き込み
+        X.head(this->c_dim) = this->q_neutral;
+        X.tail(this->c_dim) = VectorXd::Zero(this->c_dim);
+
+        auto dt = this->time_interval;
+        double t = 0.0;  //時刻
+        result = "is not divergent";
+
         for (int i=0; i<total_step; ++i){
             t += dt;
             //if (is_debug){std::cout << "\ni = " << i << std::endl;}
@@ -312,6 +311,17 @@ void simulator::RMP_Simulator::run(string json_path, string method)
         }
     }
     else if (method == "rk"){
+        VectorXd X(dim*2);  //状態ベクトル
+        VectorXd K1(dim*2), K2(dim*2), K3(dim*2), K4(dim*2);
+
+        // 初期値書き込み
+        X.head(this->c_dim) = this->q_neutral;
+        X.tail(this->c_dim) = VectorXd::Zero(this->c_dim);
+
+        auto dt = this->time_interval;
+        double t = 0.0;  //時刻
+        result = "is not divergent";
+
         for (int i=0; i<total_step; ++i){
             t += time_interval;
             //cout << "\ni = " << i << endl;
@@ -336,16 +346,47 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     }
     else if (method == "ode45"){
 
-        //ルンゲクッタ法
-        System_Single sys(&root);
-        CSV_Observer observer(&root);
+        VectorXd X(dim*2);  //状態ベクトル
 
-        auto stepper = odeint::make_controlled<odeint::runge_kutta_dopri5<VectorXd>>(0.0001,0.0001);
-        
-        odeint::integrate_const(
-            stepper, sys, X, 0.0, this->time_span, this->time_interval, std::ref(observer)
-        );
+        // 初期値書き込み
+        X.head(this->c_dim) = this->q_neutral;
+        X.tail(this->c_dim) = VectorXd::Zero(this->c_dim);
 
+        if (this->c_dim = 4){
+            static const int N_cdim = 4;
+            auto sys = System_Single<N_cdim>(&root);
+            auto observer = CSV_Observer<N_cdim>(&root);
+            std::array<double, N_cdim*2> array_X;
+            for (int s=0; s<array_X.size(); ++s){
+                array_X[s] = X(s);
+            }
+            auto stepper = odeint::make_controlled<odeint::runge_kutta_dopri5<
+            System_Single<N_cdim>::state
+            >>(0.0001,0.0001);
+            
+            odeint::integrate_const(
+                stepper, sys, array_X, 0.0, this->time_span, this->time_interval, std::ref(observer)
+            );
+        }
+        else if (this->c_dim = 7){
+            static const int N_cdim = 7;
+            auto sys = System_Single<N_cdim>(&root);
+            auto observer = CSV_Observer<N_cdim>(&root);
+            std::array<double, N_cdim*2> array_X;
+            for (int s=0; s<array_X.size(); ++s){
+                array_X[s] = X(s);
+            }
+            auto stepper = odeint::make_controlled<odeint::runge_kutta_dopri5<
+            System_Single<N_cdim>::state
+            >>(0.0001,0.0001);
+            
+            odeint::integrate_const(
+                stepper, sys, array_X, 0.0, this->time_span, this->time_interval, std::ref(observer)
+            );
+        }
+        else {
+            assert(false);
+        }
     }
     else{
         assert(false);
@@ -772,28 +813,5 @@ void simulator::RMP_Simulator::run_multi2(string json_path, string method)
 
 
 
-simulator::System_Single::System_Single(rmp_flow::Root* root)
-{
-    this->root = root;
-}
-
-void simulator::System_Single::operator()(const VectorXd& x, VectorXd& dx, double t)
-{
-    dx.resize(x.size());
-    this->root->solve(x, dx);
-}
-
-
-simulator::CSV_Observer::CSV_Observer(rmp_flow::Root* root)
-{
-    this->root = root;
-    this->CSVFormat = Eigen::IOFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");
-}
-
-
-void simulator::CSV_Observer::operator()(const VectorXd& x, double t)
-{
-    this->root->save_state(t, this->CSVFormat);
-}
 
 

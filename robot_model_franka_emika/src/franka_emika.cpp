@@ -266,7 +266,7 @@ void franka_emika::Control_Point::jacobian_dot(const VectorXd &q, const VectorXd
     this->calc_jrx_dot(q, q_dot, this->jrx_dot);
     this->calc_jry_dot(q, q_dot, this->jry_dot);
     this->calc_jrz_dot(q, q_dot, this->jrz_dot);
-    out =this->jrx_dot*this->r_bar(0)
+    out = this->jrx_dot*this->r_bar(0)
     + this->jry_dot*this->r_bar(1)
     + this->jrz_dot*this->r_bar(2)
     + this->jo_dot;
@@ -296,8 +296,6 @@ const std::vector<std::size_t> franka_emika::Control_Point::calc_points_mapping(
     std::size_t frame_num = franka_emika::Kinematics::R_BARS_ALL.size();
     vector<std::size_t> s;
     for (std::size_t i=0; i<frame_num; ++i){
-        //std::cout << "i = " << i << std::endl;
-        //std::cout << "    num = " << baxter::Control_Point::R_BARS_ALL[i].size() << std::endl;
         s.push_back(franka_emika::Kinematics::R_BARS_ALL[i].size());
     }
     std::cout << "done!" << std::endl;

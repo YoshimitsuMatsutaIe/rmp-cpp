@@ -60,7 +60,7 @@ namespace mapping_base
         void jacobian_dot(const VectorXd &x, const VectorXd &x_dot, MatrixXd &out) override;
         void velovity(const VectorXd &x_dot, const MatrixXd& J, VectorXd &out) override;
     };
-};
+}
 
 
 

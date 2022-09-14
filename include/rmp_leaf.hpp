@@ -298,7 +298,7 @@ namespace rmp2
         void add_out_file_all(std::string dir_path) override;
         void calc_natural_form(void) override;
     };
-};
+}
 
 
 #endif
