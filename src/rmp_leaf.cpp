@@ -23,15 +23,10 @@ void rmp2::obs_avoidance_natural_form::operator()(
     VectorXd& out_f, MatrixXd& out_M
 )
 {
-    //cout << "x = " << x.transpose() << endl;
-    //cout << "o = " << o.transpose() << endl;
     double s = (x - o).norm();
     MatrixXd J = -(x-o).transpose() / s;
-    //cout << "obs 0.1" << endl;
     double s_dot = (J * (x_dot - o_dot))(0, 0);
     MatrixXd J_dot = -((x_dot-o_dot).transpose() - (x-o).transpose()*(1.0/s*(x-o).dot(x_dot-o_dot))) / (s*s);
-    //cout << "obs 1" << endl;
-
 
     double w2, w2_dot;
     if (this->rw - s > 0.0){
@@ -489,18 +484,6 @@ double rmp2::Obstacle_Avoidance::calc_force(double s, double s_dot)
 }
 
 
-// void rmp2::Obstacle_Avoidance::calc_natural_form(void)
-// {
-//     //std::cout << "obs rmp cal" << std::endl;
-//     if (this->rw - this->x(0) <= 0.0){
-//         f(0) = 0.0;
-//         M(0, 0) = 0.0;
-//     }
-//     else{
-//         f(0) = calc_force(x(0), x_dot(0));
-//         M(0, 0) = calc_inertia_matrix(x(0), x_dot(0));
-//     }
-// }
 
 void rmp2::Obstacle_Avoidance::calc_natural_form(void)
 {
@@ -632,7 +615,6 @@ void rmp2::Joint_Limit_Avoidance::calc_force(VectorXd& out)
 
 void rmp2::Joint_Limit_Avoidance::calc_natural_form(void)
 {
-    //this->initialize_rmp_natural_form();
     this->calc_inertia_matrix(this->M);
     this->calc_force(this->f);
 }

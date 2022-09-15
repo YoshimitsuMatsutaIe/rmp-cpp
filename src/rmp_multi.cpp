@@ -33,9 +33,7 @@ void rmp_multi::solve(
     #pragma omp declare reduction(+ : Eigen::VectorXd : omp_out=omp_out+omp_in) initializer(omp_priv = omp_orig)
     #pragma omp parallel
     {
-        #pragma omp parallel for \
-            reduction(+: root_f) reduction(+: root_M) \
-            private(x, x_dot, J, J_dot)
+        #pragma omp parallel for reduction(+: root_f) reduction(+: root_M) private(x, x_dot, J, J_dot)
         for (i=0; i<cpoint_num; ++i){
             mappings[i]->phi(q, x);
             mappings[i]->jacobian(q, J);
@@ -45,9 +43,7 @@ void rmp_multi::solve(
             f = VectorXd::Zero(t_dim);
             M = MatrixXd::Zero(t_dim, t_dim);
 
-            #pragma omp parallel for \
-                reduction(+: f) reduction(+: M) \
-                private(i, j, temp_f, temp_M)
+            #pragma omp parallel for reduction(+: f) reduction(+: M) private(i, j, temp_f, temp_M)
             for (j=0; j<o_s.size(); ++j){
                 obs_avoidance(x, x_dot, o_s[j], o_dot_s[j], temp_f, temp_M);
                 f += temp_f;
@@ -78,6 +74,83 @@ void rmp_multi::solve(
     //cout << "done!!!" << endl;
 }
 
+
+
+// void rmp_multi::solve(
+//     const VectorXd& state,
+//     const vector<mapping_base::Identity*> mappings,
+//     rmp2::goal_attractor_natural_form& attractor,
+//     rmp2::obs_avoidance_natural_form& obs_avoidance,
+//     rmp2::jl_avoidance_natural_form& jl_avoidance,
+//     const VectorXd& g, const VectorXd& g_dot,
+//     const std::vector<VectorXd>& o_s, const std::vector<VectorXd>& o_dot_s,
+//     const int ee_num, const int cpoint_num, const int c_dim, const int t_dim,
+//     VectorXd& state_dot
+// )
+// {
+//     //cout << "ee_num = " << ee_num << endl;
+//     VectorXd q = state.head(c_dim);
+//     VectorXd q_dot = state.tail(c_dim);
+
+//     VectorXd x(t_dim), x_dot(t_dim), f(t_dim), temp_f(t_dim);
+//     MatrixXd J(t_dim, c_dim), J_dot(t_dim, c_dim), M(t_dim, t_dim), temp_M(t_dim, t_dim);
+
+//     VectorXd root_f = VectorXd::Zero(c_dim);
+//     MatrixXd root_M = MatrixXd::Zero(c_dim, c_dim);
+
+
+//     int o_num = o_s.size();
+//     vector<std::tuple<int, int>> ids;
+//     for (int i=0; i<cpoint_num; ++i){
+//         for (int j=0; j<o_num; ++j){
+//             ids.push_back({i, j});
+//         }
+//     }
+
+
+//     //cout << "jl done!" << endl;
+    
+//     int k;
+    
+//     #pragma omp declare reduction(+ : Eigen::MatrixXd : omp_out=omp_out+omp_in) initializer(omp_priv = omp_orig)
+//     #pragma omp declare reduction(+ : Eigen::VectorXd : omp_out=omp_out+omp_in) initializer(omp_priv = omp_orig)
+//     #pragma omp parallel
+//     {
+//         #pragma omp for reduction(+: root_f) reduction(+: root_M) private(k, temp_f, temp_M, x, x_dot, J, J_dot)
+//         for (k=0; k<cpoint_num*o_num; ++k){
+
+//             auto [i, j] = ids[k];
+        
+//             mappings[i]->phi(q, x);
+//             mappings[i]->jacobian(q, J);
+//             mappings[i]->jacobian_dot(q, q_dot, J_dot);
+//             mappings[i]->velovity(q_dot, J, x_dot);
+
+//             obs_avoidance(x, x_dot, o_s[j], o_dot_s[j], temp_f, temp_M);
+//             root_f += J.transpose() * (temp_f - (temp_M * J_dot * q_dot));
+//             root_M += J.transpose() * temp_M * J;
+//             if (i == ee_num){
+//                 attractor(x, x_dot, g, g_dot, temp_f, temp_M);
+//                 root_f += J.transpose() * (temp_f - (temp_M * J_dot * q_dot));
+//                 root_M += J.transpose() * temp_M * J;
+//             }
+//             }
+        
+//     }
+
+//     VectorXd f_jl(c_dim);
+//     MatrixXd M_jl(c_dim, c_dim);
+//     jl_avoidance(q, q_dot, f_jl, M_jl);
+//     root_f += f_jl;
+//     root_M += M_jl;
+    
+    
+//     //cout << "root_f = \n" << root_f << endl;
+//     state_dot.head(c_dim) = q_dot;
+//     state_dot.tail(c_dim) = rmp_flow::pseudoInverse(root_M) * root_f;
+//     //state_dot.tail(c_dim) = root_M.completeOrthogonalDecomposition().pseudoInverse() * root_f;
+//     //cout << "done!!!" << endl;
+// }
 
 
 

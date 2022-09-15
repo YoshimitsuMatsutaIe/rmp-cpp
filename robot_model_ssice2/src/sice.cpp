@@ -1,39 +1,22 @@
 #include "../include/sice.hpp"
 
-const double sice::Kinematics::l1 = 1.0;
-const double sice::Kinematics::l2 = 1.0;
-const double sice::Kinematics::l3 = 1.0;
-const double sice::Kinematics::l4 = 1.0;
-const int sice::Kinematics::c_dim = 4;
-const int sice::Kinematics::t_dim = 2;
+const double sice::Param::l1 = 1.0;
+const double sice::Param::l2 = 1.0;
+const double sice::Param::l3 = 1.0;
+const double sice::Param::l4 = 1.0;
+const int sice::c_dim = 4;
+const int sice::t_dim = 2;
 
-void sice::Kinematics::set_q_neutral(VectorXd& out)
-{
-    out = VectorXd::Zero(c_dim);
-}
 
-void sice::Kinematics::set_q_min(VectorXd& out)
-{
-    out = VectorXd::Zero(c_dim);
-    out << -180.0, -180.0, -180.0, -180.0;
-    out *= M_PI/180.0;
-}
 
-void sice::Kinematics::set_q_max(VectorXd& out)
-{
-    out = VectorXd::Zero(c_dim);
-    out << 180.0, 180.0, 180.0, 180.0;
-    out *= M_PI/180.0;
-}
-
-Eigen::VectorXd sice::Kinematics::q_neutral(void)
+Eigen::VectorXd sice::q_neutral(void)
 {
     VectorXd out = VectorXd::Zero(c_dim);
     return out;
 }
 
 
-Eigen::VectorXd sice::Kinematics::q_max(void)
+Eigen::VectorXd sice::q_max(void)
 {
     VectorXd out(c_dim);
     out << 180.0, 180.0, 180.0, 180.0;
@@ -42,7 +25,7 @@ Eigen::VectorXd sice::Kinematics::q_max(void)
 }
 
 
-Eigen::VectorXd sice::Kinematics::q_min(void)
+Eigen::VectorXd sice::q_min(void)
 {
     VectorXd out(c_dim);
     out << -180.0, -180.0, -180.0, -180.0;
@@ -53,7 +36,7 @@ Eigen::VectorXd sice::Kinematics::q_min(void)
 
 
 std::tuple<Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd>
-sice::Kinematics::get_q_neutoral_max_min(void)
+sice::get_q_neutoral_max_min(void)
 {
 
     return {q_neutral(), q_max(), q_min()};
@@ -61,43 +44,31 @@ sice::Kinematics::get_q_neutoral_max_min(void)
 
 
 
-const std::vector<std::vector<double>> sice::Kinematics::r_bars_0{
+const std::vector<std::vector<double>> sice::r_bars_0{
     {0, 0, 1}
 };
-const std::vector<std::vector<double>> sice::Kinematics::r_bars_1{
+const std::vector<std::vector<double>> sice::r_bars_1{
     {0, 0, 1}
 };
-const std::vector<std::vector<double>> sice::Kinematics::r_bars_2{
+const std::vector<std::vector<double>> sice::r_bars_2{
     {0, 0, 1}
 };
-const std::vector<std::vector<double>> sice::Kinematics::r_bars_3{
+const std::vector<std::vector<double>> sice::r_bars_3{
     {0, 0, 1}
 };
-const std::vector<std::vector<double>> sice::Kinematics::r_bars_ee{
+const std::vector<std::vector<double>> sice::r_bars_ee{
     {0, 0, 1}
 };
 
-const std::vector<std::vector<std::vector<double>>> sice::Kinematics::R_BARS_ALL{
+const std::vector<std::vector<std::vector<double>>> sice::R_BARS_ALL{
     r_bars_0, r_bars_1, r_bars_2, r_bars_3, r_bars_ee
 };
 
-const std::tuple<int, int> sice::Kinematics::get_ee_id()
+const std::tuple<int, int> sice::get_ee_id()
 {
     return {4, 0};
 }
 
-std::vector<sice::func_q_vecout> sice::Kinematics::Os = {&o_0, &o_1, &o_2, &o_3, &o_ee};
-std::vector<sice::func_q_vecout> sice::Kinematics::RXs = {&rx_0, &rx_1, &rx_2, &rx_3,&rx_ee};
-std::vector<sice::func_q_vecout> sice::Kinematics::RYs = {&ry_0, &ry_1, &ry_2, &ry_3,&ry_ee};
-
-std::vector<sice::func_q_matout> sice::Kinematics::HTMs = {&htm_0, &htm_1, &htm_2, &htm_3, &htm_ee};
-std::vector<sice::func_q_matout> sice::Kinematics::JOs =  {&jo_0, &jo_1, &jo_2, &jo_3, &jo_ee};
-std::vector<sice::func_q_matout> sice::Kinematics::JRXs = {&jrx_0, &jrx_1, &jrx_2, &jrx_3, &jrx_ee};
-std::vector<sice::func_q_matout> sice::Kinematics::JRYs = {&jry_0, &jry_1, &jry_2, &jry_3, &jry_ee};
-
-std::vector<sice::func_q_dq_matout> sice::Kinematics::JOs_dot =  {&jo_0_dot, &jo_1_dot, &jo_2_dot, &jo_3_dot, &jo_ee_dot};
-std::vector<sice::func_q_dq_matout> sice::Kinematics::JRXs_dot = {&jrx_0_dot, &jrx_1_dot, &jrx_2_dot, &jrx_3_dot, &jrx_ee_dot};
-std::vector<sice::func_q_dq_matout> sice::Kinematics::JRYs_dot = {&jry_0_dot, &jry_1_dot, &jry_2_dot, &jry_3_dot, &jry_ee_dot};
 
 
 
@@ -223,15 +194,15 @@ const void sice::Control_Point::print_state(void)
 }
 
 
-const std::vector<std::size_t> sice::Control_Point::calc_points_mapping(void)
+const std::vector<std::size_t> sice::calc_points_mapping(void)
 {
     //std::cout << "calc_points_mapping start." << std::endl;
-    size_t frame_num = sice::Kinematics::R_BARS_ALL.size();
+    size_t frame_num = sice::R_BARS_ALL.size();
     vector<std::size_t> s;
     for (size_t i=0; i<frame_num; ++i){
         //std::cout << "i = " << i << std::endl;
         //std::cout << "    num = " << baxter::Control_Point::R_BARS_ALL[i].size() << std::endl;
-        s.push_back(sice::Kinematics::R_BARS_ALL[i].size());
+        s.push_back(sice::R_BARS_ALL[i].size());
     }
     //std::cout << "done!" << std::endl;
     return s;
@@ -247,15 +218,15 @@ std::tuple<std::vector<sice::Control_Point>, int, int> sice::make_cpoint_map(voi
     int ee_num;
 
     int cpoint_num = 0;
-    for (std::size_t i=0; i<model_struct.size(); ++i){
+    for (size_t i=0; i<model_struct.size(); ++i){
         if (i == a){
             ee_num = cpoint_num + b;
         }
         cpoint_num += model_struct[i];
     }
 
-    for (std::size_t i=0; i<model_struct.size(); ++i){
-        for(std::size_t j=0; j<model_struct[i]; ++j){
+    for (size_t i=0; i<model_struct.size(); ++i){
+        for(int j=0; j<model_struct[i]; ++j){
             maps.push_back(rm::Control_Point(i, j));
         }
     }

@@ -28,7 +28,7 @@ int main()
     //sim.run_multi("../../config/sice.json", "rk");
     //sim.run_multi2("../../config/sice.json", "rk");
 
-
+    
     sim.run("../../config/sice.json", "rk");
 
     cout << "done!" << endl;

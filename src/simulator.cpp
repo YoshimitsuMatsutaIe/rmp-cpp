@@ -395,8 +395,6 @@ void simulator::RMP_Simulator::run(string json_path, string method)
     // 環境情報保存
     this->save_environment(CSVFormat);
     
-
-
     end_time = std::chrono::system_clock::now();
     double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end_time-start_time).count(); //処理に要した時間をミリ秒に変換
     std::cout << "time = " << elapsed/1000.0 << "[sec]" << std::endl;
