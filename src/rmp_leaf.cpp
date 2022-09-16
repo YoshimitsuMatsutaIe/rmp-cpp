@@ -54,7 +54,7 @@ void rmp2::obs_avoidance_natural_form::operator()(
     double grad_phi = this->gain * w2 * w2_dot;
 
 
-    double m = w2 + delta;
+    double m = w2 * delta;
     double f = -grad_phi - xi;
 
 

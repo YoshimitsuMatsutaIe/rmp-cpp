@@ -33,7 +33,7 @@ void rmp_multi::solve(
     #pragma omp declare reduction(+ : Eigen::VectorXd : omp_out=omp_out+omp_in) initializer(omp_priv = omp_orig)
     #pragma omp parallel
     {
-        #pragma omp parallel for reduction(+: root_f) reduction(+: root_M) private(x, x_dot, J, J_dot)
+        #pragma omp parallel for reduction(+: root_f) reduction(+: root_M) private(i, x, x_dot, J, J_dot)
         for (i=0; i<cpoint_num; ++i){
             mappings[i]->phi(q, x);
             mappings[i]->jacobian(q, J);
@@ -43,7 +43,7 @@ void rmp_multi::solve(
             f = VectorXd::Zero(t_dim);
             M = MatrixXd::Zero(t_dim, t_dim);
 
-            #pragma omp parallel for reduction(+: f) reduction(+: M) private(i, j, temp_f, temp_M)
+            #pragma omp parallel for reduction(+: f) reduction(+: M) private(i, j, temp_f, temp_M, obs_avoidance)
             for (j=0; j<o_s.size(); ++j){
                 obs_avoidance(x, x_dot, o_s[j], o_dot_s[j], temp_f, temp_M);
                 f += temp_f;
@@ -107,9 +107,6 @@ void rmp_multi::solve(
 //         }
 //     }
 
-
-//     //cout << "jl done!" << endl;
-    
 //     int k;
     
 //     #pragma omp declare reduction(+ : Eigen::MatrixXd : omp_out=omp_out+omp_in) initializer(omp_priv = omp_orig)
@@ -143,13 +140,9 @@ void rmp_multi::solve(
 //     jl_avoidance(q, q_dot, f_jl, M_jl);
 //     root_f += f_jl;
 //     root_M += M_jl;
-    
-    
-//     //cout << "root_f = \n" << root_f << endl;
+
 //     state_dot.head(c_dim) = q_dot;
 //     state_dot.tail(c_dim) = rmp_flow::pseudoInverse(root_M) * root_f;
-//     //state_dot.tail(c_dim) = root_M.completeOrthogonalDecomposition().pseudoInverse() * root_f;
-//     //cout << "done!!!" << endl;
 // }
 
 
