@@ -29,6 +29,7 @@ namespace rmp2
         double sigma;
         double rw;
 
+        obs_avoidance_natural_form(void){};
         obs_avoidance_natural_form(
             double scale_rep,
             double scale_damp,
@@ -248,6 +249,28 @@ namespace rmp2
             double rw
         );
 
+        void add_out_file_all(std::string dir_path) override;
+        void calc_natural_form(void) override;
+    };
+
+
+    class Obstacle_Avoidance_Multi : public rmp_flow::Leaf_Base
+    {
+    private:
+        double rw;
+        std::vector<VectorXd>& o_s;
+        obs_avoidance_natural_form rmp_func;
+
+    public:
+        Obstacle_Avoidance_Multi(
+            int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
+            double scale_rep,
+            double scale_damp,
+            double gain,
+            double sigma,
+            double rw,
+            std::vector<VectorXd>& o_s
+        );
         void add_out_file_all(std::string dir_path) override;
         void calc_natural_form(void) override;
     };

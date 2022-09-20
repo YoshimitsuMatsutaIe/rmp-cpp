@@ -494,6 +494,38 @@ void rmp2::Obstacle_Avoidance::calc_natural_form(void)
 }
 
 
+
+rmp2::Obstacle_Avoidance_Multi::Obstacle_Avoidance_Multi(
+    int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
+    double scale_rep,
+    double scale_damp,
+    double gain,
+    double sigma,
+    double rw,
+    std::vector<VectorXd>& o_s
+): Leaf_Base(self_dim, parent_dim, name, mappings), o_s(o_s)
+{
+    this->rw = rw;
+
+    this->rmp_func = obs_avoidance_natural_form(scale_rep, scale_damp, gain, sigma, rw);
+
+    this->have_rmp_func = true;
+}
+
+
+void rmp2::Obstacle_Avoidance_Multi::add_out_file_all(std::string dir_path)
+{
+    this->add_out_file(dir_path + "/task/" + this->name + ".csv");
+}
+
+
+void rmp2::Obstacle_Avoidance_Multi::calc_natural_form(void)
+{
+
+}
+
+
+
 rmp2::Joint_Limit_Avoidance::Joint_Limit_Avoidance(
     int self_dim, int parent_dim, std::string name, mapping_base::Identity* mappings,
     double gamma_p,
